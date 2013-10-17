@@ -10,7 +10,7 @@ public abstract class ElasticTube extends Tube {
 	protected float alpha;
 	protected float elastance;
 	protected ArrayList<ElasticTube> parents;
-	protected ArrayList<ElasticTube> childrens;
+	protected ArrayList<ElasticTube> children;
 	
 	public ElasticTube(){
 		super();
@@ -20,7 +20,7 @@ public abstract class ElasticTube extends Tube {
 		setArea(-1.0f);
 		setAlpha(-1.0f);
 		parents = new ArrayList<ElasticTube>();
-		childrens = new ArrayList<ElasticTube>();
+		children = new ArrayList<ElasticTube>();
 	}
 	
 	public ElasticTube(String name, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
@@ -32,7 +32,7 @@ public abstract class ElasticTube extends Tube {
 		setFlowout(flowout);
 		setPressure(pressure);
 		parents = new ArrayList<ElasticTube>();
-		childrens = new ArrayList<ElasticTube>();
+		children = new ArrayList<ElasticTube>();
 	}	
 	
 	public ElasticTube(String name, float len, float a, float alf, float elast, float flowin, float flowout, float pressure, ArrayList<ElasticTube> par, ArrayList<ElasticTube> child){
@@ -56,11 +56,11 @@ public abstract class ElasticTube extends Tube {
 	}
 
 	protected ArrayList<ElasticTube> getChildrens() {
-		return childrens;
+		return children;
 	}
 
 	protected void setChildrens(ArrayList<ElasticTube> childrens) {
-		this.childrens = childrens;
+		this.children = childrens;
 	}
 
 	protected float getElastance() {
@@ -112,4 +112,10 @@ public abstract class ElasticTube extends Tube {
 		return super.toString()+" - Elastance = "+getElastance()+" - Area = "+getArea()+" - Alpha = "+getAlpha();
 	}
 	
+	public boolean addParent(ElasticTube parent){
+		return parents.add(parent);
+	}
+	public boolean addChild(ElasticTube child){
+		return children.add(child);
+	}
 }
