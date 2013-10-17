@@ -2,7 +2,7 @@ package models;
 
 import java.util.ArrayList;
 
-public class Vein extends Vessel {
+public class Vein extends ElasticTube {
 	public static final float DEFAULT_LENGTH = 3.0906f;
 	public static final float DEFAULT_AREA = 5.3388f;
 	public static final float DEFAULT_ELASTANCE = 1008666.7f;// en Pa
@@ -24,8 +24,8 @@ public class Vein extends Vessel {
 		super(name, len, a, alpha, elast);
 	}
 
-	public Vein(String name, float len, float a, ArrayList<Vessel> par,
-			ArrayList<Vessel> child) {
+	public Vein(String name, float len, float a, ArrayList<ElasticTube> par,
+			ArrayList<ElasticTube> child) {
 		super(name, len, a, DEFAULT_ALPHA, DEFAULT_ELASTANCE, par, child);
 	}
 	
