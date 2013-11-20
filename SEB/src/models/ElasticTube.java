@@ -9,6 +9,7 @@ public abstract class ElasticTube extends Tube {
 	protected float area;
 	protected float alpha;
 	protected float elastance;
+	protected Hemisphere hemisphere;
 	protected ArrayList<ElasticTube> parents;
 	protected ArrayList<ElasticTube> children;
 	
@@ -19,11 +20,12 @@ public abstract class ElasticTube extends Tube {
 		setPressure(-1.0f);
 		setArea(-1.0f);
 		setAlpha(-1.0f);
+		hemisphere = Hemisphere.UNKNOWN;
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
 	}
 	
-	public ElasticTube(String name, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
+	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
 		super(name, len);
 		setArea(a);
 		setAlpha(alf);
@@ -31,12 +33,14 @@ public abstract class ElasticTube extends Tube {
 		setFlowin(flowin);
 		setFlowout(flowout);
 		setPressure(pressure);
+		setHemisphere(hemi);
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
 	}	
 	
-	public ElasticTube(String name, float len, float a, float alf, float elast, float flowin, float flowout, float pressure, ArrayList<ElasticTube> par, ArrayList<ElasticTube> child){
+	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure, ArrayList<ElasticTube> par, ArrayList<ElasticTube> child){
 		super(name,len);
+		setHemisphere(hemi);
 		setArea(a);
 		setAlpha(alf);
 		setElastance(elast);
@@ -108,8 +112,16 @@ public abstract class ElasticTube extends Tube {
 		this.pressure = pressure;
 	}
 
+	public Hemisphere getHemisphere() {
+		return hemisphere;
+	}
+
+	public void setHemisphere(Hemisphere hemisphere) {
+		this.hemisphere = hemisphere;
+	}
+
 	public String toString(){
-		return super.toString()+" - Elastance = "+getElastance()+" - Area = "+getArea()+" - Alpha = "+getAlpha();
+		return super.toString()+" - Elastance = "+getElastance()+" - Area = "+getArea()+" - Alpha = "+getAlpha()+" - Hemisphere = "+getHemisphere();
 	}
 	
 	public boolean addParent(ElasticTube parent){
