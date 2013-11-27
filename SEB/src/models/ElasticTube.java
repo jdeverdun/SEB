@@ -3,10 +3,15 @@ package models;
 import java.util.ArrayList;
 
 public abstract class ElasticTube extends Tube {
-	protected float flowin;
-	protected float flowout;
-	protected float pressure;
-	protected float area;
+	protected static String AREA_LABEL = "A";
+	protected static String PRESSURE_LABEL = "P";
+	protected static String FLOWIN_LABEL = "fi";
+	protected static String FLOWOUT_LABEL = "fo";
+	protected String TUBE_NUM;
+	protected Variable flowin;
+	protected Variable flowout;
+	protected Variable pressure;
+	protected Variable area;
 	protected float alpha;
 	protected float elastance;
 	protected Hemisphere hemisphere;
@@ -74,11 +79,12 @@ public abstract class ElasticTube extends Tube {
 	protected void setElastance(float elastance) {
 		this.elastance = elastance;
 	}	
-	protected float getArea() {
+	protected Variable getArea() {
 		return area;
 	}
-	protected void setArea(float area) {
-		this.area = area;
+	protected void setArea(float area){
+		Variable v = new Variable("T"+TUBE_NUM+"_"+AREA_LABEL+"_"+ID,area);
+		this.area = v;
 	}
 
 	protected float getAlpha() {
@@ -88,28 +94,31 @@ public abstract class ElasticTube extends Tube {
 	protected void setAlpha(float alpha) {
 		this.alpha = alpha;
 	}
-	public float getFlowin() {
+	public Variable getFlowin() {
 		return flowin;
 	}
 
-	public void setFlowin(float flowin) {
-		this.flowin = flowin;
+	public void setFlowin(float flowin){
+		Variable v = new Variable("T"+TUBE_NUM+"_"+FLOWIN_LABEL+"_"+ID,flowin);
+		this.flowin = v;
 	}
 
-	public float getFlowout() {
+	public Variable getFlowout() {
 		return flowout;
 	}
 
-	public void setFlowout(float flowout) {
-		this.flowout = flowout;
+	public void setFlowout(float flowout){
+		Variable v = new Variable("T"+TUBE_NUM+"_"+FLOWOUT_LABEL+"_"+ID,flowout);
+		this.flowout = v;
 	}
 
-	public float getPressure() {
+	public Variable getPressure() {
 		return pressure;
 	}
 
-	public void setPressure(float pressure) {
-		this.pressure = pressure;
+	public void setPressure(float pressure){
+		Variable v = new Variable("T"+TUBE_NUM+"_"+PRESSURE_LABEL+"_"+ID,pressure);
+		this.pressure = v;
 	}
 
 	public Hemisphere getHemisphere() {
@@ -130,4 +139,8 @@ public abstract class ElasticTube extends Tube {
 	public boolean addChild(ElasticTube child){
 		return children.add(child);
 	}
+	
+	
+	// ---------    EQUATIONS ---------------
+	public abstract ArrayList<float[]> getEquations(ArrayList<Variable> variables);
 }

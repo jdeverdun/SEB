@@ -5,8 +5,11 @@ import java.util.ArrayList;
 public abstract class Tube {
 	protected String name;
 	protected float length;
+	protected static String TUBE_LABEL = "T";
+	protected static int ID = 0;
 	
 	public Tube(){
+		ID++;
 		setName("Unknown");
 		setLength(-1.0f);
 	}
