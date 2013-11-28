@@ -34,4 +34,8 @@ public class VenousSinus extends ElasticTube {
 		return "VenousSinus : "+super.toString();
 	}
 
+	@Override
+	public String getTubeNum() {
+		return "8";
+	}
 }

@@ -33,5 +33,9 @@ public class FirstArtery extends ElasticTube {
 	public String toString(){
 		return "FirstArtery : "+super.toString();
 	}
+	@Override
+	public String getTubeNum() {
+		return "I";
+	}
 
 }

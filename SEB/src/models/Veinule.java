@@ -33,4 +33,9 @@ public class Veinule extends ElasticTube {
 		return "Vein : "+super.toString();
 	}
 
+	@Override
+	public String getTubeNum() {
+		return "3";
+	}
+	
 }

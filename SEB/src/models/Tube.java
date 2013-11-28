@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public abstract class Tube {
 	protected String name;
-	protected float length;
+	protected Variable length;
 	protected static String TUBE_LABEL = "T";
 	protected static int ID = 0;
 	
@@ -19,12 +19,8 @@ public abstract class Tube {
 		setLength(len);
 	}
 	
-	protected float getLength() {
-		return length;
-	}
-	protected void setLength(float length) {
-		this.length = length;
-	}
+	protected abstract Variable getLength();
+	protected abstract void setLength(float length);
 		
 	protected String getName() {
 		return name;
@@ -34,6 +30,8 @@ public abstract class Tube {
 		this.name = name;
 	}
 
+	public abstract String getTubeNum();
+	
 	// ----- Methodes ----
 	public String toString(){
 		return "Name = "+getName()+" - Length = "+getLength();

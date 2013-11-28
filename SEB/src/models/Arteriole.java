@@ -3,7 +3,6 @@ package models;
 import java.util.ArrayList;
 
 public class Arteriole extends ElasticTube {
-	public static final float TUBE_NUM = 1;
 	public static final float DEFAULT_LENGTH = 1.75f;
 	public static final float DEFAULT_AREA = 4.74f;
 	public static final float DEFAULT_ELASTANCE = 2735000.0f;// en Pa
@@ -34,7 +33,10 @@ public class Arteriole extends ElasticTube {
 		return "Arteriole : "+super.toString();
 	}
 
-	
+	@Override
+	public String getTubeNum() {
+		return "1";
+	}
 	
 	// --------------- EQUATIONS -------------
 	@Override
@@ -45,9 +47,12 @@ public class Arteriole extends ElasticTube {
 	
 	
 	
-	private void getContinuityEquation(){
-		
+	private float getContinuityEquation(Variable area, Variable flowin, Variable flowout){
+		// equ(2)
+		return (area.getValue() - getArea().getValue())/ModelSpecification.dt + (- flowin.getValue() + flowout.getValue())/getLength().getValue();
 	}
+
+
 
 
 

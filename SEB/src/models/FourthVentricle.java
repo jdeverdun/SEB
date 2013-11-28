@@ -34,5 +34,9 @@ public class FourthVentricle extends ElasticTube {
 	public String toString(){
 		return "FourthVentricle : "+super.toString();
 	}
+	@Override
+	public String getTubeNum() {
+		return "6";
+	}
 
 }

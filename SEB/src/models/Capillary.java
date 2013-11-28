@@ -32,5 +32,10 @@ public class Capillary extends ElasticTube {
 	public String toString(){
 		return "Capillary : "+super.toString();
 	}
+	
+	@Override
+	public String getTubeNum() {
+		return "2";
+	}
 
 }

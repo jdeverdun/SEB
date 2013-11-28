@@ -34,4 +34,8 @@ public class SAS extends ElasticTube {
 		return "SAS : "+super.toString();
 	}
 
+	@Override
+	public String getTubeNum() {
+		return "7";
+	}
 }

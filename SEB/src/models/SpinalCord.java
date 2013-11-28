@@ -34,4 +34,9 @@ public class SpinalCord extends ElasticTube {
 		return "SpinalCord : "+super.toString();
 	}
 
+	@Override
+	public String getTubeNum() {
+		return "9";
+	}
+	
 }

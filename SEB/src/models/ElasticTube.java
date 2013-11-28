@@ -2,18 +2,24 @@ package models;
 
 import java.util.ArrayList;
 
+import params.ModelSpecification;
+
 public abstract class ElasticTube extends Tube {
 	protected static String AREA_LABEL = "A";
+	protected static String INITIAL_AREA_LABEL = "A0";
 	protected static String PRESSURE_LABEL = "P";
 	protected static String FLOWIN_LABEL = "fi";
 	protected static String FLOWOUT_LABEL = "fo";
-	protected String TUBE_NUM;
+	protected static String LENGTH_LABEL = "l0";
+	protected static String ALPHA_LABEL = "alfa";
+	protected static String ELASTANCE_LABEL = "E";
 	protected Variable flowin;
 	protected Variable flowout;
 	protected Variable pressure;
 	protected Variable area;
-	protected float alpha;
-	protected float elastance;
+	protected Variable alpha;
+	protected Variable elastance;
+	protected Variable initialArea;
 	protected Hemisphere hemisphere;
 	protected ArrayList<ElasticTube> parents;
 	protected ArrayList<ElasticTube> children;
@@ -25,6 +31,7 @@ public abstract class ElasticTube extends Tube {
 		setPressure(-1.0f);
 		setArea(-1.0f);
 		setAlpha(-1.0f);
+		setInitialArea(-1.0f);
 		hemisphere = Hemisphere.UNKNOWN;
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
@@ -32,6 +39,7 @@ public abstract class ElasticTube extends Tube {
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
 		super(name, len);
+		setInitialArea(a);
 		setArea(a);
 		setAlpha(alf);
 		setElastance(elast);
@@ -56,6 +64,13 @@ public abstract class ElasticTube extends Tube {
 		setChildrens(child);
 	}
 
+	protected Variable getLength() {
+		return length;
+	}
+	protected void setLength(float length) {
+		this.length = new Variable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL,length);
+	}
+	
 	protected ArrayList<ElasticTube> getParents() {
 		return parents;
 	}
@@ -72,34 +87,57 @@ public abstract class ElasticTube extends Tube {
 		this.children = childrens;
 	}
 
-	protected float getElastance() {
+	protected Variable getElastance() {
 		return elastance;
 	}
 
 	protected void setElastance(float elastance) {
-		this.elastance = elastance;
+		Variable v = new Variable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance);
+		this.elastance = v;
 	}	
 	protected Variable getArea() {
 		return area;
 	}
 	protected void setArea(float area){
-		Variable v = new Variable("T"+TUBE_NUM+"_"+AREA_LABEL+"_"+ID,area);
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_LABEL+"_"+ID,area);
 		this.area = v;
 	}
 
-	protected float getAlpha() {
+	protected Variable getAlpha() {
 		return alpha;
 	}
 
 	protected void setAlpha(float alpha) {
-		this.alpha = alpha;
+		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+ID,alpha);
+		this.alpha = v;
 	}
+	public Variable getInitialArea() {
+		return initialArea;
+	}
+
+	public void setInitialArea(float iArea) {
+		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+ID,iArea);
+		this.initialArea = v;
+	}
+
 	public Variable getFlowin() {
 		return flowin;
 	}
 
 	public void setFlowin(float flowin){
-		Variable v = new Variable("T"+TUBE_NUM+"_"+FLOWIN_LABEL+"_"+ID,flowin);
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN_LABEL+"_"+ID,flowin);
 		this.flowin = v;
 	}
 
@@ -108,7 +146,13 @@ public abstract class ElasticTube extends Tube {
 	}
 
 	public void setFlowout(float flowout){
-		Variable v = new Variable("T"+TUBE_NUM+"_"+FLOWOUT_LABEL+"_"+ID,flowout);
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT_LABEL+"_"+ID,flowout);
 		this.flowout = v;
 	}
 
@@ -117,7 +161,13 @@ public abstract class ElasticTube extends Tube {
 	}
 
 	public void setPressure(float pressure){
-		Variable v = new Variable("T"+TUBE_NUM+"_"+PRESSURE_LABEL+"_"+ID,pressure);
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+ID,pressure);
 		this.pressure = v;
 	}
 
@@ -129,6 +179,18 @@ public abstract class ElasticTube extends Tube {
 		this.hemisphere = hemisphere;
 	}
 
+	/**
+	 * Renvoi le parenchyme associe a l'hemisphere de l'objet, nul si non applicable
+	 * @return
+	 */
+	protected BrainParenchyma getAssociatedBrainParenchyma(){
+		if(getHemisphere() != Hemisphere.LEFT && getHemisphere() != Hemisphere.RIGHT)
+			return null;
+		if(getHemisphere() == Hemisphere.LEFT)
+			return ModelSpecification.architecture.getBrain().getLeftHemi();
+		else
+			return ModelSpecification.architecture.getBrain().getRightHemi();
+	}
 	public String toString(){
 		return super.toString()+" - Elastance = "+getElastance()+" - Area = "+getArea()+" - Alpha = "+getAlpha()+" - Hemisphere = "+getHemisphere();
 	}
