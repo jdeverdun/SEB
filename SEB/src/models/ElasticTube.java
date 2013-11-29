@@ -204,5 +204,6 @@ public abstract class ElasticTube extends Tube {
 	
 	
 	// ---------    EQUATIONS ---------------
-	public abstract ArrayList<float[]> getEquations(ArrayList<Variable> variables);
+	public abstract ArrayList<float[]> getEquations(ArrayList<Variable> variables) throws Exception;
+	public abstract ArrayList<String[]> getSymbolicEquations(ArrayList<Variable> variables) throws Exception;
 }

@@ -37,4 +37,20 @@ public abstract class Tube {
 		return "Name = "+getName()+" - Length = "+getLength();
 	}
 	
+	/**
+	 * Recherche dans une arraylist la variable qui a le meme nom que le nom donne en argument
+	 * @param name
+	 * @param variables
+	 * @return
+	 * @throws Exception 
+	 */
+	public Variable findVariableWithName(String name,ArrayList<Variable> variables) throws Exception{
+		for(Variable lv : variables){
+			if(lv.getName().equals(name)){
+				return lv;
+			}
+		}
+		throw new Exception("Variable Area missing for momentum derivative in "+TUBE_LABEL+getTubeNum());
+	}
+	
 }
