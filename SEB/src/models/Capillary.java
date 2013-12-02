@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class Capillary extends ElasticTube {
+	public static final String TUBE_NUM = "2";
 	public static final float DEFAULT_LENGTH = 0.2618f;
 	public static final float DEFAULT_AREA = 38.0f;
 	public static final float DEFAULT_ELASTANCE = 8500f * 1333.2240f;// en Pa
@@ -37,7 +38,7 @@ public class Capillary extends ElasticTube {
 
 	@Override
 	public String getTubeNum() {
-		return "2";
+		return TUBE_NUM;
 	}
 
 	// ------------------- EQUATIONS -------------
@@ -75,8 +76,38 @@ public class Capillary extends ElasticTube {
 			}
 			res.add(momentum);
 		}
+
+		// Connectivity
+		float[] connectivity = new float[variables.size()+1];
+		connectivity[0] = getConnectivityEquation(fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
+		
+		// bilan connectivity
+		ArrayList<Variable> folist = findVariableWithStruct(getHemisphere(),Capillary.TUBE_NUM, FLOWOUT_LABEL,variables);
+		ArrayList<Variable> ft4list = findVariableWithStruct(getHemisphere(),Ventricle.TUBE_NUM,FLOWIN_LABEL ,variables);
+		ArrayList<Variable> ft3list = findVariableWithStruct(getHemisphere(),Veinule.TUBE_NUM,FLOWIN_LABEL ,variables);
+		ArrayList<Variable> ft3blist = findVariableWithStruct(getHemisphere(),Vein.TUBE_NUM,FLOWIN_LABEL ,variables);
+		ArrayList<Variable> filist = new ArrayList<Variable>();
+		filist.addAll(ft4list);
+		filist.addAll(ft3blist);
+		filist.addAll(ft3list);
+		Variable bfin1 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin1().getName(), variables);
+		Variable bfin2 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin2().getName(), variables);
+		filist.add(bfin1);
+		filist.add(bfin2);
+		float[] bilanconnectivity = new float[variables.size()+1];
+		bilanconnectivity[0] = getBilanConnectivityEquation(folist, filist);
+		for(int i = 0; i<variables.size();i++){
+			bilanconnectivity[i+1] = getBilanConnectivityDerivative(variables.get(i), folist, filist);
+		}
+		res.add(bilanconnectivity);
+		
 		return res;
 	}
+
 
 	/**
 	 * Renvoi les equations en format symbolic (en string)
@@ -117,6 +148,35 @@ public class Capillary extends ElasticTube {
 			}
 			res.add(momentum);
 		}
+
+		// connectivity
+		String[] connectivity = new String[variables.size()+1];
+		connectivity[0] = getSymbolicConnectivityEquation(fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getSymbolicConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
+		
+		// bilan connectivity
+		ArrayList<Variable> folist = findVariableWithStruct(getHemisphere(),Capillary.TUBE_NUM, FLOWOUT_LABEL,variables);
+		ArrayList<Variable> ft4list = findVariableWithStruct(getHemisphere(),Ventricle.TUBE_NUM,FLOWIN_LABEL ,variables);
+		ArrayList<Variable> ft3list = findVariableWithStruct(getHemisphere(),Veinule.TUBE_NUM,FLOWIN_LABEL ,variables);
+		ArrayList<Variable> ft3blist = findVariableWithStruct(getHemisphere(),Vein.TUBE_NUM,FLOWIN_LABEL ,variables);
+		ArrayList<Variable> filist = new ArrayList<Variable>();
+		filist.addAll(ft4list);
+		filist.addAll(ft3blist);
+		filist.addAll(ft3list);
+		Variable bfin1 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin1().getName(), variables);
+		Variable bfin2 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin2().getName(), variables);
+		filist.add(bfin1);
+		filist.add(bfin2);
+		String[] bilanconnectivity = new String[variables.size()+1];
+		bilanconnectivity[0] = getSymbolicBilanConnectivityEquation(folist, filist);
+		for(int i = 0; i<variables.size();i++){
+			bilanconnectivity[i+1] = getSymbolicBilanConnectivityDerivative(variables.get(i), folist, filist);
+		}
+		res.add(bilanconnectivity);
+
 		return res;
 	}
 
@@ -298,4 +358,133 @@ public class Capillary extends ElasticTube {
 		}
 	}
 
+	//====== Connectivity ====
+	/**
+	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
+	 * @param parentFlowout
+	 * @param fi
+	 * @return
+	 */
+	private float getConnectivityEquation(Variable fi){
+		// equ(49) et equ(52)
+		float res = 0;
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			Arteriole par = ((Arteriole)parent);
+			Variable pf = par.getFlowout();
+			float fact = par.getChildrens().size();
+			res += (pf.getValue()/fact);
+		}
+		return (res - fi.getValue());
+	}
+	
+	private String getSymbolicConnectivityEquation(Variable fi){
+		// equ(49) et equ(52)
+		String res = "(";
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			if(!res.equals("("))
+				res += "+";
+			Arteriole par = ((Arteriole)parent);
+			Variable pf = par.getFlowout();
+			float fact = par.getChildrens().size();
+			res += "("+pf.getName()+"/"+fact+")";
+		}
+		res += ")";
+		return "("+res+" - "+fi.getName()+")";
+	}
+	
+	private float getConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(49) et equ(52)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return -1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				Variable pr = findVariableWithName(((Arteriole)parent).getFlowout().getName(),variables);
+				if(v.getName().equals(pr.getName())){
+					// derive selon flowoutParent :  1.0f
+					return 1.0f/(float)((Arteriole)parent).getChildrens().size();		
+				}
+			}
+			return 0.0f;
+		}
+	}
+	
+	private String getSymbolicConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(49) et equ(52)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return "-"+1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				Variable pr = findVariableWithName(((Arteriole)parent).getFlowout().getName(),variables);
+				if(v.getName().equals(pr.getName())){
+					// derive selon flowoutParent :  1.0f
+					return ""+1.0f+"/"+(float)((Arteriole)parent).getChildrens().size();		
+				}
+			}
+			return ""+0.0f;
+		}
+	}
+
+	// ====== bilan connectivity =====
+	private float getBilanConnectivityEquation(ArrayList<Variable> flowout, ArrayList<Variable> flowin){
+		// equ(50) et equ(53)
+		float resfo = 0;
+		float resfi = 0;
+		for(Variable pfo : flowout){
+			resfo += pfo.getValue();
+		}
+		for(Variable pfi : flowin){
+			resfi += pfi.getValue();
+		}
+		return (resfi - resfo);
+	}
+	
+	private String getSymbolicBilanConnectivityEquation(ArrayList<Variable> flowout, ArrayList<Variable> flowin){
+		// equ(50) et equ(53)
+		String res = "";
+		String res1 = "(";
+		String res2 = "(";
+		for(Variable pfo : flowout){
+			if(!res1.equals("("))
+				res1 += "+";
+			res1 += pfo.getName();
+		}
+		res1 += ")";
+		for(Variable pfi : flowin){
+			if(!res2.equals("("))
+				res2 += "+";
+			res2 += pfi.getName();
+		}
+		res2 += ")";
+		return res1+" - "+res2;
+	}
+	private float getBilanConnectivityDerivative(Variable v, ArrayList<Variable> flowout, ArrayList<Variable> flowin){
+		// equ(50) et equ(53)
+		if(flowout.contains(v)){
+			// derive selon un flowout : 1
+			return 1.0f;
+		}else{
+			if(flowin.contains(v)){
+				// drive selon un flowin : -1
+				return -1.0f;
+			}
+			return 0.0f;
+		}
+	}
+	
+	private String getSymbolicBilanConnectivityDerivative(Variable v, ArrayList<Variable> flowout, ArrayList<Variable> flowin){
+		// equ(50) et equ(53)
+		if(flowout.contains(v)){
+			// derive selon un flowout : 1
+			return ""+1.0f;
+		}else{
+			if(flowin.contains(v)){
+				// drive selon un flowin : -1
+				return "-"+1.0f;
+			}
+			return ""+0.0f;
+		}
+	}
+	
 }

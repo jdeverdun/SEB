@@ -30,5 +30,12 @@ public class Variable {
 	public void setValue(float value) {
 		this.value = value;
 	}
+	@Override
+	public boolean equals(Object v) {
+		if (v instanceof Variable){
+			return name.equals(((Variable)v).getName());
+		}
+		return false;
+	}
 
 }

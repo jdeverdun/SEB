@@ -180,6 +180,34 @@ public abstract class ElasticTube extends Tube {
 	}
 
 	/**
+	 * Renvoi les variables dans variables qui ont le
+	 * code standard pour un tube décrit en argument ex : "R_T2_fo"
+	 * @param hemisphere
+	 * @param tube_num
+	 * @param fLOWIN_LAparam_labelBEL
+	 * @param variables
+	 * @return
+	 */
+	public ArrayList<Variable> findVariableWithStruct(Hemisphere hemisphere,
+			String tube_num, String param_label,
+			ArrayList<Variable> variables) {
+		ArrayList<Variable> results = new ArrayList<Variable>();
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		String code = prefix+TUBE_LABEL+tube_num+"_"+param_label;
+		for(Variable lv : variables){
+			if(lv.getName().startsWith(code)){
+				results.add(lv);
+			}
+		}
+		return results;
+	}
+	
+	/**
 	 * Renvoi le parenchyme associe a l'hemisphere de l'objet, nul si non applicable
 	 * @return
 	 */

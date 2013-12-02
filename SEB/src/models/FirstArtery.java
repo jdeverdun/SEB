@@ -3,6 +3,7 @@ package models;
 import java.util.ArrayList;
 
 public class FirstArtery extends ElasticTube {
+	public static final String TUBE_NUM = "I";
 	public static final Hemisphere DEFAULT_HEMI = Hemisphere.NONE;
 	public static final float DEFAULT_LENGTH = 0.5f;
 	public static final float DEFAULT_AREA = 3.42f;
@@ -35,7 +36,7 @@ public class FirstArtery extends ElasticTube {
 	}
 	@Override
 	public String getTubeNum() {
-		return "I";
+		return TUBE_NUM;
 	}
 
 }

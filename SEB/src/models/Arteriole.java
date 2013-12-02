@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class Arteriole extends ElasticTube {
+	public static final String TUBE_NUM = "1";
 	public static final float DEFAULT_LENGTH = 1.75f;
 	public static final float DEFAULT_AREA = 4.74f;
 	public static final float DEFAULT_ELASTANCE = 2735000.0f;// en Pa
@@ -37,7 +38,7 @@ public class Arteriole extends ElasticTube {
 
 	@Override
 	public String getTubeNum() {
-		return "1";
+		return TUBE_NUM;
 	}
 
 	// ------------------- EQUATIONS -------------
@@ -75,6 +76,15 @@ public class Arteriole extends ElasticTube {
 			}
 			res.add(momentum);
 		}
+		
+		// Connectivity
+		float[] connectivity = new float[variables.size()+1];
+		connectivity[0] = getConnectivityEquation(fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
+		
 		return res;
 	}
 
@@ -117,6 +127,15 @@ public class Arteriole extends ElasticTube {
 			}
 			res.add(momentum);
 		}
+		
+		// connectivity
+		String[] connectivity = new String[variables.size()+1];
+		connectivity[0] = getSymbolicConnectivityEquation(fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getSymbolicConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
+				
 		return res;
 	}
 
@@ -136,7 +155,12 @@ public class Arteriole extends ElasticTube {
 		return ModelSpecification.damp2 * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
 	}
 
+	
+	
 	// symbolic equation (en chaine de caractere)
+
+	
+	
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(2) et equ(7)
 		return "" + "("+ar.getName()+" - "+getArea().getName()+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
@@ -299,6 +323,73 @@ public class Arteriole extends ElasticTube {
 	}
 
 
+	//====== Connectivity ====
+	/**
+	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
+	 * @param parentFlowout
+	 * @param fi
+	 * @return
+	 */
+	private float getConnectivityEquation(Variable fi){
+		// equ(48) et equ(51)
+		float res = 0;
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			Artery par = ((Artery)parent);
+			Variable pf = par.getFlowout();
+			float fact = par.getChildrens().size();
+			res += (pf.getValue()/fact);
+		}
+		return (res - fi.getValue());
+	}
+	
+	private String getSymbolicConnectivityEquation(Variable fi){
+		// equ(48) et equ(51)
+		String res = "(";
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			if(!res.equals("("))
+				res += "+";
+			Artery par = ((Artery)parent);
+			Variable pf = par.getFlowout();
+			float fact = par.getChildrens().size();
+			res += "("+pf.getName()+"/"+fact+")";
+		}
+		res += ")";
+		return "("+res+" - "+fi.getName()+")";
+	}
+	
+	private float getConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(48) et equ(51)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return -1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				Variable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
+				if(v.getName().equals(pr.getName())){
+					// derive selon flowoutParent :  1.0f
+					return 1.0f/(float)((Artery)parent).getChildrens().size();		
+				}
+			}
+			return 0.0f;
+		}
+	}
+	
+	private String getSymbolicConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(48) et equ(51)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return "-"+1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				Variable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
+				if(v.getName().equals(pr.getName())){
+					// derive selon flowoutParent :  1.0f
+					return ""+1.0f+"/"+(float)((Artery)parent).getChildrens().size();		
+				}
+			}
+			return ""+0.0f;
+		}
+	}
 
 
 

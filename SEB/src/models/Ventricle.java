@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class Ventricle extends ElasticTube {
-
+	public static final String TUBE_NUM = "4";
 	public static final float DEFAULT_LENGTH = 0.75f;
 	public static final float DEFAULT_AREA = 12.0f;
 	public static final float DEFAULT_ALPHA = 1.0f * 1333.2240f;
@@ -38,7 +38,7 @@ public class Ventricle extends ElasticTube {
 
 	@Override
 	public String getTubeNum() {
-		return "4";
+		return TUBE_NUM;
 	}
 
 	// ------------------- EQUATIONS -------------
@@ -156,11 +156,11 @@ public class Ventricle extends ElasticTube {
 			return 1.0f/ModelSpecification.dt;
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
-				// derive selon flowin : - 1/T3_l0;
+				// derive selon flowin : - 1/T4_l0;
 				return -1.0f/getLength().getValue();
 			}else{
 				if(v.getName().equals(getFlowout().getName())){
-					// derive selon flowout : 1/T3_l0
+					// derive selon flowout : 1/T4_l0
 					return 1.0f/getLength().getValue();		
 				}else{
 					return 0.0f;
@@ -173,7 +173,7 @@ public class Ventricle extends ElasticTube {
 		// equ(20) et equ(25)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : -damp/dt - T3_E * (1/T3_A0) 
+			// derive selon area : -damp/dt - T4_E * (1/T4_A0) 
 			return -ModelSpecification.damp/ModelSpecification.dt-getElastance().getValue()*(1.0f/getInitialArea().getValue());
 		}else{
 			if(v.getName().equals(getPressure().getName())){
@@ -209,11 +209,11 @@ public class Ventricle extends ElasticTube {
 			return "" + 1.0f+"/dt";
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
-				// derive selon flowin : - 1/T3_l0;
+				// derive selon flowin : - 1/T4_l0;
 				return "-"+1.0f+"/"+getLength().getName();
 			}else{
 				if(v.getName().equals(getFlowout().getName())){
-					// derive selon flowout : 1/T3_l0
+					// derive selon flowout : 1/T4_l0
 					return ""+1.0f+"/"+getLength().getName();		
 				}else{
 					return ""+0.0f;
@@ -226,7 +226,7 @@ public class Ventricle extends ElasticTube {
 		// equ(20) et equ(25)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : -damp/dt - T3_E * (1/T3_A0) 
+			// derive selon area : -damp/dt - T4_E * (1/T4_A0) 
 			return "-damp/dt-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
 		}else{
 			if(v.getName().equals(getPressure().getName())){

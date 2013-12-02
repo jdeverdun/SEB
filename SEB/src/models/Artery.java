@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class Artery extends ElasticTube {
+	public static final String TUBE_NUM = "0";
 	public static final float DEFAULT_LENGTH = 4.15f;
 	public static final float DEFAULT_AREA = 3.42f;
 	public static final float DEFAULT_ELASTANCE = 1066579.2f;// en Pa
@@ -34,7 +35,7 @@ public class Artery extends ElasticTube {
 	
 	@Override
 	public String getTubeNum() {
-		return "0";
+		return TUBE_NUM;
 	}
 	
 	public String toString(){

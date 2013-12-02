@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class ThirdVentricle extends ElasticTube {
-
+	public static final String TUBE_NUM = "5";
 	public static final Hemisphere DEFAULT_HEMI = Hemisphere.BOTH;
 	public static final float DEFAULT_LENGTH = 1.0f;
 	public static final float DEFAULT_AREA = 2.5f;
@@ -39,7 +39,7 @@ public class ThirdVentricle extends ElasticTube {
 
 	@Override
 	public String getTubeNum() {
-		return "5";
+		return TUBE_NUM;
 	}
 
 	// ------------------- EQUATIONS -------------
@@ -82,6 +82,23 @@ public class ThirdVentricle extends ElasticTube {
 			}
 			res.add(momentum);
 		}
+		
+		// Connectivity
+		Variable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1();
+		Variable rightbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout2();
+		Variable leftbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout1();
+		Variable rightbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout2();
+		ArrayList<Variable> parentFlowout = new ArrayList<Variable>();
+		for(ElasticTube parent:getParents()){
+			parentFlowout.add(findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables));
+		}
+		float[] connectivity = new float[variables.size()+1];
+		connectivity[0] = getConnectivityEquation(parentFlowout, leftbrain_flowout1, rightbrain_flowout1, leftbrain_flowout2, rightbrain_flowout2, fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
+				
 		return res;
 	}
 
@@ -129,6 +146,22 @@ public class ThirdVentricle extends ElasticTube {
 			}
 			res.add(momentum);
 		}
+		
+		// Connectivity
+		Variable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1();
+		Variable rightbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout2();
+		Variable leftbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout1();
+		Variable rightbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout2();
+		ArrayList<Variable> parentFlowout = new ArrayList<Variable>();
+		for(ElasticTube parent:getParents()){
+			parentFlowout.add(findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables));
+		}
+		String[] connectivity = new String[variables.size()+1];
+		connectivity[0] = getSymbolicConnectivityEquation(parentFlowout, leftbrain_flowout1, rightbrain_flowout1, leftbrain_flowout2, rightbrain_flowout2, fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getSymbolicConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
 		return res;
 	}
 
@@ -173,11 +206,11 @@ public class ThirdVentricle extends ElasticTube {
 			return 1.0f/ModelSpecification.dt;
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
-				// derive selon flowin : - 1/T3_l0;
+				// derive selon flowin : - 1/T5_l0;
 				return -1.0f/getLength().getValue();
 			}else{
 				if(v.getName().equals(getFlowout().getName())){
-					// derive selon flowout : 1/T3_l0
+					// derive selon flowout : 1/T5_l0
 					return 1.0f/getLength().getValue();		
 				}else{
 					return 0.0f;
@@ -209,7 +242,7 @@ public class ThirdVentricle extends ElasticTube {
 					}else{
 						return 0.0f;
 					}
-					
+
 				}
 			}
 		}
@@ -253,11 +286,11 @@ public class ThirdVentricle extends ElasticTube {
 			return "" + 1.0f+"/dt";
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
-				// derive selon flowin : - 1/T3_l0;
+				// derive selon flowin : - 1/T5_l0;
 				return "-"+1.0f+"/"+getLength().getName();
 			}else{
 				if(v.getName().equals(getFlowout().getName())){
-					// derive selon flowout : 1/T3_l0
+					// derive selon flowout : 1/T5_l0
 					return ""+1.0f+"/"+getLength().getName();		
 				}else{
 					return ""+0.0f;
@@ -289,7 +322,7 @@ public class ThirdVentricle extends ElasticTube {
 					}else{
 						return ""+0.0f;
 					}
-					
+
 				}
 			}
 		}
@@ -321,6 +354,85 @@ public class ThirdVentricle extends ElasticTube {
 				}
 			}
 			return ""+0.0f;
+		}
+	}
+
+	//====== Connectivity ====
+	/**
+	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
+	 * @param parentFlowout
+	 * @param fi
+	 * @return
+	 */
+	private float getConnectivityEquation(ArrayList<Variable> parentFlowout, Variable leftbrain_flowout1, Variable rightbrain_flowout1, Variable leftbrain_flowout2, Variable rightbrain_flowout2, Variable fi){
+		// equ(55)
+		float res = 0;
+		for(Variable pf : parentFlowout){
+			res += pf.getValue();
+		}
+		res = res + rightbrain_flowout1.getValue() + rightbrain_flowout2.getValue() + leftbrain_flowout1.getValue() + leftbrain_flowout2.getValue();
+		return (res - fi.getValue());
+	}
+
+	private String getSymbolicConnectivityEquation(ArrayList<Variable> parentFlowout, Variable leftbrain_flowout1, Variable rightbrain_flowout1, Variable leftbrain_flowout2, Variable rightbrain_flowout2, Variable fi){
+		// equ(55)
+		String res = "(";
+		for(Variable pf : parentFlowout){
+			if(!res.equals("("))
+				res += "+";
+			res += pf.getName();
+		}
+		res += rightbrain_flowout1.getName()+" + "+rightbrain_flowout2.getName()+" + "+leftbrain_flowout1.getName()+" + "+leftbrain_flowout2.getName();
+		return res+" - ("+fi.getName()+")";
+	}
+
+	private float getConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(55)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return -1.0f;
+		}else{
+			if(v.getName().equals(ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1().getName()) ||
+					v.getName().equals(ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout2().getName()) || 
+					v.getName().equals(ModelSpecification.architecture.getBrain().getRightHemi().getFlowout1().getName()) ||
+					v.getName().equals(ModelSpecification.architecture.getBrain().getRightHemi().getFlowout2().getName())){
+				// derive selon le flowout : 1;
+				return 1.0f;
+			}else{
+				for(ElasticTube parent:getParents()){
+					Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
+					if(v.getName().equals(pr.getName())){
+						// derive selon flowoutParent :  1.0f
+						return 1.0f;		
+					}
+				}
+				return 0.0f;
+			}
+		}
+	}
+
+	private String getSymbolicConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(55)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return "-"+1.0f;
+		}else{
+			if(v.getName().equals(ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1().getName()) ||
+					v.getName().equals(ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout2().getName()) || 
+					v.getName().equals(ModelSpecification.architecture.getBrain().getRightHemi().getFlowout1().getName()) ||
+					v.getName().equals(ModelSpecification.architecture.getBrain().getRightHemi().getFlowout2().getName())){
+				// derive selon le flowout : 1;
+				return ""+1.0f;
+			}else{
+				for(ElasticTube parent:getParents()){
+					Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
+					if(v.getName().equals(pr.getName())){
+						// derive selon flowoutParent :  1.0f
+						return ""+1.0f;		
+					}
+				}
+				return ""+0.0f;
+			}
 		}
 	}
 }

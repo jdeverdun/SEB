@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class Veinule extends ElasticTube {
+	public static final String TUBE_NUM = "3";
 	public static final float DEFAULT_LENGTH = 3.0906f;
 	public static final float DEFAULT_AREA = 5.3388f;
 	public static final float DEFAULT_ELASTANCE = 1008666.7f;// en Pa
@@ -37,7 +38,7 @@ public class Veinule extends ElasticTube {
 
 	@Override
 	public String getTubeNum() {
-		return "3";
+		return TUBE_NUM;
 	}
 
 	// ------------------- EQUATIONS -------------

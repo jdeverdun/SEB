@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class Vein extends ElasticTube {
+	public static final String TUBE_NUM = "3b";
 	public static final float DEFAULT_LENGTH = 4.074f;
 	public static final float DEFAULT_AREA = 5.3388f;
 	public static final float DEFAULT_ELASTANCE = 1008666.7f;// en Pa
@@ -36,7 +37,7 @@ public class Vein extends ElasticTube {
 	}
 	@Override
 	public String getTubeNum() {
-		return "3b";
+		return TUBE_NUM;
 	}
 
 	// ------------------- EQUATIONS -------------
@@ -76,12 +77,8 @@ public class Vein extends ElasticTube {
 		}
 
 		// connectivity
-		ArrayList<Variable> parentFlowout = new ArrayList<Variable>();
-		for(ElasticTube parent:getParents()){
-			parentFlowout.add(findVariableWithName(((Veinule)parent).getFlowout().getName(),variables));
-		}
 		float[] connectivity = new float[variables.size()+1];
-		connectivity[0] = getConnectivityEquation(parentFlowout,fi);
+		connectivity[0] = getConnectivityEquation(fi);
 		for(int i = 0; i<variables.size();i++){
 			connectivity[i+1] = getConnectivityDerivative(variables.get(i), variables);
 		}
@@ -130,12 +127,8 @@ public class Vein extends ElasticTube {
 		}
 
 		// connectivity
-		ArrayList<Variable> parentFlowout = new ArrayList<Variable>();
-		for(ElasticTube parent:getParents()){
-			parentFlowout.add(findVariableWithName(((Veinule)parent).getFlowout().getName(),variables));
-		}
 		String[] connectivity = new String[variables.size()+1];
-		connectivity[0] = getSymbolicConnectivityEquation(parentFlowout,fi);
+		connectivity[0] = getSymbolicConnectivityEquation(fi);
 		for(int i = 0; i<variables.size();i++){
 			connectivity[i+1] = getSymbolicConnectivityDerivative(variables.get(i), variables);
 		}
@@ -160,22 +153,6 @@ public class Vein extends ElasticTube {
 		return (parentPressure.getValue() - pr.getValue()) - getAlpha().getValue() * fi.getValue();
 	}
 
-	/**
-	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
-	 * @param parentFlowout
-	 * @param fi
-	 * @return
-	 */
-	private float getConnectivityEquation(ArrayList<Variable> parentFlowout, Variable fi){
-		// equ(80)
-		float res = 0;
-		for(Variable pf : parentFlowout){
-			res += pf.getValue();
-		}
-		return (res - fi.getValue());
-	}
-
-
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable fi, Variable fo){
 		// equ(77) et equ(81)
@@ -190,18 +167,6 @@ public class Vein extends ElasticTube {
 	private String getSymbolicMomentumEquation(Variable fi, Variable pr, Variable parentPressure){
 		// equ(79) et equ(83)
 		return "("+parentPressure.getName()+" - "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
-	}
-
-	private String getSymbolicConnectivityEquation(ArrayList<Variable> parentFlowout, Variable fi){
-		// equ(80)
-		String res = "(";
-		for(Variable pf : parentFlowout){
-			if(!res.equals("("))
-				res += "+";
-			res += pf.getName();
-		}
-		res += ")";
-		return "("+res+" - "+fi.getName()+")";
 	}
 
 	// ------- Derive -----------
@@ -262,22 +227,6 @@ public class Vein extends ElasticTube {
 		}
 	}
 
-	private float getConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
-		// equ(80)
-		if(v.getName().equals(getFlowin().getName())){
-			// derive selon flowin : -1;
-			return -1.0f;
-		}else{
-			for(ElasticTube parent:getParents()){
-				Variable pr = findVariableWithName(((Veinule)parent).getFlowout().getName(),variables);
-				if(v.getName().equals(pr.getName())){
-					// derive selon flowoutParent :  1.0f
-					return 1.0f;		
-				}
-			}
-			return 0.0f;
-		}
-	}
 
 	private String getSymbolicContinuityDerivative(Variable v, ArrayList<Variable> variables){
 		// equ(77) et equ(81)
@@ -338,17 +287,69 @@ public class Vein extends ElasticTube {
 			}
 		}
 	}
+
+	
+	/**
+	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
+	 * @param parentFlowout
+	 * @param fi
+	 * @return
+	 */
+	private float getConnectivityEquation(Variable fi){
+		// equ(49) et equ(52)
+		float res = 0;
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			Vein par = ((Vein)parent);
+			Variable pf = par.getFlowout();
+			float fact = par.getChildrens().size();
+			res += (pf.getValue()/fact);
+		}
+		return (res - fi.getValue());
+	}
+	
+	private String getSymbolicConnectivityEquation(Variable fi){
+		// equ(49) et equ(52)
+		String res = "(";
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			if(!res.equals("("))
+				res += "+";
+			Vein par = ((Vein)parent);
+			Variable pf = par.getFlowout();
+			float fact = par.getChildrens().size();
+			res += "("+pf.getName()+"/"+fact+")";
+		}
+		res += ")";
+		return "("+res+" - "+fi.getName()+")";
+	}
+	
+	private float getConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(49) et equ(52)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return -1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
+				if(v.getName().equals(pr.getName())){
+					// derive selon flowoutParent :  1.0f
+					return 1.0f/(float)((Vein)parent).getChildrens().size();		
+				}
+			}
+			return 0.0f;
+		}
+	}
+	
 	private String getSymbolicConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
-		// equ(80)
+		// equ(49) et equ(52)
 		if(v.getName().equals(getFlowin().getName())){
 			// derive selon flowin : -1;
 			return "-"+1.0f;
 		}else{
 			for(ElasticTube parent:getParents()){
-				Variable pr = findVariableWithName(((Veinule)parent).getFlowout().getName(),variables);
+				Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
 				if(v.getName().equals(pr.getName())){
 					// derive selon flowoutParent :  1.0f
-					return ""+1.0f;		
+					return ""+1.0f+"/"+(float)((Vein)parent).getChildrens().size();		
 				}
 			}
 			return ""+0.0f;

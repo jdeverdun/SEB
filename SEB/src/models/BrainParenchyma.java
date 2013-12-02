@@ -1,6 +1,7 @@
 package models;
 
 public class BrainParenchyma extends Tube {
+	public static final String TUBE_NUM = "";
 	public static final float DEFAULT_LENGTH = 7.0f;// par hemisphere
 	public static final float DEFAULT_AREA_FLUID = 30.0f;
 	public static final float DEFAULT_AREA_SOLID = 70.0f;
@@ -76,7 +77,7 @@ public class BrainParenchyma extends Tube {
 
 	@Override
 	public String getTubeNum() {
-		return "";
+		return TUBE_NUM;
 	}
 	
 	protected Variable getLength() {
