@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public class Vein extends ElasticTube {
-	public static final float DEFAULT_LENGTH = 3.0906f;
+	public static final float DEFAULT_LENGTH = 4.074f;
 	public static final float DEFAULT_AREA = 5.3388f;
 	public static final float DEFAULT_ELASTANCE = 1008666.7f;// en Pa
-	public static final float DEFAULT_ALPHA = 2.309223857f * 1333.2240f;
-	public static final float DEFAULT_FLOWIN = 13.0f;
-	public static final float DEFAULT_FLOWOUT = 13.0f;
-	public static final float DEFAULT_PRESSURE = 5.0f * 1333.2240f;
+	public static final float DEFAULT_ALPHA = 0.1457065f * 1333.2240f;
+	public static final float DEFAULT_FLOWIN = 6.5f;
+	public static final float DEFAULT_FLOWOUT = 6.5f;
+	public static final float DEFAULT_PRESSURE = 5332.89f;
 
 	public Vein(String name, Hemisphere hemi) {
 		super(name, hemi, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
@@ -34,10 +34,9 @@ public class Vein extends ElasticTube {
 	public String toString(){
 		return "Vein : "+super.toString();
 	}
-
 	@Override
 	public String getTubeNum() {
-		return "3";
+		return "3b";
 	}
 
 	// ------------------- EQUATIONS -------------
@@ -50,7 +49,7 @@ public class Vein extends ElasticTube {
 		Variable ar = findVariableWithName(getArea().getName(),variables);
 		Variable fi = findVariableWithName(getFlowin().getName(),variables);
 		Variable fo = findVariableWithName(getFlowout().getName(),variables);
-		continuity[0] = getContinuityEquation(ar, fi, fo);
+		continuity[0] = getContinuityEquation(fi, fo);
 		for(int i = 0; i<variables.size();i++){
 			continuity[i+1] = getContinuityDerivative(variables.get(i), variables);
 		}
@@ -66,14 +65,27 @@ public class Vein extends ElasticTube {
 		res.add(distensibility);
 
 		// momentum
-		QUE FAIRE AVEC LES PARENTS ????
-				Variable parentPressure = findVariableWithName(((Artery)getParents().get(0)).getPressure().getName(),variables);
-		float[] momentum = new float[variables.size()+1];
-		momentum[0] = getMomentumEquation(fi, ar, pr, parentPressure);
-		for(int i = 0; i<variables.size();i++){
-			momentum[i+1] = getMomentumDerivative(variables.get(i), variables);
+		for(ElasticTube parent:getParents()){
+			Variable parentPressure = findVariableWithName(((Veinule)parent).getPressure().getName(),variables);
+			float[] momentum = new float[variables.size()+1];
+			momentum[0] = getMomentumEquation(fi, pr, parentPressure);
+			for(int i = 0; i<variables.size();i++){
+				momentum[i+1] = getMomentumDerivative(variables.get(i), variables);
+			}
+			res.add(momentum);
 		}
-		res.add(momentum);
+
+		// connectivity
+		ArrayList<Variable> parentFlowout = new ArrayList<Variable>();
+		for(ElasticTube parent:getParents()){
+			parentFlowout.add(findVariableWithName(((Veinule)parent).getFlowout().getName(),variables));
+		}
+		float[] connectivity = new float[variables.size()+1];
+		connectivity[0] = getConnectivityEquation(parentFlowout,fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
 		return res;
 	}
 
@@ -91,7 +103,7 @@ public class Vein extends ElasticTube {
 		Variable ar = findVariableWithName(getArea().getName(),variables);
 		Variable fi = findVariableWithName(getFlowin().getName(),variables);
 		Variable fo = findVariableWithName(getFlowout().getName(),variables);
-		continuity[0] = getSymbolicContinuityEquation(ar, fi, fo);
+		continuity[0] = getSymbolicContinuityEquation(fi, fo);
 		for(int i = 0; i<variables.size();i++){
 			continuity[i+1] = getSymbolicContinuityDerivative(variables.get(i), variables);
 		}
@@ -107,79 +119,112 @@ public class Vein extends ElasticTube {
 		res.add(distensibility);
 
 		// momentum
-		QUE FAIRE AVEC LES PARENTS ???
-		Variable parentPressure = findVariableWithName(getPressure().getName(),variables);
-		String[] momentum = new String[variables.size()+1];
-		momentum[0] = getSymbolicMomentumEquation(fi, ar, pr, parentPressure);
-		for(int i = 0; i<variables.size();i++){
-			momentum[i+1] = getSymbolicMomentumDerivative(variables.get(i), variables);
+		for(ElasticTube parent:getParents()){
+			Variable parentPressure = findVariableWithName(((Veinule)parent).getPressure().getName(),variables);
+			String[] momentum = new String[variables.size()+1];
+			momentum[0] = getSymbolicMomentumEquation(fi, pr, parentPressure);
+			for(int i = 0; i<variables.size();i++){
+				momentum[i+1] = getSymbolicMomentumDerivative(variables.get(i), variables);
+			}
+			res.add(momentum);
 		}
-		res.add(momentum);
+
+		// connectivity
+		ArrayList<Variable> parentFlowout = new ArrayList<Variable>();
+		for(ElasticTube parent:getParents()){
+			parentFlowout.add(findVariableWithName(((Veinule)parent).getFlowout().getName(),variables));
+		}
+		String[] connectivity = new String[variables.size()+1];
+		connectivity[0] = getSymbolicConnectivityEquation(parentFlowout,fi);
+		for(int i = 0; i<variables.size();i++){
+			connectivity[i+1] = getSymbolicConnectivityDerivative(variables.get(i), variables);
+		}
+		res.add(connectivity);
+
 		return res;
 	}
 
 
-	private float getContinuityEquation(Variable ar, Variable fi, Variable fo){
-		// equ(4) et equ(9)
-		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (- fi.getValue() + fo.getValue())/getLength().getValue();
+	private float getContinuityEquation(Variable fi, Variable fo){
+		// equ(77) et equ(81)
+		return fi.getValue()-fo.getValue();
 	}
 
 	private float getDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
-		// equ(19) et equ(24)
-		return -ModelSpecification.damp * (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (pr.getValue()-pbrain.getValue())-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
+		// equ(78) et equ(82)
+		return (pr.getValue() - pbrain.getValue()) - getElastance().getValue() * (ar.getValue()/getInitialArea().getValue() - 1);
 	}
 
-	private float getMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
-		// equ(34) et equ(39)
-		QUE FAIRE AVEC LES PARENTS ??
-		return ModelSpecification.damp2 * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
+	private float getMomentumEquation(Variable fi, Variable pr, Variable parentPressure){
+		// equ(79) et equ(83)
+		return (parentPressure.getValue() - pr.getValue()) - getAlpha().getValue() * fi.getValue();
 	}
+
+	/**
+	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
+	 * @param parentFlowout
+	 * @param fi
+	 * @return
+	 */
+	private float getConnectivityEquation(ArrayList<Variable> parentFlowout, Variable fi){
+		// equ(80)
+		float res = 0;
+		for(Variable pf : parentFlowout){
+			res += pf.getValue();
+		}
+		return (res - fi.getValue());
+	}
+
 
 	// symbolic equation (en chaine de caractere)
-	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
-		// equ(4) et equ(9)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+	private String getSymbolicContinuityEquation(Variable fi, Variable fo){
+		// equ(77) et equ(81)
+		return ""+fi.getName()+"-"+fo.getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
-		// equ(19) et equ(24)
-		return " -damp * ("+ar.getName()+" - "+getArea().getName()+" )/dt + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
+		// equ(78) et equ(82)
+		return "("+pr.getName()+" - "+pbrain.getName()+") - "+getElastance().getName()+" * ("+ar.getName()+"/"+getInitialArea().getName()+" - 1)";
 	}
 
-	private String getSymbolicMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
-		// equ(34) et equ(39)
-		QUE FAIRE AVEC LES PARENTS ??
-				return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+" / "+getArea().getName()+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
+	private String getSymbolicMomentumEquation(Variable fi, Variable pr, Variable parentPressure){
+		// equ(79) et equ(83)
+		return "("+parentPressure.getName()+" - "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
+	}
+
+	private String getSymbolicConnectivityEquation(ArrayList<Variable> parentFlowout, Variable fi){
+		// equ(80)
+		String res = "(";
+		for(Variable pf : parentFlowout){
+			if(!res.equals("("))
+				res += "+";
+			res += pf.getName();
+		}
+		res += ")";
+		return "("+res+" - "+fi.getName()+")";
 	}
 
 	// ------- Derive -----------
 	private float getContinuityDerivative(Variable v, ArrayList<Variable> variables){
-		// equ(4) et equ(9)
-
-		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return 1.0f/ModelSpecification.dt;
+		// equ(77) et equ(81)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : 1;
+			return 1.0f;
 		}else{
-			if(v.getName().equals(getFlowin().getName())){
-				// derive selon flowin : - 1/T3_l0;
-				return -1.0f/getLength().getValue();
+			if(v.getName().equals(getFlowout().getName())){
+				// derive selon flowout : -1
+				return -1.0f;		
 			}else{
-				if(v.getName().equals(getFlowout().getName())){
-					// derive selon flowout : 1/T3_l0
-					return 1.0f/getLength().getValue();		
-				}else{
-					return 0.0f;
-				}
+				return 0.0f;
 			}
 		}
 	}
 
 	private float getDistensibilityDerivative(Variable v, ArrayList<Variable> variables){
-		// equ(19) et equ(24)
-
+		// equ(78) et equ(82)
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : -damp/dt - T3_E * (1/T3_A0) 
-			return -ModelSpecification.damp/ModelSpecification.dt-getElastance().getValue()*(1.0f/getInitialArea().getValue());
+			// derive selon area : - T3b_E * (1/T3b_A0);
+			return - getElastance().getValue() * (1.0f/getInitialArea().getValue());
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -196,63 +241,66 @@ public class Vein extends ElasticTube {
 	}
 
 	private float getMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
-		// equ(34) et equ(39)
-
+		// equ(79) et equ(83)
 		if(v.getName().equals(getFlowin().getName())){
-			// derive selon flowin : damp2 * ((1/R_T3_A))/dt -T3_alfa ;
-			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return ModelSpecification.damp2*(1/ar.getValue())/ModelSpecification.dt - getAlpha().getValue();
+			// derive selon flowin : -T3b_alfa ;
+			return -getAlpha().getValue();
 		}else{
-			if(v.getName().equals(getArea().getName())){
-				// derive selon area : damp2 * (-R_T3_fi/R_T3_A²)/dt
-				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return (float) (ModelSpecification.damp2 * (-fi.getValue()/Math.pow(v.getValue(),2))/ModelSpecification.dt);
+			if(v.getName().equals(getPressure().getName())){
+				// derive selon pression : - 1.0f
+				return -1.0f;		
 			}else{
-				if(v.getName().equals(getPressure().getName())){
-					// derive selon pression : - 1.0f
-					return -1.0f;		
-				}else{
-					QUE FAIRE AVEC LES PARENTS ??
-							Variable pr = findVariableWithName(((Artery)getParents().get(0)).getPressure().getName(),variables);
+				for(ElasticTube parent:getParents()){
+					Variable pr = findVariableWithName(((Veinule)parent).getPressure().getName(),variables);
 					if(v.getName().equals(pr.getName())){
 						// derive selon pressionParent :  1.0f
 						return 1.0f;		
-					}else{
-						return 0.0f;
 					}
 				}
+				return 0.0f;
 			}
 		}
 	}
 
+	private float getConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(80)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return -1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				Variable pr = findVariableWithName(((Veinule)parent).getFlowout().getName(),variables);
+				if(v.getName().equals(pr.getName())){
+					// derive selon flowoutParent :  1.0f
+					return 1.0f;		
+				}
+			}
+			return 0.0f;
+		}
+	}
 
 	private String getSymbolicContinuityDerivative(Variable v, ArrayList<Variable> variables){
-		// equ(4) et equ(9)
+		// equ(77) et equ(81)
 
-		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return "" + 1.0f+"/dt";
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : 1;
+			return ""+1.0f;
 		}else{
-			if(v.getName().equals(getFlowin().getName())){
-				// derive selon flowin : - 1/T3_l0;
-				return "-"+1.0f+"/"+getLength().getName();
+			if(v.getName().equals(getFlowout().getName())){
+				// derive selon flowout : -1
+				return "-"+1.0f;		
 			}else{
-				if(v.getName().equals(getFlowout().getName())){
-					// derive selon flowout : 1/T3_l0
-					return ""+1.0f+"/"+getLength().getName();		
-				}else{
-					return ""+0.0f;
-				}
+				return ""+0.0f;
 			}
 		}
 	}
 
 	private String getSymbolicDistensibilityDerivative(Variable v, ArrayList<Variable> variables){
-		// equ(19) et equ(24)
+		// equ(78) et equ(82)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : -damp/dt - T3_E * (1/T3_A0) 
-			return "-damp/dt-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
+			// derive selon area : - T3b_E * (1/T3b_A0);
+			return "- "+getElastance().getName()+" * ("+1.0f+"/"+getInitialArea().getName()+")";
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -269,34 +317,41 @@ public class Vein extends ElasticTube {
 	}
 
 	private String getSymbolicMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
-		// equ(34) et equ(39)
+		// equ(79) et equ(83)
 
 		if(v.getName().equals(getFlowin().getName())){
-			// derive selon flowin : damp2 * ((1/R_T3_A))/dt -T3_alfa ;
-			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return "damp2*(1/"+ar.getName()+")/dt - "+getAlpha().getName();
+			// derive selon flowin : -T3b_alfa ;
+			return "-"+getAlpha().getName();
 		}else{
-			if(v.getName().equals(getArea().getName())){
-				// derive selon area : damp2 * (-R_T3_fi/R_T3_A²)/dt
-				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return "(damp2 * (-"+fi.getName()+"/"+v.getName()+"^2)/dt)";
+			if(v.getName().equals(getPressure().getName())){
+				// derive selon pression : - 1.0f
+				return "-"+1.0f;		
 			}else{
-				if(v.getName().equals(getPressure().getName())){
-					// derive selon pression : - 1.0f
-					return ""+-1.0f;		
-				}else{
-					QUE FAIRE AVEC LES PARENTS ??
-							Variable pr = findVariableWithName(((Artery)getParents().get(0)).getPressure().getName(),variables);
+				for(ElasticTube parent:getParents()){
+					Variable pr = findVariableWithName(((Veinule)parent).getPressure().getName(),variables);
 					if(v.getName().equals(pr.getName())){
 						// derive selon pressionParent :  1.0f
 						return ""+1.0f;		
-					}else{
-						return ""+0.0f;
 					}
 				}
+				return ""+0.0f;
 			}
 		}
 	}
-
-
+	private String getSymbolicConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(80)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return "-"+1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				Variable pr = findVariableWithName(((Veinule)parent).getFlowout().getName(),variables);
+				if(v.getName().equals(pr.getName())){
+					// derive selon flowoutParent :  1.0f
+					return ""+1.0f;		
+				}
+			}
+			return ""+0.0f;
+		}
+	}
 }

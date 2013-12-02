@@ -66,14 +66,15 @@ public class Capillary extends ElasticTube {
 		res.add(distensibility);
 
 		// momentum
-		QUE FAIRE AVEC LES PARENTS ????
-				Variable parentPressure = findVariableWithName(((Artery)getParents().get(0)).getPressure().getName(),variables);
-		float[] momentum = new float[variables.size()+1];
-		momentum[0] = getMomentumEquation(fi, ar, pr, parentPressure);
-		for(int i = 0; i<variables.size();i++){
-			momentum[i+1] = getMomentumDerivative(variables.get(i), variables);
+		for(ElasticTube parent:getParents()){
+			Variable parentPressure = findVariableWithName(((Arteriole)parent).getPressure().getName(),variables);
+			float[] momentum = new float[variables.size()+1];
+			momentum[0] = getMomentumEquation(fi, ar, pr, parentPressure);
+			for(int i = 0; i<variables.size();i++){
+				momentum[i+1] = getMomentumDerivative(variables.get(i), variables);
+			}
+			res.add(momentum);
 		}
-		res.add(momentum);
 		return res;
 	}
 
@@ -107,14 +108,15 @@ public class Capillary extends ElasticTube {
 		res.add(distensibility);
 
 		// momentum
-		QUE FAIRE AVEC LES PARENTS ???
-				Variable parentPressure = findVariableWithName(getPressure().getName(),variables);
-		String[] momentum = new String[variables.size()+1];
-		momentum[0] = getSymbolicMomentumEquation(fi, ar, pr, parentPressure);
-		for(int i = 0; i<variables.size();i++){
-			momentum[i+1] = getSymbolicMomentumDerivative(variables.get(i), variables);
+		for(ElasticTube parent:getParents()){
+			Variable parentPressure = findVariableWithName(((Arteriole)parent).getPressure().getName(),variables);
+			String[] momentum = new String[variables.size()+1];
+			momentum[0] = getSymbolicMomentumEquation(fi, ar, pr, parentPressure);
+			for(int i = 0; i<variables.size();i++){
+				momentum[i+1] = getSymbolicMomentumDerivative(variables.get(i), variables);
+			}
+			res.add(momentum);
 		}
-		res.add(momentum);
 		return res;
 	}
 
@@ -131,7 +133,6 @@ public class Capillary extends ElasticTube {
 
 	private float getMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
 		// equ(33) et equ(38)
-		QUE FAIRE AVEC LES PARENTS ??
 		return ModelSpecification.damp2 * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
 	}
 
@@ -148,7 +149,6 @@ public class Capillary extends ElasticTube {
 
 	private String getSymbolicMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
 		// equ(33) et equ(38)
-		QUE FAIRE AVEC LES PARENTS ??
 		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+" / "+getArea().getName()+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
 	}
 
@@ -212,14 +212,14 @@ public class Capillary extends ElasticTube {
 					// derive selon pression : - 1.0f
 					return -1.0f;		
 				}else{
-					QUE FAIRE AVEC LES PARENTS ??
-							Variable pr = findVariableWithName(((Artery)getParents().get(0)).getPressure().getName(),variables);
-					if(v.getName().equals(pr.getName())){
-						// derive selon pressionParent :  1.0f
-						return 1.0f;		
-					}else{
-						return 0.0f;
+					for(ElasticTube parent:getParents()){
+						Variable pr = findVariableWithName(((Arteriole)parent).getPressure().getName(),variables);
+						if(v.getName().equals(pr.getName())){
+							// derive selon pressionParent :  1.0f
+							return 1.0f;		
+						}
 					}
+					return 0.0f;
 				}
 			}
 		}
@@ -285,14 +285,14 @@ public class Capillary extends ElasticTube {
 					// derive selon pression : - 1.0f
 					return ""+-1.0f;		
 				}else{
-					QUE FAIRE AVEC LES PARENTS ??
-							Variable pr = findVariableWithName(((Artery)getParents().get(0)).getPressure().getName(),variables);
-					if(v.getName().equals(pr.getName())){
-						// derive selon pressionParent :  1.0f
-						return ""+1.0f;		
-					}else{
-						return ""+0.0f;
+					for(ElasticTube parent:getParents()){
+						Variable pr = findVariableWithName(((Arteriole)parent).getPressure().getName(),variables);
+						if(v.getName().equals(pr.getName())){
+							// derive selon pressionParent :  1.0f
+							return ""+1.0f;		
+						}
 					}
+					return ""+0.0f;
 				}
 			}
 		}
