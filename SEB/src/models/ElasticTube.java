@@ -68,7 +68,7 @@ public abstract class ElasticTube extends Tube {
 		return length;
 	}
 	protected void setLength(float length) {
-		this.length = new Variable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL,length);
+		this.length = new Variable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL,length, (Tube)this);
 	}
 	
 	protected ArrayList<ElasticTube> getParents() {
@@ -92,7 +92,7 @@ public abstract class ElasticTube extends Tube {
 	}
 
 	protected void setElastance(float elastance) {
-		Variable v = new Variable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance);
+		Variable v = new Variable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance, (Tube)this);
 		this.elastance = v;
 	}	
 	protected Variable getArea() {
@@ -105,7 +105,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_LABEL+"_"+ID,area);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_LABEL+"_"+ID,area, (Tube)this);
 		this.area = v;
 	}
 
@@ -114,7 +114,7 @@ public abstract class ElasticTube extends Tube {
 	}
 
 	protected void setAlpha(float alpha) {
-		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+ID,alpha);
+		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+ID,alpha, (Tube)this);
 		this.alpha = v;
 	}
 	public Variable getInitialArea() {
@@ -122,7 +122,7 @@ public abstract class ElasticTube extends Tube {
 	}
 
 	public void setInitialArea(float iArea) {
-		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+ID,iArea);
+		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+ID,iArea, (Tube)this);
 		this.initialArea = v;
 	}
 
@@ -137,7 +137,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN_LABEL+"_"+ID,flowin);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN_LABEL+"_"+ID,flowin, (Tube)this);
 		this.flowin = v;
 	}
 
@@ -152,7 +152,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT_LABEL+"_"+ID,flowout);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT_LABEL+"_"+ID,flowout, (Tube)this);
 		this.flowout = v;
 	}
 
@@ -167,7 +167,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+ID,pressure);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+ID,pressure, (Tube)this);
 		this.pressure = v;
 	}
 
@@ -177,34 +177,6 @@ public abstract class ElasticTube extends Tube {
 
 	public void setHemisphere(Hemisphere hemisphere) {
 		this.hemisphere = hemisphere;
-	}
-
-	/**
-	 * Renvoi les variables dans variables qui ont le
-	 * code standard pour un tube décrit en argument ex : "R_T2_fo"
-	 * @param hemisphere
-	 * @param tube_num
-	 * @param fLOWIN_LAparam_labelBEL
-	 * @param variables
-	 * @return
-	 */
-	public ArrayList<Variable> findVariableWithStruct(Hemisphere hemisphere,
-			String tube_num, String param_label,
-			ArrayList<Variable> variables) {
-		ArrayList<Variable> results = new ArrayList<Variable>();
-		String prefix = "";
-		if(hemisphere == Hemisphere.LEFT)
-			prefix = "L_";
-		else
-			if(hemisphere == Hemisphere.RIGHT)
-				prefix = "R_";
-		String code = prefix+TUBE_LABEL+tube_num+"_"+param_label;
-		for(Variable lv : variables){
-			if(lv.getName().startsWith(code)){
-				results.add(lv);
-			}
-		}
-		return results;
 	}
 	
 	/**
@@ -231,7 +203,5 @@ public abstract class ElasticTube extends Tube {
 	}
 	
 	
-	// ---------    EQUATIONS ---------------
-	public abstract ArrayList<float[]> getEquations(ArrayList<Variable> variables) throws Exception;
-	public abstract ArrayList<String[]> getSymbolicEquations(ArrayList<Variable> variables) throws Exception;
+	
 }
