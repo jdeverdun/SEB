@@ -7,21 +7,25 @@ public abstract class Tube {
 	protected Variable length;
 	protected static String TUBE_LABEL = "T";
 	protected static int ID = 0;
+	protected int myID = -1;
 	
 	public Tube(){
 		ID++;
+		myID = ID;
 		setName("Unknown");
 		setLength(-1.0f);
 	}
 	
 	public Tube(String name,float len){
+		ID++;
+		myID = ID;
 		setName(name);
 		setLength(len);
 	}
 	
 	protected abstract Variable getLength();
 	protected abstract void setLength(float length);
-		
+	public abstract ArrayList<Variable> getVariables();	
 	protected String getName() {
 		return name;
 	}
@@ -29,8 +33,11 @@ public abstract class Tube {
 	protected void setName(String name) {
 		this.name = name;
 	}
-
+	public int getMyID(){
+		return myID;
+	}
 	public abstract String getTubeNum();
+	
 	// ---------    EQUATIONS ---------------
 	public abstract ArrayList<float[]> getEquations(ArrayList<Variable> variables) throws Exception;
 	public abstract ArrayList<String[]> getSymbolicEquations(ArrayList<Variable> variables) throws Exception;

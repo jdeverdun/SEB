@@ -61,7 +61,7 @@ public abstract class ElasticTube extends Tube {
 		setFlowout(flowout);
 		setPressure(pressure);
 		setParents(par);
-		setChildrens(child);
+		setChildren(child);
 	}
 
 	protected Variable getLength() {
@@ -79,11 +79,11 @@ public abstract class ElasticTube extends Tube {
 		this.parents = parents;
 	}
 
-	protected ArrayList<ElasticTube> getChildrens() {
+	protected ArrayList<ElasticTube> getChildren() {
 		return children;
 	}
 
-	protected void setChildrens(ArrayList<ElasticTube> childrens) {
+	protected void setChildren(ArrayList<ElasticTube> childrens) {
 		this.children = childrens;
 	}
 
@@ -196,10 +196,30 @@ public abstract class ElasticTube extends Tube {
 	}
 	
 	public boolean addParent(ElasticTube parent){
+		if(!parent.getChildren().contains(this))
+			parent.addChild(this);
 		return parents.add(parent);
 	}
 	public boolean addChild(ElasticTube child){
 		return children.add(child);
+	}
+	
+	
+	public ArrayList<Variable> getVariables(){
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		variables.add(getFlowin());
+		variables.add(getFlowout());
+		variables.add(getPressure());
+		variables.add(getArea());
+		return variables;
+	}
+	
+	@Override
+	public boolean equals(Object v) {
+		if (v instanceof ElasticTube){
+			return getMyID() == ((ElasticTube)v).getMyID();
+		}
+		return false;
 	}
 	
 	

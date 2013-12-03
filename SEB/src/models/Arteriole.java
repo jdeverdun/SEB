@@ -336,7 +336,7 @@ public class Arteriole extends ElasticTube {
 		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
 			Artery par = ((Artery)parent);
 			Variable pf = par.getFlowout();
-			float fact = par.getChildrens().size();
+			float fact = par.getChildren().size();
 			res += (pf.getValue()/fact);
 		}
 		return (res - fi.getValue());
@@ -350,7 +350,7 @@ public class Arteriole extends ElasticTube {
 				res += "+";
 			Artery par = ((Artery)parent);
 			Variable pf = par.getFlowout();
-			float fact = par.getChildrens().size();
+			float fact = par.getChildren().size();
 			res += "("+pf.getName()+"/"+fact+")";
 		}
 		res += ")";
@@ -367,7 +367,7 @@ public class Arteriole extends ElasticTube {
 				Variable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
 				if(v.getName().equals(pr.getName())){
 					// derive selon flowoutParent :  1.0f
-					return 1.0f/(float)((Artery)parent).getChildrens().size();		
+					return 1.0f/(float)((Artery)parent).getChildren().size();		
 				}
 			}
 			return 0.0f;
@@ -384,7 +384,7 @@ public class Arteriole extends ElasticTube {
 				Variable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
 				if(v.getName().equals(pr.getName())){
 					// derive selon flowoutParent :  1.0f
-					return ""+1.0f+"/"+(float)((Artery)parent).getChildrens().size();		
+					return ""+1.0f+"/"+(float)((Artery)parent).getChildren().size();		
 				}
 			}
 			return ""+0.0f;

@@ -7,12 +7,14 @@ package models;
  */
 public class Architecture {
 
-	private Artery startPoint;
+	private FirstArtery startPoint;
 	private VenousSinus endPoint;
 	private Brain brain;
- // ================= TODO ==================
-	public Architecture() {
-		// TODO Auto-generated constructor stub
+
+	public Architecture(FirstArtery sp, VenousSinus ep, Brain br) {
+		setStartPoint(sp);
+		setEndPoint(ep);
+		setBrain(br);
 	}
 	/**
 	 * @return the brain
@@ -41,15 +43,22 @@ public class Architecture {
 	/**
 	 * @return the startPoint
 	 */
-	public Artery getStartPoint() {
+	public FirstArtery getStartPoint() {
 		return startPoint;
 	}
 	/**
 	 * @param startPoint the startPoint to set
 	 */
-	public void setStartPoint(Artery startPoint) {
+	public void setStartPoint(FirstArtery startPoint) {
 		this.startPoint = startPoint;
 	}
 	
+	/**
+	 * Verifie si tous les champs ont ete rentre
+	 * @return
+	 */
+	public boolean isFilled(){
+		return (startPoint != null) && (endPoint != null) && (brain != null);
+	}
 
 }

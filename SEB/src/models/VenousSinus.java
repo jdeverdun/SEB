@@ -96,6 +96,15 @@ public class VenousSinus extends ElasticTube {
 		}
 		res.add(connectivity);
 
+		// additonal momentum
+		float[] addmom = new float[variables.size()+1];
+		addmom[0] = getAddMomentumEquation(pr,fo);
+		for(int i = 0; i<variables.size();i++){
+			addmom[i+1] = getAddMomentumDerivative(variables.get(i), variables);
+		}
+		res.add(addmom);
+
+
 		return res;
 	}
 
@@ -157,6 +166,14 @@ public class VenousSinus extends ElasticTube {
 		}
 		res.add(connectivity);
 
+		// additonal momentum
+		String[] addmom = new String[variables.size()+1];
+		addmom[0] = getSymbolicAddMomentumEquation(pr,fo);
+		for(int i = 0; i<variables.size();i++){
+			addmom[i+1] = getSymbolicAddMomentumDerivative(variables.get(i), variables);
+		}
+		res.add(addmom);
+				
 		return res;
 	}
 
@@ -433,6 +450,47 @@ public class VenousSinus extends ElasticTube {
 					}
 					return ""+0.0f;
 				}
+			}
+		}
+	}
+
+	//====== additional momentum ====
+	private float getAddMomentumEquation(Variable pr, Variable fo){
+		// equ(72)
+		return (pr.getValue() - ModelSpecification.P_OUT[ModelSpecification.currentIter]) - ModelSpecification.TPout_alfa * fo.getValue();
+	}
+
+	private String getSymbolicAddMomentumEquation(Variable pr, Variable fo){
+		// equ(72)
+		return "("+pr.getName()+" - P_OUT[currentIter]) - TPout_alfa * "+fo.getName();
+	}
+
+	private float getAddMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(72)
+		if(v.getName().equals(getFlowout().getName())){
+			// derive selon flowout : - TPout_alfa;
+			return -ModelSpecification.TPout_alfa;
+		}else{
+			if(v.getName().equals(getPressure().getName())){
+				// derive selon la pression : 1;
+				return 1.0f;
+			}else{
+				return 0.0f;
+			}
+		}
+	}
+
+	private String getSymbolicAddMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(72)
+		if(v.getName().equals(getFlowout().getName())){
+			// derive selon flowout : - TPout_alfa;
+			return "-TPout_alfa";
+		}else{
+			if(v.getName().equals(getPressure().getName())){
+				// derive selon la pression : 1;
+				return ""+1.0f;
+			}else{
+				return ""+0.0f;
 			}
 		}
 	}

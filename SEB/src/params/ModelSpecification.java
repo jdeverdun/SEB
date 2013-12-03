@@ -12,6 +12,7 @@ public class ModelSpecification {
 
 	public static float Pstar = (0.0f + 0.0f) * 1333.2240f;
 	public static float k1 = (float) 8.0e-7;
+	public static float TPout_alfa = 0.0809088f * 1333.2240f;
 	public static Architecture architecture;
 	public static float[] P_INIT = null;
 	public static float[] P_OUT = null;

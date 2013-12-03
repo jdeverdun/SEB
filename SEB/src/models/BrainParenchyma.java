@@ -41,9 +41,9 @@ public class BrainParenchyma extends Tube {
 	private Variable pressure;
 
 
-	public BrainParenchyma(String name, Hemisphere hemi) {
+	public BrainParenchyma(String name, Hemisphere lhemi) {
 		super(name, DEFAULT_LENGTH);
-		setHemi(hemi);
+		setHemi(lhemi);
 		setInitialAreaFluid(DEFAULT_AREA_FLUID);
 		setInitialAreaSolid(DEFAULT_AREA_SOLID);
 		setAreaFluid(DEFAULT_AREA_FLUID);
@@ -57,8 +57,9 @@ public class BrainParenchyma extends Tube {
 		setPressure(DEFAULT_PRESSURE);
 	}
 
-	public BrainParenchyma(String name, float len) {
+	public BrainParenchyma(String name, float len, Hemisphere lhemi) {
 		super(name, len);
+		setHemi(lhemi);
 		setInitialAreaFluid(DEFAULT_AREA_FLUID);
 		setInitialAreaSolid(DEFAULT_AREA_SOLID);
 		setAreaFluid(DEFAULT_AREA_FLUID);
@@ -72,8 +73,9 @@ public class BrainParenchyma extends Tube {
 		setPressure(DEFAULT_PRESSURE);
 	}
 
-	public BrainParenchyma(String name, float len, float aFluid, float aSolid, float alf1, float alf2, float fin1, float fin2, float fout1, float fout2, float press) {
+	public BrainParenchyma(String name, float len, Hemisphere lhemi, float aFluid, float aSolid, float alf1, float alf2, float fin1, float fin2, float fout1, float fout2, float press) {
 		super(name, len);
+		setHemi(lhemi);
 		setInitialAreaFluid(aFluid);
 		setInitialAreaSolid(aSolid);
 		setAreaFluid(aFluid);
@@ -279,6 +281,18 @@ public class BrainParenchyma extends Tube {
 		this.hemi = hemi;
 	}
 
+	public ArrayList<Variable> getVariables(){
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		variables.add(getFlowin1());
+		variables.add(getFlowin2());
+		variables.add(getFlowout1());
+		variables.add(getFlowout2());
+		variables.add(getPressure());
+		variables.add(getAreaFluid());
+		variables.add(getAreaSolid());
+		return variables;
+	}
+	
 	// ------------------- EQUATIONS -------------
 	@Override
 	public ArrayList<float[]> getEquations(ArrayList<Variable> variables) throws Exception {
@@ -339,7 +353,21 @@ public class BrainParenchyma extends Tube {
 		}
 		res.add(totalvol);
 
-		
+		// Additional equations
+		float[] addfout = new float[variables.size()+1];
+		addfout[0] =getAdditionalFout2Equation(fo2);
+		for(int i = 0; i<variables.size();i++){
+			addfout[i+1] = getAdditionalFout2Derivative(variables.get(i), variables);
+		}
+		res.add(addfout);
+
+		float[] addfin = new float[variables.size()+1];
+		addfin[0] =getAdditionalFin1Equation(fi1);
+		for(int i = 0; i<variables.size();i++){
+			addfin[i+1] = getAdditionalFin1Derivative(variables.get(i), variables);
+		}
+		res.add(addfin);
+
 		return res;
 	}
 
@@ -403,10 +431,86 @@ public class BrainParenchyma extends Tube {
 			totalvol[i+1] = getSymbolicTotalVolumeDerivative(variables.get(i), variables);
 		}
 		res.add(totalvol);
-				
+
+		// Additional equations
+		String[] addfout = new String[variables.size()+1];
+		addfout[0] =getSymbolicAdditionalFout2Equation(fo2);
+		for(int i = 0; i<variables.size();i++){
+			addfout[i+1] = getSymbolicAdditionalFout2Derivative(variables.get(i), variables);
+		}
+		res.add(addfout);
+
+		String[] addfin = new String[variables.size()+1];
+		addfin[0] =getSymbolicAdditionalFin1Equation(fi1);
+		for(int i = 0; i<variables.size();i++){
+			addfin[i+1] = getSymbolicAdditionalFin1Derivative(variables.get(i), variables);
+		}
+		res.add(addfin);
+
 		return res;
 	}
 
+	//====== Additional equation fout2 ====
+	private float getAdditionalFout2Equation(Variable fout2){
+		// equ(68) et equ(70)
+		return fout2.getValue() - 0.0f;
+	}
+
+	private String getSymbolicAdditionalFout2Equation(Variable fout2){
+		// equ(68) et equ(70)
+		return ""+fout2.getName()+" - "+0.0f;
+	}
+
+	private float getAdditionalFout2Derivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(68) et equ(70)
+		if(v.getName().equals(getFlowout2().getName())){
+			// derive selon flow out1 : 1;
+			return 1.0f;
+		}else{
+			return 0.0f;
+		}
+	}
+
+	private String getSymbolicAdditionalFout2Derivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(68) et equ(70)
+		if(v.getName().equals(getFlowout2().getName())){
+			// derive selon flow out1 : 1;
+			return ""+1.0f;
+		}else{
+			return ""+0.0f;
+		}
+	}
+
+	//====== Additional equation fin1 ====
+	private float getAdditionalFin1Equation(Variable fin1){
+		// equ(69) et equ(70)
+		return fin1.getValue() - 0.0f;
+	}
+
+	private String getSymbolicAdditionalFin1Equation(Variable fin1){
+		// equ(69) et equ(70)
+		return ""+fin1.getName()+" - "+0.0f;
+	}
+
+	private float getAdditionalFin1Derivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(69) et equ(70)
+		if(v.getName().equals(getFlowin1().getName())){
+			// derive selon flow in1 : 1;
+			return 1.0f;
+		}else{
+			return 0.0f;
+		}
+	}
+
+	private String getSymbolicAdditionalFin1Derivative(Variable v, ArrayList<Variable> variables) throws Exception{
+		// equ(69) et equ(70)
+		if(v.getName().equals(getFlowin1().getName())){
+			// derive selon flow in1 : 1;
+			return ""+1.0f;
+		}else{
+			return ""+0.0f;
+		}
+	}
 
 	//====== Momentum ventricle ====
 	private float getMomentumVentricleEquation(Variable ventriclePr, Variable pr, Variable alfa2, Variable fout1){
@@ -421,11 +525,11 @@ public class BrainParenchyma extends Tube {
 
 	private float getMomentumVentricleDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
 		// equ(62) et equ(66)
-		if(v.getName().equals(getPressure())){
+		if(v.getName().equals(getPressure().getName())){
 			// derive selon pression : -1;
 			return -1.0f;
 		}else{
-			if(v.getName().equals(getFlowout1())){
+			if(v.getName().equals(getFlowout1().getName())){
 				// derive selon flow out 1 : T_alpha2_brain ;
 				return getAlpha2().getValue();
 			}else{
@@ -441,11 +545,11 @@ public class BrainParenchyma extends Tube {
 
 	private String getSymbolicMomentumVentricleDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
 		// equ(62) et equ(66)
-		if(v.getName().equals(getPressure())){
+		if(v.getName().equals(getPressure().getName())){
 			// derive selon pression : -1;
 			return "-"+1.0f;
 		}else{
-			if(v.getName().equals(getFlowout1())){
+			if(v.getName().equals(getFlowout1().getName())){
 				// derive selon flow out 1 : T_alpha2_brain ;
 				return ""+getAlpha2().getName();
 			}else{
@@ -595,7 +699,7 @@ public class BrainParenchyma extends Tube {
 		res2 += (((SAS)sasArea.getSourceObj()).getInitialArea().getValue() * ((SAS)sasArea.getSourceObj()).getLength().getValue());  
 		res1 += ((brainFluidArea.getValue() + getInitialAreaSolid().getValue()) * getLength().getValue());
 		res2 += ((getInitialAreaFluid().getValue() + getInitialAreaSolid().getValue()) * getLength().getValue());
-		
+
 		return res1 - res2;
 	}
 
@@ -637,7 +741,7 @@ public class BrainParenchyma extends Tube {
 		res2 += "("+((SAS)sasArea.getSourceObj()).getInitialArea().getName() +" * "+ ((SAS)sasArea.getSourceObj()).getLength().getName()+") + ";  
 		res1 += "(("+brainFluidArea.getName()+" + "+getInitialAreaSolid().getName() +") * "+ getLength().getName()+")";
 		res2 += "(("+getInitialAreaFluid().getName()+" + "+getInitialAreaSolid().getName() +") * "+ getLength().getName()+")";
-		
+
 		return res1+" - "+res2;
 	}
 
