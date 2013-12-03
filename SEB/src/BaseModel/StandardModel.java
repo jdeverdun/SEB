@@ -1,5 +1,10 @@
 package BaseModel;
 
+import java.util.ArrayList;
+
+import params.ModelSpecification;
+import params.SystemParams;
+import models.Architecture;
 import models.Arteriole;
 import models.Artery;
 import models.Brain;
@@ -11,6 +16,7 @@ import models.Hemisphere;
 import models.SAS;
 import models.SpinalCord;
 import models.ThirdVentricle;
+import models.Variable;
 import models.Vein;
 import models.Veinule;
 import models.VenousSinus;
@@ -18,7 +24,13 @@ import models.Ventricle;
 
 public class StandardModel {
 
-	public StandardModel(){
+	public static boolean run(){
+		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///             Definition des variables               ///
+		///													   ///
+		//////////////////////////////////////////////////////////
 		
 		// ------------ Definition du brain ---------
 		BrainParenchyma left_brain = new BrainParenchyma("left_brain", Hemisphere.LEFT);
@@ -62,5 +74,65 @@ public class StandardModel {
 		SpinalCord spinal = new SpinalCord("spinal_cord");
 		
 		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///             Liaisons des variables                 ///
+		///													   ///
+		//////////////////////////////////////////////////////////
+		
+		// ------------ liaisons des blocs sanguins ------
+		// artery
+		arteryleft.addParent(firstArtery);
+		arteryright.addParent(firstArtery);
+		// arteriole
+		arteriolleft.addParent(arteryleft);
+		arteriolright.addParent(arteryright);
+		// capillary
+		capleft.addParent(arteriolleft);
+		capright.addParent(arteriolright);
+		// veinule
+		vlleft.addParent(capleft);
+		vlright.addParent(capright);
+		// vein
+		vleft.addParent(vlleft);
+		vright.addParent(vlright);
+		// vsinous
+		vsinous.addParent(vleft);
+		vsinous.addParent(vright);
+		// ------------ Liaison des blocs LCR -------------
+		// 3V
+		thirdVent.addParent(ventricleleft);
+		thirdVent.addParent(ventricleright);
+		// 4V
+		fourthVent.addParent(thirdVent);
+		// SAS
+		sas.addParent(fourthVent);
+		// sp. cord
+		spinal.addParent(sas);
+		
+		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///             Definition de l'architecture           ///
+		///													   ///
+		//////////////////////////////////////////////////////////
+		Architecture architecture = new Architecture(firstArtery, vsinous, brain);
+		// on initialise le systeme (pression entree - sortie)
+		ModelSpecification.init(architecture);
+		
+		System.out.println("pret");
+		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///             Recuperation des variables             ///
+		///													   ///
+		//////////////////////////////////////////////////////////
+		
+		// Sanguin
+		ArrayList<Variable> variables = firstArtery.getRecursiveVariables();
+		for(int i = 0; i<variables.size();i++)
+			System.out.println(variables.get(i));
+		
+		return true;
 	}
 }

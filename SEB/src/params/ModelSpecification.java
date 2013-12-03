@@ -28,7 +28,8 @@ public class ModelSpecification {
 	/**
 	 * On prepare la simulation en calculant les P en entrée à tous les points, temps etc
 	 */
-	public static void prepare(){
+	public static void init(Architecture arch){
+		architecture = arch;
 		time = new float[time_step];
 		P_INIT = new float[time_step];
 		P_OUT = new float[time_step];
@@ -49,9 +50,6 @@ public class ModelSpecification {
 			P_OUT[i] =  2.5f * 1333.2240f;
 			OUT_D[i] = 0.0f;
 		}
-	}
-	public ModelSpecification() {
-		// TODO Auto-generated constructor stub
 	}
 
 }

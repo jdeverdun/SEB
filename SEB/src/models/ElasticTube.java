@@ -26,19 +26,20 @@ public abstract class ElasticTube extends Tube {
 	
 	public ElasticTube(){
 		super();
+		hemisphere = Hemisphere.UNKNOWN;
 		setFlowin(-1.0f);
 		setFlowout(-1.0f);
 		setPressure(-1.0f);
 		setArea(-1.0f);
 		setAlpha(-1.0f);
 		setInitialArea(-1.0f);
-		hemisphere = Hemisphere.UNKNOWN;
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
 	}
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
 		super(name, len);
+		setHemisphere(hemi);
 		setInitialArea(a);
 		setArea(a);
 		setAlpha(alf);
@@ -46,7 +47,6 @@ public abstract class ElasticTube extends Tube {
 		setFlowin(flowin);
 		setFlowout(flowout);
 		setPressure(pressure);
-		setHemisphere(hemi);
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
 	}	
@@ -211,6 +211,17 @@ public abstract class ElasticTube extends Tube {
 		variables.add(getFlowout());
 		variables.add(getPressure());
 		variables.add(getArea());
+		return variables;
+	}
+	
+	public ArrayList<Variable> getRecursiveVariables(){
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		variables.addAll(getVariables());
+		if(getChildren().size() != 0){
+			for(ElasticTube child : getChildren()){
+				variables.addAll(child.getRecursiveVariables());
+			}
+		}
 		return variables;
 	}
 	

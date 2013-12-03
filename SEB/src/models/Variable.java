@@ -45,6 +45,10 @@ public class Variable {
 	public void setSourceObj(Tube sourceObj) {
 		this.sourceObj = sourceObj;
 	}
+	
+	public String toString(){
+		return name + " || " + getValue() + " || " + sourceObj.getClass().getName();
+	}
 
 	@Override
 	public boolean equals(Object v) {
