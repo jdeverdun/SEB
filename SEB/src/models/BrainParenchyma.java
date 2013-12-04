@@ -289,7 +289,6 @@ public class BrainParenchyma extends Tube {
 		variables.add(getFlowout2());
 		variables.add(getPressure());
 		variables.add(getAreaFluid());
-		variables.add(getAreaSolid());
 		return variables;
 	}
 	
@@ -312,11 +311,9 @@ public class BrainParenchyma extends Tube {
 
 		// Momentum ventricle
 		Variable pr = findVariableWithName(getPressure().getName(),variables);
-		Variable alf1 = findVariableWithName(getAlpha1().getName(),variables);
-		Variable alf2 = findVariableWithName(getAlpha2().getName(),variables);
 		ArrayList<Variable> pven = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		float[] momentumvent = new float[variables.size()+1];
-		momentumvent[0] = getMomentumVentricleEquation(pven.get(0), getPressure(), alf2, fo2);
+		momentumvent[0] = getMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo2);
 		for(int i = 0; i<variables.size();i++){
 			momentumvent[i+1] = getMomentumVentricleDerivative(variables.get(i), variables);
 		}
@@ -327,7 +324,7 @@ public class BrainParenchyma extends Tube {
 		ArrayList<Variable> pcap = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		for(Variable pc : pcap){
 			float[] momentumcap = new float[variables.size()+1];
-			momentumcap[0] = getMomentumCappilaryEquation(pr, pc, alf1, fi1);
+			momentumcap[0] = getMomentumCappilaryEquation(pr, pc, getAlpha1(), fi1);
 			for(int i = 0; i<variables.size();i++){
 				momentumcap[i+1] = getMomentumCappilaryDerivative(variables.get(i), variables);
 			}

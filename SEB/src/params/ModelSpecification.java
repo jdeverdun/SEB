@@ -30,6 +30,7 @@ public class ModelSpecification {
 	 */
 	public static void init(Architecture arch){
 		architecture = arch;
+		currentIter = 0;
 		time = new float[time_step];
 		P_INIT = new float[time_step];
 		P_OUT = new float[time_step];

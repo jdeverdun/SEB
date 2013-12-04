@@ -2,17 +2,20 @@ package main;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import models.Hemisphere;
+import models.Variable;
+import models.Vein;
+
 import params.SystemParams;
 
 
 import BaseModel.StandardModel;
-
-import com.mathworks.toolbox.javabuilder.MWException;
 
 public class main {
 

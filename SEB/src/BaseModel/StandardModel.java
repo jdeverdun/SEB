@@ -2,9 +2,13 @@ package BaseModel;
 
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
+import java.util.Collections;
+
+import Jama.Matrix;
 
 import params.ModelSpecification;
 import params.SystemParams;
+import solver.EquationSolver;
 import models.Architecture;
 import models.Arteriole;
 import models.Artery;
@@ -143,6 +147,7 @@ public class StandardModel {
 		tubes.add(spinal);
 		tubes.add(left_brain);
 		tubes.add(right_brain);
+		architecture.setTubes(tubes);
 		System.out.println("pret");
 		
 		//////////////////////////////////////////////////////////
@@ -155,7 +160,6 @@ public class StandardModel {
 		for(Tube tube : tubes){
 			variables.addAll(tube.getVariables());
 		}
-		
 		for(int i = 0; i<variables.size();i++)
 			System.out.println(variables.get(i));
 		
@@ -173,12 +177,52 @@ public class StandardModel {
 				equations.addAll(tube.getSymbolicEquations(variables));
 			}
 			for(String[] bloceq : equations){
-				System.out.println(bloceq[0]);
+				
+				for(String bloc1 : bloceq){
+					System.out.print(bloc1+"\t");
+				}
+				System.out.print("\n");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///             Recuperation des valeurs               ///
+		///													   ///
+		//////////////////////////////////////////////////////////
+		
+		System.out.println("============ Valeurs T0 ===========");
+		try {
+			ArrayList<float[]> equations = new ArrayList<float[]>();
+			for(Tube tube : tubes){
+				equations.addAll(tube.getEquations(variables));
+			}
+			
+			for(float[] bloceq : equations){
+				
+				for(float bloc1 : bloceq){
+					System.out.print(bloc1+"\t");
+				}
+				System.out.print("\n");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///                   Resolution                       ///
+		///													   ///
+		//////////////////////////////////////////////////////////
+		
+		System.out.println("============ Resolution ===========");
+
+		Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
 		return true;
 	}
 }
