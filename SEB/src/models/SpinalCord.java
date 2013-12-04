@@ -246,7 +246,7 @@ public class SpinalCord extends ElasticTube {
 					return -1.0f;		
 				}else{
 					for(ElasticTube parent:getParents()){
-						Variable pr = findVariableWithName(((Capillary)parent).getPressure().getName(),variables);
+						Variable pr = findVariableWithName(((SAS)parent).getPressure().getName(),variables);
 						if(v.getName().equals(pr.getName())){
 							// derive selon pressionParent :  1.0f
 							return 1.0f;		
@@ -314,7 +314,7 @@ public class SpinalCord extends ElasticTube {
 					return ""+-1.0f;		
 				}else{
 					for(ElasticTube parent:getParents()){
-						Variable pr = findVariableWithName(((Capillary)parent).getPressure().getName(),variables);
+						Variable pr = findVariableWithName(((SAS)parent).getPressure().getName(),variables);
 						if(v.getName().equals(pr.getName())){
 							// derive selon pressionParent :  1.0f
 							return ""+1.0f;		

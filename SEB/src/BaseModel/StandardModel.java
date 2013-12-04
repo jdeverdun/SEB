@@ -1,5 +1,6 @@
 package BaseModel;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 
 import params.ModelSpecification;
@@ -16,6 +17,7 @@ import models.Hemisphere;
 import models.SAS;
 import models.SpinalCord;
 import models.ThirdVentricle;
+import models.Tube;
 import models.Variable;
 import models.Vein;
 import models.Veinule;
@@ -119,7 +121,28 @@ public class StandardModel {
 		Architecture architecture = new Architecture(firstArtery, vsinous, brain);
 		// on initialise le systeme (pression entree - sortie)
 		ModelSpecification.init(architecture);
-		
+		// on stock la liste des tubes
+		ArrayList<Tube> tubes = new ArrayList<Tube>();
+		tubes.add(firstArtery);
+		tubes.add(arteryleft);
+		tubes.add(arteryright);
+		tubes.add(arteriolleft);
+		tubes.add(arteriolright);
+		tubes.add(capleft);
+		tubes.add(capright);
+		tubes.add(vlleft);
+		tubes.add(vlright);
+		tubes.add(vleft);
+		tubes.add(vright);
+		tubes.add(vsinous);
+		tubes.add(ventricleleft);
+		tubes.add(ventricleright);
+		tubes.add(thirdVent);
+		tubes.add(fourthVent);
+		tubes.add(sas);
+		tubes.add(spinal);
+		tubes.add(left_brain);
+		tubes.add(right_brain);
 		System.out.println("pret");
 		
 		//////////////////////////////////////////////////////////
@@ -128,10 +151,33 @@ public class StandardModel {
 		///													   ///
 		//////////////////////////////////////////////////////////
 		
-		// Sanguin
-		ArrayList<Variable> variables = firstArtery.getRecursiveVariables();
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		for(Tube tube : tubes){
+			variables.addAll(tube.getVariables());
+		}
+		
 		for(int i = 0; i<variables.size();i++)
 			System.out.println(variables.get(i));
+		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///             Recuperation des equations             ///
+		///													   ///
+		//////////////////////////////////////////////////////////
+		
+		System.out.println("============ Equations ===========");
+		
+		try {
+			ArrayList<String[]> equations = new ArrayList<String[]>();
+			for(Tube tube : tubes){
+				equations.addAll(tube.getSymbolicEquations(variables));
+			}
+			for(String[] bloceq : equations){
+				System.out.println(bloceq[0]);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		return true;
 	}

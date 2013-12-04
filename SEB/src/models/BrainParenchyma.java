@@ -113,7 +113,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+AREA_FLUID_LABEL+"_"+BRAIN_LABEL,areaFluid, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_FLUID_LABEL+"_"+BRAIN_LABEL,areaFluid, (Tube)this);
 		this.areaFluid = v;
 	}
 
@@ -128,7 +128,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+AREA_SOLID_LABEL+"_"+BRAIN_LABEL,areaSolid, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_SOLID_LABEL+"_"+BRAIN_LABEL,areaSolid, (Tube)this);
 		this.areaSolid = v;
 	}
 
@@ -161,7 +161,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+FLOWIN1_LABEL+"_"+BRAIN_LABEL,flowin1, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN1_LABEL+"_"+BRAIN_LABEL,flowin1, (Tube)this);
 		this.flowin1 = v;
 	}
 
@@ -176,7 +176,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+FLOWIN2_LABEL+"_"+BRAIN_LABEL,flowin2, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN2_LABEL+"_"+BRAIN_LABEL,flowin2, (Tube)this);
 		this.flowin2 = v;
 	}
 
@@ -191,7 +191,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT1_LABEL+"_"+BRAIN_LABEL,flowout1, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT1_LABEL+"_"+BRAIN_LABEL,flowout1, (Tube)this);
 		this.flowout1 = v;
 	}
 
@@ -206,7 +206,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT2_LABEL+"_"+BRAIN_LABEL,flowout2, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT2_LABEL+"_"+BRAIN_LABEL,flowout2, (Tube)this);
 		this.flowout2 = v;
 	}
 
@@ -221,7 +221,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+BRAIN_LABEL,pressure, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+BRAIN_LABEL,pressure, (Tube)this);
 		this.pressure = v;
 	}
 
@@ -242,7 +242,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREAFLUID_LABEL+"_"+BRAIN_LABEL,initialAreaFluid, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREAFLUID_LABEL+"_"+BRAIN_LABEL,initialAreaFluid, (Tube)this);
 		this.initialAreaFluid = v;
 	}
 
@@ -263,7 +263,7 @@ public class BrainParenchyma extends Tube {
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+"_"+TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREASOLID_LABEL+"_"+BRAIN_LABEL,initialAreaSolid, (Tube)this);
+		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREASOLID_LABEL+"_"+BRAIN_LABEL,initialAreaSolid, (Tube)this);
 		this.initialAreaSolid = v;
 	}
 

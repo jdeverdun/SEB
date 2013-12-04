@@ -299,7 +299,7 @@ public class Vein extends ElasticTube {
 		// equ(49) et equ(52)
 		float res = 0;
 		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
-			Vein par = ((Vein)parent);
+			Veinule par = ((Veinule)parent);
 			Variable pf = par.getFlowout();
 			float fact = par.getChildren().size();
 			res += (pf.getValue()/fact);
@@ -313,7 +313,7 @@ public class Vein extends ElasticTube {
 		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
 			if(!res.equals("("))
 				res += "+";
-			Vein par = ((Vein)parent);
+			Veinule par = ((Veinule)parent);
 			Variable pf = par.getFlowout();
 			float fact = par.getChildren().size();
 			res += "("+pf.getName()+"/"+fact+")";
@@ -329,10 +329,10 @@ public class Vein extends ElasticTube {
 			return -1.0f;
 		}else{
 			for(ElasticTube parent:getParents()){
-				Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
+				Variable pr = findVariableWithName(((Veinule)parent).getFlowout().getName(),variables);
 				if(v.getName().equals(pr.getName())){
 					// derive selon flowoutParent :  1.0f
-					return 1.0f/(float)((Vein)parent).getChildren().size();		
+					return 1.0f/(float)((Veinule)parent).getChildren().size();		
 				}
 			}
 			return 0.0f;
@@ -346,10 +346,10 @@ public class Vein extends ElasticTube {
 			return "-"+1.0f;
 		}else{
 			for(ElasticTube parent:getParents()){
-				Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
+				Variable pr = findVariableWithName(((Veinule)parent).getFlowout().getName(),variables);
 				if(v.getName().equals(pr.getName())){
 					// derive selon flowoutParent :  1.0f
-					return ""+1.0f+"/"+(float)((Vein)parent).getChildren().size();		
+					return ""+1.0f+"/"+(float)((Veinule)parent).getChildren().size();		
 				}
 			}
 			return ""+0.0f;

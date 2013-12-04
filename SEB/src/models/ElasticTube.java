@@ -216,13 +216,36 @@ public abstract class ElasticTube extends Tube {
 	
 	public ArrayList<Variable> getRecursiveVariables(){
 		ArrayList<Variable> variables = new ArrayList<Variable>();
-		variables.addAll(getVariables());
+		for(Variable var:getVariables()){
+			if(!variables.contains(var))
+				variables.add(var);
+		}
 		if(getChildren().size() != 0){
 			for(ElasticTube child : getChildren()){
-				variables.addAll(child.getRecursiveVariables());
+				for(Variable var:child.getRecursiveVariables()){
+					if(!variables.contains(var))
+						variables.add(var);
+				}
 			}
 		}
 		return variables;
+	}
+	
+	public ArrayList<String[]> getRecursiveSymbolicEquations(ArrayList<Variable> variables) throws Exception{
+		ArrayList<String[]> equations = new ArrayList<String[]>();
+		for(String[] eq:getSymbolicEquations(variables)){
+			if(!equations.contains(eq))
+				equations.add(eq);
+		}
+		if(getChildren().size() != 0){
+			for(ElasticTube child : getChildren()){
+				for(String[] eq:child.getRecursiveSymbolicEquations(variables)){
+					if(!equations.contains(eq))
+						equations.add(eq);
+				}
+			}
+		}
+		return equations;
 	}
 	
 	@Override

@@ -400,7 +400,7 @@ public class ThirdVentricle extends ElasticTube {
 				return 1.0f;
 			}else{
 				for(ElasticTube parent:getParents()){
-					Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
+					Variable pr = findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables);
 					if(v.getName().equals(pr.getName())){
 						// derive selon flowoutParent :  1.0f
 						return 1.0f;		
@@ -425,7 +425,7 @@ public class ThirdVentricle extends ElasticTube {
 				return ""+1.0f;
 			}else{
 				for(ElasticTube parent:getParents()){
-					Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
+					Variable pr = findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables);
 					if(v.getName().equals(pr.getName())){
 						// derive selon flowoutParent :  1.0f
 						return ""+1.0f;		
