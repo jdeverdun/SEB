@@ -2,6 +2,8 @@ package display.containers;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.geom.Ellipse2D;
@@ -46,13 +48,20 @@ public class InitialInputsPanel extends JPanel {
 	}
 	
 	public void refreshPlot(){
-		try {
-			plot(0,ModelSpecification.time,ModelSpecification.P_INIT,"P_INIT","time", "First Artery pressure");
-			plot(1,ModelSpecification.time,ModelSpecification.P_OUT,"P_OUT","time", "Output pressure");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					plot(0,ModelSpecification.time,ModelSpecification.P_INIT,"P_INIT","time", "First Artery pressure");
+					plot(1,ModelSpecification.time,ModelSpecification.P_OUT,"P_OUT","time", "Output pressure");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+
 	}
 	private void plot(int position, float[] x, float[] y, String seriename, String xlabel, String ylabel) throws Exception{
 		if(x.length != y.length){

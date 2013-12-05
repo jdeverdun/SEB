@@ -382,7 +382,7 @@ public class ThirdVentricle extends ElasticTube {
 				res += "+";
 			res += pf.getName();
 		}
-		res += rightbrain_flowout1.getName()+" + "+rightbrain_flowout2.getName()+" + "+leftbrain_flowout1.getName()+" + "+leftbrain_flowout2.getName();
+		res += "+"+rightbrain_flowout1.getName()+" + "+rightbrain_flowout2.getName()+" + "+leftbrain_flowout1.getName()+" + "+leftbrain_flowout2.getName()+")";
 		return res+" - ("+fi.getName()+")";
 	}
 

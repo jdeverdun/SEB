@@ -313,7 +313,7 @@ public class BrainParenchyma extends Tube {
 		Variable pr = findVariableWithName(getPressure().getName(),variables);
 		ArrayList<Variable> pven = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		float[] momentumvent = new float[variables.size()+1];
-		momentumvent[0] = getMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo2);
+		momentumvent[0] = getMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo1);
 		for(int i = 0; i<variables.size();i++){
 			momentumvent[i+1] = getMomentumVentricleDerivative(variables.get(i), variables);
 		}
@@ -321,7 +321,7 @@ public class BrainParenchyma extends Tube {
 
 		// Momentum cappillary
 
-		ArrayList<Variable> pcap = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
+		ArrayList<Variable> pcap = findVariableWithStruct(getHemi(), Capillary.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		for(Variable pc : pcap){
 			float[] momentumcap = new float[variables.size()+1];
 			momentumcap[0] = getMomentumCappilaryEquation(pr, pc, getAlpha1(), fi1);
@@ -359,7 +359,7 @@ public class BrainParenchyma extends Tube {
 		res.add(addfout);
 
 		float[] addfin = new float[variables.size()+1];
-		addfin[0] =getAdditionalFin1Equation(fi1);
+		addfin[0] =getAdditionalFin1Equation(fi2);
 		for(int i = 0; i<variables.size();i++){
 			addfin[i+1] = getAdditionalFin1Derivative(variables.get(i), variables);
 		}
@@ -393,17 +393,17 @@ public class BrainParenchyma extends Tube {
 		// Momentum ventricle
 		ArrayList<Variable> pven = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		String[] momentumvent = new String[variables.size()+1];
-		momentumvent[0] = getSymbolicMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), getFlowout2());
+		momentumvent[0] = getSymbolicMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo1);
 		for(int i = 0; i<variables.size();i++){
 			momentumvent[i+1] = getSymbolicMomentumVentricleDerivative(variables.get(i), variables);
 		}
 		res.add(momentumvent);
 
 		// Momentum cappillary
-		ArrayList<Variable> pcap = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
+		ArrayList<Variable> pcap = findVariableWithStruct(getHemi(), Capillary.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		for(Variable pc : pcap){
 			String[] momentumcap = new String[variables.size()+1];
-			momentumcap[0] = getSymbolicMomentumCappilaryEquation(getPressure(), pc, getAlpha1(), getFlowin1());
+			momentumcap[0] = getSymbolicMomentumCappilaryEquation(getPressure(), pc, getAlpha1(), fi1);
 			for(int i = 0; i<variables.size();i++){
 				momentumcap[i+1] = getSymbolicMomentumCappilaryDerivative(variables.get(i), variables);
 			}
@@ -438,7 +438,7 @@ public class BrainParenchyma extends Tube {
 		res.add(addfout);
 
 		String[] addfin = new String[variables.size()+1];
-		addfin[0] =getSymbolicAdditionalFin1Equation(fi1);
+		addfin[0] =getSymbolicAdditionalFin1Equation(fi2);
 		for(int i = 0; i<variables.size();i++){
 			addfin[i+1] = getSymbolicAdditionalFin1Derivative(variables.get(i), variables);
 		}
@@ -688,14 +688,14 @@ public class BrainParenchyma extends Tube {
 		res2 += (((VenousSinus)vsinousArea.getSourceObj()).getInitialArea().getValue() * ((VenousSinus)vsinousArea.getSourceObj()).getLength().getValue());  
 		res1 += (ventricleArea.getValue() * ((Ventricle)ventricleArea.getSourceObj()).getLength().getValue()); 
 		res2 += (((Ventricle)ventricleArea.getSourceObj()).getInitialArea().getValue() * ((Ventricle)ventricleArea.getSourceObj()).getLength().getValue());  
-		res1 += (0.5 * (thirdvArea.getValue() * ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getValue())); 
-		res2 += (((ThirdVentricle)thirdvArea.getSourceObj()).getInitialArea().getValue() * ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getValue());  
-		res1 += (0.5 * (fourthvArea.getValue() * ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getValue())); 
-		res2 += (((FourthVentricle)fourthvArea.getSourceObj()).getInitialArea().getValue() * ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getValue());  
-		res1 += (0.5 * (sasArea.getValue() * ((SAS)sasArea.getSourceObj()).getLength().getValue())); 
-		res2 += (((SAS)sasArea.getSourceObj()).getInitialArea().getValue() * ((SAS)sasArea.getSourceObj()).getLength().getValue());  
-		res1 += ((brainFluidArea.getValue() + getInitialAreaSolid().getValue()) * getLength().getValue());
-		res2 += ((getInitialAreaFluid().getValue() + getInitialAreaSolid().getValue()) * getLength().getValue());
+		res1 += (0.5f * (thirdvArea.getValue() * ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getValue())); 
+		res2 += (0.5f * ((ThirdVentricle)thirdvArea.getSourceObj()).getInitialArea().getValue() * ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getValue());  
+		res1 += (0.5f * (fourthvArea.getValue() * ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getValue())); 
+		res2 += (0.5f * ((FourthVentricle)fourthvArea.getSourceObj()).getInitialArea().getValue() * ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getValue());  
+		res1 += (0.5f * (sasArea.getValue() * ((SAS)sasArea.getSourceObj()).getLength().getValue())); 
+		res2 += (0.5f * ((SAS)sasArea.getSourceObj()).getInitialArea().getValue() * ((SAS)sasArea.getSourceObj()).getLength().getValue());  
+		res1 += ((brainFluidArea.getValue() + getInitialAreaSolid().getValue())* getLength().getValue());
+		res2 += ((getInitialAreaFluid().getValue() + getInitialAreaSolid().getValue())* getLength().getValue());
 
 		return res1 - res2;
 	}
@@ -730,16 +730,16 @@ public class BrainParenchyma extends Tube {
 		res2 += "("+((VenousSinus)vsinousArea.getSourceObj()).getInitialArea().getName() +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getLength().getName()+") + ";  
 		res1 += "("+ventricleArea.getName() +" * "+ ((Ventricle)ventricleArea.getSourceObj()).getLength().getName()+") + "; 
 		res2 += "("+((Ventricle)ventricleArea.getSourceObj()).getInitialArea().getName() +" * "+ ((Ventricle)ventricleArea.getSourceObj()).getLength().getName()+") + ";  
-		res1 += "("+0.5 +" * "+ (thirdvArea.getName() +" * "+ ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getName())+") + "; 
-		res2 += "("+((ThirdVentricle)thirdvArea.getSourceObj()).getInitialArea().getName() +" * "+ ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getName()+") + ";  
-		res1 += "("+0.5 +" * "+ (fourthvArea.getName()+" * "+ ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getName())+") + "; 
-		res2 += "("+((FourthVentricle)fourthvArea.getSourceObj()).getInitialArea().getName() +" * "+ ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getName()+") + ";  
-		res1 += "("+0.5 +" * "+ (sasArea.getName() +" * "+ ((SAS)sasArea.getSourceObj()).getLength().getName())+") + "; 
-		res2 += "("+((SAS)sasArea.getSourceObj()).getInitialArea().getName() +" * "+ ((SAS)sasArea.getSourceObj()).getLength().getName()+") + ";  
-		res1 += "(("+brainFluidArea.getName()+" + "+getInitialAreaSolid().getName() +") * "+ getLength().getName()+")";
-		res2 += "(("+getInitialAreaFluid().getName()+" + "+getInitialAreaSolid().getName() +") * "+ getLength().getName()+")";
+		res1 += "("+0.5f +" * "+ (thirdvArea.getName() +" * "+ ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getName())+") + "; 
+		res2 += "("+0.5f +" * "+((ThirdVentricle)thirdvArea.getSourceObj()).getInitialArea().getName() +" * "+ ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getName()+") + ";  
+		res1 += "("+0.5f +" * "+ (fourthvArea.getName()+" * "+ ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getName())+") + "; 
+		res2 += "("+0.5f +" * "+((FourthVentricle)fourthvArea.getSourceObj()).getInitialArea().getName() +" * "+ ((FourthVentricle)fourthvArea.getSourceObj()).getLength().getName()+") + ";  
+		res1 += "("+0.5f +" * "+ (sasArea.getName() +" * "+ ((SAS)sasArea.getSourceObj()).getLength().getName())+") + "; 
+		res2 += "("+0.5f +" * "+((SAS)sasArea.getSourceObj()).getInitialArea().getName() +" * "+ ((SAS)sasArea.getSourceObj()).getLength().getName()+") + ";  
+		res1 += "(("+brainFluidArea.getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
+		res2 += "(("+getInitialAreaFluid().getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
 
-		return res1+" - "+res2;
+		return res1+")"+" - "+res2+")";
 	}
 
 	private float getTotalVolumeDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
