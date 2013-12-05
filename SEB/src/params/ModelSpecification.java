@@ -1,5 +1,13 @@
 package params;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
+
+import display.SEBWindow;
 import models.Architecture;
 
 
@@ -51,6 +59,8 @@ public class ModelSpecification {
 			P_OUT[i] =  2.5f * 1333.2240f;
 			OUT_D[i] = 0.0f;
 		}
+		// on update l'affichage
+		WindowManager.MAINWINDOW.getInitialInputPanel().refreshPlot();
 	}
 
 }

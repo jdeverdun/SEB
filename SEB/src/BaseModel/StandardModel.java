@@ -30,7 +30,7 @@ import models.Ventricle;
 
 public class StandardModel {
 
-	public static boolean run(){
+	public static boolean run_linninger(){
 		
 		//////////////////////////////////////////////////////////
 		///                                                    ///
