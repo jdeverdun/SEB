@@ -772,7 +772,7 @@ public class Capillary extends ElasticTube {
 		// equ(49) et equ(52)
 		float res = 0;
 		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
-			Artery par = ((Artery)parent);
+			Arteriole par = ((Arteriole)parent);
 			Variable pf = par.getFlowout();
 			float fact = par.getChildren().size();
 			res += (pf.getValue()/fact);

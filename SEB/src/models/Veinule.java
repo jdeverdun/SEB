@@ -474,7 +474,7 @@ public class Veinule extends ElasticTube {
 	private float getInitialMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
 		// eq (34)  (39)
 		if(v.getName().equals(getFlowin().getName())){
-			// derive selon flowin : -T2_alfa ;
+			// derive selon flowin : -T3_alfa ;
 			return -getAlpha().getValue();
 		}else{
 			if(v.getName().equals(getPressure().getName())){
@@ -499,7 +499,7 @@ public class Veinule extends ElasticTube {
 	private String getSymbolicInitialMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
 		// eq (34)  (39)
 		if(v.getName().equals(getFlowin().getName())){
-			// derive selon flowin : -T2_alfa ;
+			// derive selon flowin : -T3_alfa ;
 			return "-"+getAlpha().getValue();
 		}else{
 			if(v.getName().equals(getPressure().getName())){

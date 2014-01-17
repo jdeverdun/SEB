@@ -174,7 +174,7 @@ public class StandardModel {
 		try {
 			ArrayList<String[]> equations = new ArrayList<String[]>();
 			for(Tube tube : tubes){
-				equations.addAll(tube.getSymbolicEquations(variables));
+				equations.addAll(tube.getSymbolicInitialEquations(variables));
 			}
 			for(String[] bloceq : equations){
 				
@@ -198,7 +198,7 @@ public class StandardModel {
 		try {
 			ArrayList<float[]> equations = new ArrayList<float[]>();
 			for(Tube tube : tubes){
-				equations.addAll(tube.getEquations(variables));
+				equations.addAll(tube.getInitialEquations(variables));
 			}
 			
 			for(float[] bloceq : equations){
