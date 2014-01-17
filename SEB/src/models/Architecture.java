@@ -83,10 +83,10 @@ public class Architecture {
 		ArrayList<Matrix> mats = new ArrayList<Matrix>(2);
 		try {
 			ArrayList<float[]> equations = new ArrayList<float[]>();
-			ArrayList<String[]> ss = new ArrayList<String[]>();
+			//ArrayList<String[]> ss = new ArrayList<String[]>();
 			for(Tube tube : tubes){
-				equations.addAll(tube.getEquations(variables));
-				ss.addAll(tube.getSymbolicEquations(variables));
+				equations.addAll(tube.getInitialEquations(variables));
+				//ss.addAll(tube.getSymbolicEquations(variables));
 			}
 			// on convertie en objet matrix
 			Matrix fx = new Matrix(equations.size(),1);
@@ -100,6 +100,14 @@ public class Architecture {
 	    				x.set(j, 0, variables.get(j).getValue());
 	    		}
 	    	}
+	    	/*System.out.println("\n\n\n");
+	    	for(int i = 0; i<jacobian.getRowDimension();i++){
+				
+				for(int j = 0; j<jacobian.getColumnDimension();j++){
+					System.out.print(jacobian.get(i, j)+"\t");
+				}
+				System.out.print("\n");
+			}*/
 			mats.add(fx);
 			mats.add(jacobian);
 			mats.add(x);

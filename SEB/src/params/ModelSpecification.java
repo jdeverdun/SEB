@@ -9,6 +9,7 @@ import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 
 import display.SEBWindow;
 import models.Architecture;
+import models.Variable;
 
 
 /**
@@ -19,9 +20,12 @@ import models.Architecture;
 public class ModelSpecification {
 
 	public static float Pstar = (0.0f + 0.0f) * 1333.2240f;
-	public static float k1 = (float) 8.0e-7;
-	public static float TPout_alfa = 0.0809088f * 1333.2240f;
+	public static Variable k1 = new Variable("k1",(float) 8.0e-7,null);
+	public static Variable TPout_alfa = new Variable("TPout_alfa",0.0809088f * 1333.2240f,null);
 	public static Architecture architecture;
+	public static String P_INIT_NAME = "P_INIT";
+	public static String P_OUT_NAME = "P_OUT";
+	public static String OUT_D_NAME = "OUT_D";
 	public static float[] P_INIT = null;
 	public static float[] P_OUT = null;
 	public static float[] OUT_D = null;

@@ -7,16 +7,17 @@ import models.Tube;
 import models.Variable;
 
 import Jama.Matrix;
+import Jama.SingularValueDecomposition;
 
 public class EquationSolver {
 	public static final double EPSILON = 1e-4;
+
 
 	// Newton's method to find x* such that f(x*) = 0, starting at x
 	public static Matrix root(Architecture archi, ArrayList<Variable> variables) {
 		Matrix x = null;
 		int c=0;
 		while (true) {
-			System.out.println(c++);
 			ArrayList<Matrix> mats = archi.eval(variables);
 			Matrix f = mats.get(0);
 			Matrix J = mats.get(1);//f.jacobian(x);
@@ -24,9 +25,10 @@ public class EquationSolver {
 			Matrix delta = J.inverse().times(f);
 			x = x.minus(delta);
 			updateVariablesFromMatrix(variables,x);
-			if (delta.norm1() < EPSILON) break;
+			double dnorm1 = delta.norm1();
+			if (dnorm1 < EPSILON) break;
+			System.out.println(dnorm1+"----"+c++);
 		}
-
 		return x;
 	}
 

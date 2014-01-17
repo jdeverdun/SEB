@@ -294,17 +294,17 @@ public class SpinalCord extends ElasticTube {
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(15)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr){
 		// equ(30)
-		return "-damp * ("+ar.getName()+" - "+getArea().getName()+")/dt + ("+pr.getName()+"- Pstar)-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
+		return "-damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt + ("+pr.getName()+"- Pstar)-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
 	}
 
 	private String getSymbolicMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
 		// equ(45)
-		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+" / "+getArea().getName()+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
+		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
 	}
 
 	// ------- Derive -----------
@@ -452,13 +452,13 @@ public class SpinalCord extends ElasticTube {
 	 */
 	private float getConnectivityEquation(Variable sasFlowout, Variable fi, Variable sasPressure, Variable vsinuspr){
 		// equ(58)
-		float res = sasFlowout.getValue() - (fi.getValue() + ModelSpecification.k1 * (sasPressure.getValue() - vsinuspr.getValue()));
+		float res = sasFlowout.getValue() - (fi.getValue() + ModelSpecification.k1.getValue() * (sasPressure.getValue() - vsinuspr.getValue()));
 		return res;
 	}
 
 	private String getSymbolicConnectivityEquation(Variable sasFlowout, Variable fi, Variable sasPressure, Variable vsinuspr){
 		// equ(58)
-		return ""+sasFlowout.getName()+" - ("+fi.getName()+" + k1 * ("+sasPressure.getName()+" - "+vsinuspr.getName()+"))";
+		return ""+sasFlowout.getName()+" - ("+fi.getName()+" + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+vsinuspr.getName()+"))";
 	}
 
 	private float getConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
@@ -473,12 +473,12 @@ public class SpinalCord extends ElasticTube {
 			}else{
 				if(v.getName().equals(((SAS)getParents().get(0)).getPressure())){
 					// derive selon la sas sas pression : -k1;
-					return -ModelSpecification.k1;
+					return -ModelSpecification.k1.getValue();
 				}else{
 					ArrayList<Variable> psin = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, PRESSURE_LABEL, variables);
 					if(v.getName().equals(psin.get(0).getName())){
 						// derive selon la pression vsinus : k1;
-						return ModelSpecification.k1;
+						return ModelSpecification.k1.getValue();
 					}else{
 						return 0.0f;
 					}
@@ -499,12 +499,12 @@ public class SpinalCord extends ElasticTube {
 			}else{
 				if(v.getName().equals(((SAS)getParents().get(0)).getPressure())){
 					// derive selon la sas sas pression : -k1;
-					return "-k1";
+					return "-"+ModelSpecification.k1.getName();
 				}else{
 					ArrayList<Variable> psin = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, PRESSURE_LABEL, variables);
 					if(v.getName().equals(psin.get(0).getName())){
 						// derive selon la pression vsinus : k1;
-						return "k1";
+						return ModelSpecification.k1.getName();
 					}else{
 						return ""+0.0f;
 					}
@@ -682,13 +682,13 @@ public class SpinalCord extends ElasticTube {
 	 */
 	private float getInitialConnectivityEquation(Variable sasFlowout, Variable fi, Variable sasPressure, Variable vsinuspr){
 		// equ(58)
-		float res = sasFlowout.getValue() - (fi.getValue() + ModelSpecification.k1 * (sasPressure.getValue() - vsinuspr.getValue()));
+		float res = sasFlowout.getValue() - (fi.getValue() + ModelSpecification.k1.getValue() * (sasPressure.getValue() - vsinuspr.getValue()));
 		return res;
 	}
 
 	private String getSymbolicInitialConnectivityEquation(Variable sasFlowout, Variable fi, Variable sasPressure, Variable vsinuspr){
 		// equ(58)
-		return ""+sasFlowout.getName()+" - ("+fi.getName()+" + k1 * ("+sasPressure.getName()+" - "+vsinuspr.getName()+"))";
+		return ""+sasFlowout.getName()+" - ("+fi.getName()+" + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+vsinuspr.getName()+"))";
 	}
 
 	private float getInitialConnectivityDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
@@ -703,12 +703,12 @@ public class SpinalCord extends ElasticTube {
 			}else{
 				if(v.getName().equals(((SAS)getParents().get(0)).getPressure())){
 					// derive selon la sas sas pression : -k1;
-					return -ModelSpecification.k1;
+					return -ModelSpecification.k1.getValue();
 				}else{
 					ArrayList<Variable> psin = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, PRESSURE_LABEL, variables);
 					if(v.getName().equals(psin.get(0).getName())){
 						// derive selon la pression vsinus : k1;
-						return ModelSpecification.k1;
+						return ModelSpecification.k1.getValue();
 					}else{
 						return 0.0f;
 					}
@@ -729,12 +729,12 @@ public class SpinalCord extends ElasticTube {
 			}else{
 				if(v.getName().equals(((SAS)getParents().get(0)).getPressure())){
 					// derive selon la sas sas pression : -k1;
-					return "-k1";
+					return "-"+ModelSpecification.k1.getName();
 				}else{
 					ArrayList<Variable> psin = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, PRESSURE_LABEL, variables);
 					if(v.getName().equals(psin.get(0).getName())){
 						// derive selon la pression vsinus : k1;
-						return "k1";
+						return ModelSpecification.k1.getName();
 					}else{
 						return ""+0.0f;
 					}

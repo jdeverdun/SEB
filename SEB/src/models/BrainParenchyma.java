@@ -291,6 +291,19 @@ public class BrainParenchyma extends Tube {
 		variables.add(getAreaFluid());
 		return variables;
 	}
+	public ArrayList<Variable> getFixedVariables(){
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		variables.add(getAlpha1());
+		variables.add(getAlpha2());
+		variables.add(getInitialAreaFluid());
+		variables.add(getInitialAreaSolid());
+		return variables;
+	}
+	
+	public ArrayList<Variable> getGlobalVariables(){
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		return variables;
+	}
 	
 	// ------------------- EQUATIONS -------------
 	@Override

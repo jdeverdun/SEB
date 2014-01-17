@@ -324,17 +324,17 @@ public class VenousSinus extends ElasticTube {
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(14)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain_left, Variable pbrain_right){
 		// equ(29)
-		return "-damp * ("+ar.getName()+" - "+getArea().getName()+")/dt + ("+pr.getName()+"- "+0.5f+" * ("+pbrain_left.getName()+" + "+pbrain_right.getName()+"))-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
+		return "-damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt + ("+pr.getName()+"- "+0.5f+" * ("+pbrain_left.getName()+" + "+pbrain_right.getName()+"))-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
 	}
 
 	private String getSymbolicMomentumEquation(Variable parentFlowout, Variable parentArea, Variable parentFlowout_current, Variable parentArea_current, Variable parentPressure, Variable pr){
 		// equ(46) et equ(47)
-		return "damp2 * (("+parentFlowout.getName()+"/"+parentArea.getName()+") - ("+parentFlowout_current.getName()+"/"+parentArea_current.getName()+"))/dt + ("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+parentFlowout.getName();
+		return "damp2 * (("+parentFlowout.getName()+"/"+parentArea.getName()+") - ("+parentFlowout_current.getName()+LAST_ROUND_SUFFIX+"/"+parentArea_current.getName()+LAST_ROUND_SUFFIX+"))/dt + ("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+parentFlowout.getName();
 	}
 
 	// ------- Derive -----------
@@ -510,7 +510,7 @@ public class VenousSinus extends ElasticTube {
 		for(Variable pf : parentFlowout){
 			res += pf.getValue();
 		}
-		res = res + ModelSpecification.k1 * (sasPressure.getValue() - pr.getValue());
+		res = res + ModelSpecification.k1.getValue() * (sasPressure.getValue() - pr.getValue());
 		return (res - fi.getValue());
 	}
 
@@ -522,7 +522,7 @@ public class VenousSinus extends ElasticTube {
 				res += "+";
 			res += pf.getName();
 		}
-		res += " + k1 * ("+sasPressure.getName()+" - "+pr.getName()+"))";
+		res += " + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+pr.getName()+"))";
 		return res+" - ("+fi.getName()+")";
 	}
 
@@ -534,12 +534,12 @@ public class VenousSinus extends ElasticTube {
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : -k1;
-				return -ModelSpecification.k1;
+				return -ModelSpecification.k1.getValue();
 			}else{
 				ArrayList<Variable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 				if(v.getName().equals(psas.get(0).getName())){
 					// derive selon la pression : k1;
-					return ModelSpecification.k1;
+					return ModelSpecification.k1.getValue();
 				}else{
 					for(ElasticTube parent:getParents()){
 						Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
@@ -562,12 +562,12 @@ public class VenousSinus extends ElasticTube {
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : -k1;
-				return "-k1";
+				return "-"+ModelSpecification.k1.getName();
 			}else{
 				ArrayList<Variable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 				if(v.getName().equals(psas.get(0).getName())){
 					// derive selon la pression : k1;
-					return "k1";
+					return ModelSpecification.k1.getName();
 				}else{
 					for(ElasticTube parent:getParents()){
 						Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
@@ -585,19 +585,19 @@ public class VenousSinus extends ElasticTube {
 	//====== additional momentum ====
 	private float getAddMomentumEquation(Variable pr, Variable fo){
 		// equ(72)
-		return (pr.getValue() - ModelSpecification.P_OUT[ModelSpecification.currentIter]) - ModelSpecification.TPout_alfa * fo.getValue();
+		return (pr.getValue() - ModelSpecification.P_OUT[ModelSpecification.currentIter]) - ModelSpecification.TPout_alfa.getValue() * fo.getValue();
 	}
 
 	private String getSymbolicAddMomentumEquation(Variable pr, Variable fo){
 		// equ(72)
-		return "("+pr.getName()+" - P_OUT[currentIter]) - TPout_alfa * "+fo.getName();
+		return "("+pr.getName()+" - "+ModelSpecification.P_OUT_NAME+"(currentIter)) - "+ModelSpecification.TPout_alfa.getName()+" * "+fo.getName();
 	}
 
 	private float getAddMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
 		// equ(72)
 		if(v.getName().equals(getFlowout().getName())){
 			// derive selon flowout : - TPout_alfa;
-			return -ModelSpecification.TPout_alfa;
+			return -ModelSpecification.TPout_alfa.getValue();
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : 1;
@@ -612,7 +612,7 @@ public class VenousSinus extends ElasticTube {
 		// equ(72)
 		if(v.getName().equals(getFlowout().getName())){
 			// derive selon flowout : - TPout_alfa;
-			return "-TPout_alfa";
+			return "-"+ModelSpecification.TPout_alfa.getName();
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : 1;
@@ -794,7 +794,7 @@ public class VenousSinus extends ElasticTube {
 		for(Variable pf : parentFlowout){
 			res += pf.getValue();
 		}
-		res = res + ModelSpecification.k1 * (sasPressure.getValue() - pr.getValue());
+		res = res + ModelSpecification.k1.getValue() * (sasPressure.getValue() - pr.getValue());
 		return (res - fi.getValue());
 	}
 
@@ -806,7 +806,7 @@ public class VenousSinus extends ElasticTube {
 				res += "+";
 			res += pf.getName();
 		}
-		res += " + k1 * ("+sasPressure.getName()+" - "+pr.getName()+"))";
+		res += " + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+pr.getName()+"))";
 		return res+" - ("+fi.getName()+")";
 	}
 
@@ -818,12 +818,12 @@ public class VenousSinus extends ElasticTube {
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : -k1;
-				return -ModelSpecification.k1;
+				return -ModelSpecification.k1.getValue();
 			}else{
 				ArrayList<Variable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 				if(v.getName().equals(psas.get(0).getName())){
 					// derive selon la pression : k1;
-					return ModelSpecification.k1;
+					return ModelSpecification.k1.getValue();
 				}else{
 					for(ElasticTube parent:getParents()){
 						Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
@@ -846,12 +846,12 @@ public class VenousSinus extends ElasticTube {
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : -k1;
-				return "-k1";
+				return "-"+ModelSpecification.k1.getName();
 			}else{
 				ArrayList<Variable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 				if(v.getName().equals(psas.get(0).getName())){
 					// derive selon la pression : k1;
-					return "k1";
+					return ModelSpecification.k1.getName();
 				}else{
 					for(ElasticTube parent:getParents()){
 						Variable pr = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
@@ -868,19 +868,19 @@ public class VenousSinus extends ElasticTube {
 	//====== additional momentum ====
 	private float getInitialAddMomentumEquation(Variable pr, Variable fo){
 		// equ(72)
-		return (pr.getValue() - ModelSpecification.P_OUT[ModelSpecification.currentIter]) - ModelSpecification.TPout_alfa * fo.getValue();
+		return (pr.getValue() - ModelSpecification.P_OUT[ModelSpecification.currentIter]) - ModelSpecification.TPout_alfa.getValue() * fo.getValue();
 	}
 
 	private String getSymbolicInitialAddMomentumEquation(Variable pr, Variable fo){
 		// equ(72)
-		return "("+pr.getName()+" - P_OUT[currentIter]) - TPout_alfa * "+fo.getName();
+		return "("+pr.getName()+" - "+ModelSpecification.P_OUT_NAME+"(currentIter)) - TPout_alfa * "+fo.getName();
 	}
 
 	private float getInitialAddMomentumDerivative(Variable v, ArrayList<Variable> variables) throws Exception{
 		// equ(72)
 		if(v.getName().equals(getFlowout().getName())){
 			// derive selon flowout : - TPout_alfa;
-			return -ModelSpecification.TPout_alfa;
+			return -ModelSpecification.TPout_alfa.getValue();
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : 1;
@@ -895,7 +895,7 @@ public class VenousSinus extends ElasticTube {
 		// equ(72)
 		if(v.getName().equals(getFlowout().getName())){
 			// derive selon flowout : - TPout_alfa;
-			return "-TPout_alfa";
+			return "-"+ModelSpecification.TPout_alfa.getName();
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon la pression : 1;

@@ -1,6 +1,8 @@
 package BaseModel;
 
 import java.io.ObjectInputStream.GetField;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -9,6 +11,8 @@ import Jama.Matrix;
 import params.ModelSpecification;
 import params.SystemParams;
 import solver.EquationSolver;
+import matlab.MatlabBuilder;
+import matlab.MatlabModel;
 import models.Architecture;
 import models.Arteriole;
 import models.Artery;
@@ -157,11 +161,35 @@ public class StandardModel {
 		//////////////////////////////////////////////////////////
 		
 		ArrayList<Variable> variables = new ArrayList<Variable>();
+		ArrayList<Variable> fixedvariables = new ArrayList<Variable>();
 		for(Tube tube : tubes){
 			variables.addAll(tube.getVariables());
+			fixedvariables.addAll(tube.getFixedVariables());
 		}
 		for(int i = 0; i<variables.size();i++)
 			System.out.println(variables.get(i));
+		
+		System.out.println("------------- FIXED ----------");
+		
+		for(int i = 0; i<fixedvariables.size();i++)
+			System.out.println(fixedvariables.get(i));
+		
+		//////////////////////////////////////////////////////////
+		///                                                    ///
+		///             Recuperation des variables             ///
+		///					    Globales					   ///
+		//////////////////////////////////////////////////////////
+		
+		ArrayList<Variable> globalvariables = new ArrayList<Variable>();
+		for(Tube tube : tubes){
+			globalvariables.addAll(tube.getGlobalVariables());
+		}
+		globalvariables.add(ModelSpecification.k1);
+		globalvariables.add(ModelSpecification.TPout_alfa);
+		globalvariables.add(new Variable("P_INIT", -1.0f, null));
+		globalvariables.add(new Variable("P_OUT", -1.0f, null));
+		globalvariables.add(new Variable("OUT_D", -1.0f, null));
+		globalvariables.add(new Variable("currentIter", -1.0f, null));
 		
 		//////////////////////////////////////////////////////////
 		///                                                    ///
@@ -174,7 +202,7 @@ public class StandardModel {
 		try {
 			ArrayList<String[]> equations = new ArrayList<String[]>();
 			for(Tube tube : tubes){
-				equations.addAll(tube.getSymbolicInitialEquations(variables));
+				equations.addAll(tube.getSymbolicEquations(variables));
 			}
 			for(String[] bloceq : equations){
 				
@@ -198,7 +226,7 @@ public class StandardModel {
 		try {
 			ArrayList<float[]> equations = new ArrayList<float[]>();
 			for(Tube tube : tubes){
-				equations.addAll(tube.getInitialEquations(variables));
+				equations.addAll(tube.getEquations(variables));
 			}
 			
 			for(float[] bloceq : equations){
@@ -211,6 +239,7 @@ public class StandardModel {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		
 		
 		
@@ -221,8 +250,9 @@ public class StandardModel {
 		//////////////////////////////////////////////////////////
 		
 		System.out.println("============ Resolution ===========");
-
-		Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
+		Path modelDir = Paths.get(".");
+		//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
+		MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables);
 		return true;
 	}
 }

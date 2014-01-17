@@ -213,6 +213,28 @@ public abstract class ElasticTube extends Tube {
 		variables.add(getArea());
 		return variables;
 	}
+	public ArrayList<Variable> getFixedVariables(){
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		variables.add(getInitialArea());
+		variables.add(getLength());
+		variables.add(getAlpha());
+		variables.add(getElastance());
+		return variables;
+	}
+	
+	public ArrayList<Variable> getGlobalVariables(){
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		Variable temp = getArea();
+		temp.setName(temp.getName()+LAST_ROUND_SUFFIX);
+		variables.add(temp);
+		temp = getFlowin();
+		temp.setName(temp.getName()+LAST_ROUND_SUFFIX);
+		variables.add(temp);
+		temp = getFlowout();
+		temp.setName(temp.getName()+LAST_ROUND_SUFFIX);
+		variables.add(temp);
+		return variables;
+	}
 	
 	public ArrayList<Variable> getRecursiveVariables(){
 		ArrayList<Variable> variables = new ArrayList<Variable>();

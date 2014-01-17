@@ -8,5 +8,8 @@ import java.util.logging.Logger;
  *
  */
 public class SystemParams {
+	public static final String PROGRAM_NAME = "SEB";
+	public static final String VERSION = "0.1.2";
 	public static Logger modelLogger = null;
+	
 }

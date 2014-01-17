@@ -7,6 +7,7 @@ public abstract class Tube {
 	protected Variable length;
 	protected static String TUBE_LABEL = "T";
 	protected static int ID = 0;
+	public static final String LAST_ROUND_SUFFIX = "_PREV"; // suffixe a rajouter dans symbolic quand variable issue du tour precedent
 	protected int myID = -1;
 	
 	public Tube(){
@@ -26,6 +27,8 @@ public abstract class Tube {
 	protected abstract Variable getLength();
 	protected abstract void setLength(float length);
 	public abstract ArrayList<Variable> getVariables();	
+	public abstract ArrayList<Variable> getFixedVariables();	// variables type lenght ou A0
+	public abstract ArrayList<Variable> getGlobalVariables();	// variables type lenght ou A0
 	protected String getName() {
 		return name;
 	}

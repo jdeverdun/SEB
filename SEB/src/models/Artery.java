@@ -208,17 +208,17 @@ public class Artery extends ElasticTube {
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(1) et equ(6)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 	
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
 		// equ(16) et equ(21)
-		return " -damp * ("+ar.getName()+" - "+getArea().getName()+" )/dt + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
+		return " -damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/dt + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
 	}
 	
 	private String getSymbolicMomentumEquation(Variable fi, Variable ar, Variable pr){
 		// equ(31) et equ(36)
-		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+" / "+getArea().getName()+" ))/ dt + (P_INIT[currentIter] - "+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
+		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+ModelSpecification.P_INIT_NAME+"(currentIter) - "+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
 	}
 	
 	// ------- Derive -----------
@@ -461,7 +461,7 @@ public class Artery extends ElasticTube {
 	}
 	private String getSymbolicInitialMomentumEquation(Variable fi, Variable pr){
 		// eq (31)  (36)
-		return "(P_INIT[currentIter] - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
+		return "("+ModelSpecification.P_INIT_NAME+"(currentIter) - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
 	}
 	private String getSymbolicInitialMomentumDerivative(Variable v, ArrayList<Variable> variables){
 		// eq (31)  (36)
