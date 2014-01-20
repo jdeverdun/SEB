@@ -7,6 +7,7 @@ package models;
  *
  */
 public class Variable {
+	public static float DEFAULT_VALUE = 123456789.0f;
 	private String name;
 	private float value;
 	private Tube sourceObj;
@@ -15,6 +16,12 @@ public class Variable {
 		setName(name);
 		setValue(value);
 		setSourceObj(obj);
+	}
+
+	public Variable(String name) {
+		setName(name);
+		setValue(DEFAULT_VALUE);
+		setSourceObj(null);
 	}
 
 	public String getName() {
@@ -56,6 +63,10 @@ public class Variable {
 			return name.equals(((Variable)v).getName());
 		}
 		return false;
+	}
+
+	public boolean hasValue() {
+		return getValue()!=DEFAULT_VALUE;
 	}
 
 }

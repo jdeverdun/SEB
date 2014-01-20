@@ -261,7 +261,7 @@ public class FirstArtery extends ElasticTube {
 
 	private float getMomentumEquation(Variable pr, Variable fi){
 		// equ(75)
-		return (ModelSpecification.P_INIT[ModelSpecification.currentIter] - pr.getValue()) - getAlpha().getValue() * fi.getValue();
+		return (ModelSpecification.P_INIT[(int) ModelSpecification.currentIter.getValue()] - pr.getValue()) - getAlpha().getValue() * fi.getValue();
 	}
 
 	// symbolic equation (en chaine de caractere)
@@ -277,7 +277,7 @@ public class FirstArtery extends ElasticTube {
 
 	private String getSymbolicMomentumEquation(Variable pr, Variable fi){
 		// equ(75)
-		return "("+ModelSpecification.P_INIT_NAME+"(currentIter)- "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
+		return "("+ModelSpecification.P_INIT_NAME+"("+ModelSpecification.currentIter.getName()+")- "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
 	}
 
 	// ------- Derive -----------
@@ -469,7 +469,7 @@ public class FirstArtery extends ElasticTube {
 
 	private float getInitialMomentumEquation(Variable pr, Variable fi){
 		// equ(75)
-		return (ModelSpecification.P_INIT[ModelSpecification.currentIter] - pr.getValue()) - getAlpha().getValue() * fi.getValue();
+		return (ModelSpecification.P_INIT[(int) ModelSpecification.currentIter.getValue()] - pr.getValue()) - getAlpha().getValue() * fi.getValue();
 	}
 
 	// symbolic equation (en chaine de caractere)
@@ -485,7 +485,7 @@ public class FirstArtery extends ElasticTube {
 
 	private String getSymbolicInitialMomentumEquation(Variable pr, Variable fi){
 		// equ(75)
-		return "("+ModelSpecification.P_INIT_NAME+"(currentIter)- "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
+		return "("+ModelSpecification.P_INIT_NAME+"("+ModelSpecification.currentIter.getName()+")- "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
 	}
 
 	// ------- Derive -----------

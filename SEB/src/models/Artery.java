@@ -192,33 +192,33 @@ public class Artery extends ElasticTube {
 	
 	private float getContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(1) et equ(6)
-		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (- fi.getValue() + fo.getValue())/getLength().getValue();
+		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (- fi.getValue() + fo.getValue())/getLength().getValue();
 	}
 	
 	private float getDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
 		// equ(16) et equ(21)
-		return -ModelSpecification.damp * (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (pr.getValue()-pbrain.getValue())-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
+		return -ModelSpecification.damp.getValue() * (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (pr.getValue()-pbrain.getValue())-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
 	}
 	
 	private float getMomentumEquation(Variable fi, Variable ar, Variable pr){
 		// equ(31) et equ(36)
-		return ModelSpecification.damp2 * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt + (ModelSpecification.P_INIT[ModelSpecification.currentIter] - pr.getValue())-getAlpha().getValue()*fi.getValue();
+		return ModelSpecification.damp2.getValue() * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt.getValue() + (ModelSpecification.P_INIT[(int) ModelSpecification.currentIter.getValue()] - pr.getValue())-getAlpha().getValue()*fi.getValue();
 	}
 	
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(1) et equ(6)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 	
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
 		// equ(16) et equ(21)
-		return " -damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/dt + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
+		return " -"+ModelSpecification.damp.getName()+" * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/"+ModelSpecification.dt.getName()+" + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
 	}
 	
 	private String getSymbolicMomentumEquation(Variable fi, Variable ar, Variable pr){
 		// equ(31) et equ(36)
-		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+ModelSpecification.P_INIT_NAME+"(currentIter) - "+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
+		return " "+ModelSpecification.damp2.getName()+" * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+ModelSpecification.P_INIT_NAME+"("+ModelSpecification.currentIter.getName()+") - "+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
 	}
 	
 	// ------- Derive -----------
@@ -227,7 +227,7 @@ public class Artery extends ElasticTube {
 		
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : 1/dt 
-			return 1.0f/ModelSpecification.dt;
+			return 1.0f/ModelSpecification.dt.getValue();
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T0_l0;
@@ -248,7 +248,7 @@ public class Artery extends ElasticTube {
 		
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : -damp/dt - T0_E * (1/T0_A0) 
-			return -ModelSpecification.damp/ModelSpecification.dt-getElastance().getValue()*(1.0f/getInitialArea().getValue());
+			return -ModelSpecification.damp.getValue()/ModelSpecification.dt.getValue()-getElastance().getValue()*(1.0f/getInitialArea().getValue());
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -270,12 +270,12 @@ public class Artery extends ElasticTube {
 		if(v.getName().equals(getFlowin().getName())){
 			// derive selon flowin : damp2 * ((1/R_T0_A))/dt -T0_alfa ;
 			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return ModelSpecification.damp2*(1/ar.getValue())/ModelSpecification.dt - getAlpha().getValue();
+			return ModelSpecification.damp2.getValue()*(1/ar.getValue())/ModelSpecification.dt.getValue() - getAlpha().getValue();
 		}else{
 			if(v.getName().equals(getArea().getName())){
 				// derive selon area : damp2 * (-R_T0_fi/R_T0_A²)/dt
 				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return (float) (ModelSpecification.damp2 * (-fi.getValue()/Math.pow(v.getValue(),2))/ModelSpecification.dt);
+				return (float) (ModelSpecification.damp2.getValue() * (-fi.getValue()/Math.pow(v.getValue(),2))/ModelSpecification.dt.getValue());
 			}else{
 				if(v.getName().equals(getPressure().getName())){
 					// derive selon pression : - 1.0f
@@ -293,7 +293,7 @@ public class Artery extends ElasticTube {
 		
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : 1/dt 
-			return "" + 1.0f+"/dt";
+			return "" + 1.0f+"/"+ModelSpecification.dt.getName();
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T0_l0;
@@ -314,7 +314,7 @@ public class Artery extends ElasticTube {
 		
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : -damp/dt - T0_E * (1/T0_A0) 
-			return "-damp/dt-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
+			return "-"+ModelSpecification.damp.getName()+"/"+ModelSpecification.dt.getName()+"-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -336,12 +336,12 @@ public class Artery extends ElasticTube {
 		if(v.getName().equals(getFlowin().getName())){
 			// derive selon flowin : damp2 * ((1/R_T0_A))/dt -T0_alfa ;
 			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return "damp2*(1/"+ar.getName()+")/dt - "+getAlpha().getName();
+			return ""+ModelSpecification.damp2.getName()+"*(1/"+ar.getName()+")/"+ModelSpecification.dt.getName()+" - "+getAlpha().getName();
 		}else{
 			if(v.getName().equals(getArea().getName())){
 				// derive selon area : damp2 * (-R_T0_fi/R_T0_A²)/dt
 				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return "(damp2 * (-"+fi.getName()+"/"+v.getName()+"^2)/dt)";
+				return "("+ModelSpecification.damp2.getName()+" * (-"+fi.getName()+"/"+v.getName()+"^2)/"+ModelSpecification.dt.getName()+")";
 			}else{
 				if(v.getName().equals(getPressure().getName())){
 					// derive selon pression : - 1.0f
@@ -443,7 +443,7 @@ public class Artery extends ElasticTube {
 	// momentum
 	private float getInitialMomentumEquation(Variable fi, Variable pr){
 		// eq (31)  (36)
-		return (ModelSpecification.P_INIT[ModelSpecification.currentIter] - pr.getValue())-getAlpha().getValue()*fi.getValue();
+		return (ModelSpecification.P_INIT[(int) ModelSpecification.currentIter.getValue()] - pr.getValue())-getAlpha().getValue()*fi.getValue();
 	}
 	private float getInitialMomentumDerivative(Variable v, ArrayList<Variable> variables){
 		// eq (31)  (36)
@@ -461,7 +461,7 @@ public class Artery extends ElasticTube {
 	}
 	private String getSymbolicInitialMomentumEquation(Variable fi, Variable pr){
 		// eq (31)  (36)
-		return "("+ModelSpecification.P_INIT_NAME+"(currentIter) - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
+		return "("+ModelSpecification.P_INIT_NAME+"("+ModelSpecification.currentIter.getName()+") - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
 	}
 	private String getSymbolicInitialMomentumDerivative(Variable v, ArrayList<Variable> variables){
 		// eq (31)  (36)

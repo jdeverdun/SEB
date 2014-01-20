@@ -258,33 +258,33 @@ public class SAS extends ElasticTube {
 
 	private float getContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(13)
-		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (- fi.getValue() + fo.getValue())/getLength().getValue();
+		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (- fi.getValue() + fo.getValue())/getLength().getValue();
 	}
 
 	private float getDistensibilityEquation(Variable ar, Variable pr, Variable pbrain_left, Variable pbrain_right){
 		// equ(28)
-		return -ModelSpecification.damp * (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (pr.getValue()- 0.5f * (pbrain_left.getValue() + pbrain_right.getValue()))-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
+		return -ModelSpecification.damp.getValue() * (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (pr.getValue()- 0.5f * (pbrain_left.getValue() + pbrain_right.getValue()))-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
 	}
 
 	private float getMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
 		// equ(44)
-		return ModelSpecification.damp2 * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
+		return ModelSpecification.damp2.getValue() * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt.getValue() + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
 	}
 
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(13)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain_left, Variable pbrain_right){
 		// equ(28)
-		return "-damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt + ("+pr.getName()+"- "+0.5f+" * ("+pbrain_left.getName()+" + "+pbrain_right.getName()+"))-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
+		return "-"+ModelSpecification.damp.getName()+" * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+" + ("+pr.getName()+"- "+0.5f+" * ("+pbrain_left.getName()+" + "+pbrain_right.getName()+"))-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
 	}
 
 	private String getSymbolicMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
 		// equ(44)
-		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
+		return " "+ModelSpecification.damp2.getName()+" * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
 	}
 
 	// ------- Derive -----------
@@ -292,8 +292,8 @@ public class SAS extends ElasticTube {
 		// equ(13)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return 1.0f/ModelSpecification.dt;
+			// derive selon area : 1/"+ModelSpecification.dt.getName()+" 
+			return 1.0f/ModelSpecification.dt.getValue();
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T7_l0;
@@ -313,8 +313,8 @@ public class SAS extends ElasticTube {
 		// equ(28)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : - damp /dt  -T7_E * (1/T7_A0);
-			return -ModelSpecification.damp/ModelSpecification.dt-getElastance().getValue()*(1.0f/getInitialArea().getValue());
+			// derive selon area : - damp /"+ModelSpecification.dt.getName()+"  -T7_E * (1/T7_A0);
+			return -ModelSpecification.damp.getValue()/ModelSpecification.dt.getValue()-getElastance().getValue()*(1.0f/getInitialArea().getValue());
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -342,14 +342,14 @@ public class SAS extends ElasticTube {
 		// equ(44)
 
 		if(v.getName().equals(getFlowin().getName())){
-			// derive selon flowin : damp2 * ((1/T7_A))/dt -T7_alfa ;
+			// derive selon flowin : damp2 * ((1/T7_A))/"+ModelSpecification.dt.getName()+" -T7_alfa ;
 			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return ModelSpecification.damp2*(1/ar.getValue())/ModelSpecification.dt - getAlpha().getValue();
+			return ModelSpecification.damp2.getValue()*(1/ar.getValue())/ModelSpecification.dt.getValue() - getAlpha().getValue();
 		}else{
 			if(v.getName().equals(getArea().getName())){
-				// derive selon area : damp2 * (-T7_fi/T7_A²)/dt
+				// derive selon area : damp2 * (-T7_fi/T7_A²)/"+ModelSpecification.dt.getName()+"
 				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return (float) (ModelSpecification.damp2 * (-fi.getValue()/Math.pow(v.getValue(),2))/ModelSpecification.dt);
+				return (float) (ModelSpecification.damp2.getValue() * (-fi.getValue()/Math.pow(v.getValue(),2))/ModelSpecification.dt.getValue());
 			}else{
 				if(v.getName().equals(getPressure().getName())){
 					// derive selon pression : - 1.0f
@@ -373,8 +373,8 @@ public class SAS extends ElasticTube {
 		// equ(13)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return "" + 1.0f+"/dt";
+			// derive selon area : 1/"+ModelSpecification.dt.getName()+" 
+			return "" + 1.0f+"/"+ModelSpecification.dt.getName()+"";
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T7_l0;
@@ -394,8 +394,8 @@ public class SAS extends ElasticTube {
 		// equ(28)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : - damp /dt  -T7_E * (1/T7_A0);
-			return "-damp/dt-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
+			// derive selon area : - damp /"+ModelSpecification.dt.getName()+"  -T7_E * (1/T7_A0);
+			return "-"+ModelSpecification.damp.getName()+"/"+ModelSpecification.dt.getName()+"-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -423,14 +423,14 @@ public class SAS extends ElasticTube {
 		// equ(44)
 
 		if(v.getName().equals(getFlowin().getName())){
-			// derive selon flowin : damp2 * ((1/T7_A))/dt -T7_alfa ;
+			// derive selon flowin : damp2 * ((1/T7_A))/"+ModelSpecification.dt.getName()+" -T7_alfa ;
 			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return "damp2*(1/"+ar.getName()+")/dt - "+getAlpha().getName();
+			return ""+ModelSpecification.damp2.getName()+"*(1/"+ar.getName()+")/"+ModelSpecification.dt.getName()+" - "+getAlpha().getName();
 		}else{
 			if(v.getName().equals(getArea().getName())){
-				// derive selon area : damp2 * (-T7_fi/T7_A²)/dt
+				// derive selon area : damp2 * (-T7_fi/T7_A²)/"+ModelSpecification.dt.getName()+"
 				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return "(damp2 * (-"+fi.getName()+"/"+v.getName()+"^2)/dt)";
+				return "("+ModelSpecification.damp2.getName()+" * (-"+fi.getName()+"/"+v.getName()+"^2)/"+ModelSpecification.dt.getName()+")";
 			}else{
 				if(v.getName().equals(getPressure().getName())){
 					// derive selon pression : - 1.0f

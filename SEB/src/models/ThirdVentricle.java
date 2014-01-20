@@ -286,33 +286,33 @@ public class ThirdVentricle extends ElasticTube {
 
 	private float getContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(11)
-		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (- fi.getValue() + fo.getValue())/getLength().getValue();
+		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (- fi.getValue() + fo.getValue())/getLength().getValue();
 	}
 
 	private float getDistensibilityEquation(Variable ar, Variable pr, Variable pbrain_left, Variable pbrain_right){
 		// equ(26)
-		return -ModelSpecification.damp * (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (pr.getValue()- 0.5f * (pbrain_left.getValue() + pbrain_right.getValue()))-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
+		return -ModelSpecification.damp.getValue() * (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (pr.getValue()- 0.5f * (pbrain_left.getValue() + pbrain_right.getValue()))-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
 	}
 
 	private float getMomentumEquation(Variable parentFlowout, Variable parentArea, Variable parentFlowout_current, Variable parentArea_current, Variable parentPressure, Variable pr){
 		// equ(41) et equ(42)
-		return ModelSpecification.damp2 * ((parentFlowout.getValue()/parentArea.getValue()) - (parentFlowout_current.getValue()/parentArea_current.getValue()))/ModelSpecification.dt + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*parentFlowout.getValue();
+		return ModelSpecification.damp2.getValue() * ((parentFlowout.getValue()/parentArea.getValue()) - (parentFlowout_current.getValue()/parentArea_current.getValue()))/ModelSpecification.dt.getValue() + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*parentFlowout.getValue();
 	}
 
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(11)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain_left, Variable pbrain_right){
 		// equ(26)
-		return "-damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt + ("+pr.getName()+"- "+0.5f+" * ("+pbrain_left.getName()+" + "+pbrain_right.getName()+"))-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
+		return "-"+ModelSpecification.damp.getName()+" * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+" + ("+pr.getName()+"- "+0.5f+" * ("+pbrain_left.getName()+" + "+pbrain_right.getName()+"))-"+getElastance().getName()+"*("+ar.getName()+"/"+getInitialArea().getName()+"-1)";
 	}
 
 	private String getSymbolicMomentumEquation(Variable parentFlowout, Variable parentArea, Variable parentFlowout_current, Variable parentArea_current, Variable parentPressure, Variable pr){
 		// equ(41) et equ(42)
-		return "damp2 * (("+parentFlowout.getName()+"/"+parentArea.getName()+") - ("+parentFlowout_current.getName()+LAST_ROUND_SUFFIX+"/"+parentArea_current.getName()+LAST_ROUND_SUFFIX+"))/dt + ("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+parentFlowout.getName();
+		return ""+ModelSpecification.damp2.getName()+" * (("+parentFlowout.getName()+"/"+parentArea.getName()+") - ("+parentFlowout_current.getName()+LAST_ROUND_SUFFIX+"/"+parentArea_current.getName()+LAST_ROUND_SUFFIX+"))/"+ModelSpecification.dt.getName()+" + ("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+parentFlowout.getName();
 	}
 
 	// ------- Derive -----------
@@ -320,8 +320,8 @@ public class ThirdVentricle extends ElasticTube {
 		// equ(11)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return 1.0f/ModelSpecification.dt;
+			// derive selon area : 1/"+ModelSpecification.dt.getName()+" 
+			return 1.0f/ModelSpecification.dt.getValue();
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T5_l0;
@@ -341,8 +341,8 @@ public class ThirdVentricle extends ElasticTube {
 		// equ(26)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : - damp /dt  -T5_E * (1/T5_A0);
-			return -ModelSpecification.damp/ModelSpecification.dt-getElastance().getValue()*(1.0f/getInitialArea().getValue());
+			// derive selon area : - damp /"+ModelSpecification.dt.getName()+"  -T5_E * (1/T5_A0);
+			return -ModelSpecification.damp.getValue()/ModelSpecification.dt.getValue()-getElastance().getValue()*(1.0f/getInitialArea().getValue());
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -381,12 +381,12 @@ public class ThirdVentricle extends ElasticTube {
 					Variable parentArea = findVariableWithName(((Ventricle)parent).getArea().getName(),variables);
 					Variable parentFlowout = findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables);
 					if(v.getName().equals(parentFlowout.getName())){
-						// derive selon parent flow out : damp2 * ((1/R_T4_A))/dt   -R_T5_alfa;
-						return ModelSpecification.damp2 * (1/parentArea.getValue())/ModelSpecification.dt - getAlpha().getValue();		
+						// derive selon parent flow out : damp2 * ((1/R_T4_A))/"+ModelSpecification.dt.getName()+"   -R_T5_alfa;
+						return ModelSpecification.damp2.getValue() * (1/parentArea.getValue())/ModelSpecification.dt.getValue() - getAlpha().getValue();		
 					}else{
 						if(v.getName().equals(parentArea.getName())){
-							// derive selon parent area : damp2 * ((-R_T4_fo/R_T4_A²))/dt
-							return (float) (ModelSpecification.damp2 * (-parentFlowout.getValue()/Math.pow(parentArea.getValue(), 2))/ModelSpecification.dt);
+							// derive selon parent area : damp2 * ((-R_T4_fo/R_T4_A²))/"+ModelSpecification.dt.getName()+"
+							return (float) (ModelSpecification.damp2.getValue() * (-parentFlowout.getValue()/Math.pow(parentArea.getValue(), 2))/ModelSpecification.dt.getValue());
 						}
 					}
 				}
@@ -400,8 +400,8 @@ public class ThirdVentricle extends ElasticTube {
 		// equ(11)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return "" + 1.0f+"/dt";
+			// derive selon area : 1/"+ModelSpecification.dt.getName()+" 
+			return "" + 1.0f+"/"+ModelSpecification.dt.getName()+"";
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T5_l0;
@@ -421,8 +421,8 @@ public class ThirdVentricle extends ElasticTube {
 		// equ(26)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : - damp /dt  -T5_E * (1/T5_A0);
-			return "-damp/dt-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
+			// derive selon area : - damp /"+ModelSpecification.dt.getName()+"  -T5_E * (1/T5_A0);
+			return "-"+ModelSpecification.damp.getName()+"/"+ModelSpecification.dt.getName()+"-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -461,12 +461,12 @@ public class ThirdVentricle extends ElasticTube {
 					Variable parentArea = findVariableWithName(((Ventricle)parent).getArea().getName(),variables);
 					Variable parentFlowout = findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables);
 					if(v.getName().equals(parentFlowout.getName())){
-						// derive selon parent flow out : damp2 * ((1/R_T4_A))/dt   -R_T5_alfa;
-						return "damp2 * (1/"+parentArea.getName()+")/dt - "+getAlpha().getName();		
+						// derive selon parent flow out : damp2 * ((1/R_T4_A))/"+ModelSpecification.dt.getName()+"   -R_T5_alfa;
+						return ""+ModelSpecification.damp2.getName()+" * (1/"+parentArea.getName()+")/"+ModelSpecification.dt.getName()+" - "+getAlpha().getName();		
 					}else{
 						if(v.getName().equals(parentArea.getName())){
-							// derive selon parent area : damp2 * ((-R_T4_fo/R_T4_A²))/dt
-							return "damp2 * (-"+parentFlowout.getName()+"/"+parentArea.getName()+"^2)/dt";
+							// derive selon parent area : damp2 * ((-R_T4_fo/R_T4_A²))/"+ModelSpecification.dt.getName()+"
+							return ""+ModelSpecification.damp2.getName()+" * (-"+parentFlowout.getName()+"/"+parentArea.getName()+"^2)/"+ModelSpecification.dt.getName()+"";
 						}
 					}
 				}

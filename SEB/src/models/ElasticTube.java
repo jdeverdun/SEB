@@ -224,14 +224,11 @@ public abstract class ElasticTube extends Tube {
 	
 	public ArrayList<Variable> getGlobalVariables(){
 		ArrayList<Variable> variables = new ArrayList<Variable>();
-		Variable temp = getArea();
-		temp.setName(temp.getName()+LAST_ROUND_SUFFIX);
+		Variable temp = new Variable(getArea().getName()+LAST_ROUND_SUFFIX,getArea().getValue(),getArea().getSourceObj());
 		variables.add(temp);
-		temp = getFlowin();
-		temp.setName(temp.getName()+LAST_ROUND_SUFFIX);
+		temp = new Variable(getFlowin().getName()+LAST_ROUND_SUFFIX,getFlowin().getValue(),getFlowin().getSourceObj());
 		variables.add(temp);
-		temp = getFlowout();
-		temp.setName(temp.getName()+LAST_ROUND_SUFFIX);
+		temp = new Variable(getFlowout().getName()+LAST_ROUND_SUFFIX,getFlowout().getValue(),getFlowout().getSourceObj());
 		variables.add(temp);
 		return variables;
 	}

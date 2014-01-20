@@ -6,10 +6,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
+
 import Jama.Matrix;
 
 import params.ModelSpecification;
 import params.SystemParams;
+import params.WindowManager;
 import solver.EquationSolver;
 import matlab.MatlabBuilder;
 import matlab.MatlabModel;
@@ -184,12 +189,9 @@ public class StandardModel {
 		for(Tube tube : tubes){
 			globalvariables.addAll(tube.getGlobalVariables());
 		}
-		globalvariables.add(ModelSpecification.k1);
-		globalvariables.add(ModelSpecification.TPout_alfa);
-		globalvariables.add(new Variable("P_INIT", -1.0f, null));
-		globalvariables.add(new Variable("P_OUT", -1.0f, null));
-		globalvariables.add(new Variable("OUT_D", -1.0f, null));
-		globalvariables.add(new Variable("currentIter", -1.0f, null));
+		globalvariables.addAll(ModelSpecification.getGlobalVariables());
+
+
 		
 		//////////////////////////////////////////////////////////
 		///                                                    ///
@@ -198,10 +200,11 @@ public class StandardModel {
 		//////////////////////////////////////////////////////////
 		
 		System.out.println("============ Equations ===========");
-		
+		ArrayList<String[]> equations = new ArrayList<String[]>();
+		ArrayList<String[]> initEquations = new ArrayList<String[]>();
 		try {
-			ArrayList<String[]> equations = new ArrayList<String[]>();
 			for(Tube tube : tubes){
+				initEquations.addAll(tube.getSymbolicInitialEquations(variables));
 				equations.addAll(tube.getSymbolicEquations(variables));
 			}
 			for(String[] bloceq : equations){
@@ -213,6 +216,18 @@ public class StandardModel {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					JDialog.setDefaultLookAndFeelDecorated(true);
+					JOptionPane.showMessageDialog(WindowManager.MAINWINDOW,
+						    "Error while retrieving equations",
+						    "Initialization error",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			});
+			return false;
 		}
 		
 		
@@ -222,7 +237,7 @@ public class StandardModel {
 		///													   ///
 		//////////////////////////////////////////////////////////
 		
-		System.out.println("============ Valeurs T0 ===========");
+		/*System.out.println("============ Valeurs T0 ===========");
 		try {
 			ArrayList<float[]> equations = new ArrayList<float[]>();
 			for(Tube tube : tubes){
@@ -238,7 +253,7 @@ public class StandardModel {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		
 		
@@ -252,7 +267,7 @@ public class StandardModel {
 		System.out.println("============ Resolution ===========");
 		Path modelDir = Paths.get(".");
 		//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
-		MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables);
+		MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
 		return true;
 	}
 }

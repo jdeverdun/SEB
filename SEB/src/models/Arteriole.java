@@ -239,17 +239,17 @@ public class Arteriole extends ElasticTube {
 
 	private float getContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(2) et equ(7)
-		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (- fi.getValue() + fo.getValue())/getLength().getValue();
+		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (- fi.getValue() + fo.getValue())/getLength().getValue();
 	}
 
 	private float getDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
 		// equ(17) et equ(22)
-		return -ModelSpecification.damp * (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (pr.getValue()-pbrain.getValue())-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
+		return -ModelSpecification.damp.getValue() * (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (pr.getValue()-pbrain.getValue())-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
 	}
 
 	private float getMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
 		// equ(32) et equ(37)
-		return ModelSpecification.damp2 * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
+		return ModelSpecification.damp2.getValue() * ((fi.getValue()/ar.getValue()) - (getFlowin().getValue()/getArea().getValue()))/ModelSpecification.dt.getValue() + (parentPressure.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
 	}
 
 	
@@ -260,17 +260,17 @@ public class Arteriole extends ElasticTube {
 	
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(2) et equ(7)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
 		// equ(17) et equ(22)
-		return " -damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/dt + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
+		return " -"+ModelSpecification.damp.getName()+" * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/"+ModelSpecification.dt.getName()+" + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
 	}
 
 	private String getSymbolicMomentumEquation(Variable fi, Variable ar, Variable pr, Variable parentPressure){
 		// equ(32) et equ(37)
-		return " damp2 * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
+		return " "+ModelSpecification.damp2.getName()+" * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
 	}
 
 	// ------- Derive -----------
@@ -279,7 +279,7 @@ public class Arteriole extends ElasticTube {
 
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : 1/dt 
-			return 1.0f/ModelSpecification.dt;
+			return 1.0f/ModelSpecification.dt.getValue();
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T1_l0;
@@ -300,7 +300,7 @@ public class Arteriole extends ElasticTube {
 
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : -damp/dt - T1_E * (1/T1_A0) 
-			return -ModelSpecification.damp/ModelSpecification.dt-getElastance().getValue()*(1.0f/getInitialArea().getValue());
+			return -ModelSpecification.damp.getValue()/ModelSpecification.dt.getValue()-getElastance().getValue()*(1.0f/getInitialArea().getValue());
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -322,12 +322,12 @@ public class Arteriole extends ElasticTube {
 		if(v.getName().equals(getFlowin().getName())){
 			// derive selon flowin : damp2 * ((1/R_T1_A))/dt -T1_alfa ;
 			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return ModelSpecification.damp2*(1/ar.getValue())/ModelSpecification.dt - getAlpha().getValue();
+			return ModelSpecification.damp2.getValue()*(1/ar.getValue())/ModelSpecification.dt.getValue() - getAlpha().getValue();
 		}else{
 			if(v.getName().equals(getArea().getName())){
 				// derive selon area : damp2 * (-R_T1_fi/R_T1_A²)/dt
 				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return (float) (ModelSpecification.damp2 * (-fi.getValue()/Math.pow(v.getValue(),2))/ModelSpecification.dt);
+				return (float) (ModelSpecification.damp2.getValue() * (-fi.getValue()/Math.pow(v.getValue(),2))/ModelSpecification.dt.getValue());
 			}else{
 				if(v.getName().equals(getPressure().getName())){
 					// derive selon pression : - 1.0f
@@ -352,7 +352,7 @@ public class Arteriole extends ElasticTube {
 
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : 1/dt 
-			return "" + 1.0f+"/dt";
+			return "" + 1.0f+"/"+ModelSpecification.dt.getName()+"";
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T1_l0;
@@ -373,7 +373,7 @@ public class Arteriole extends ElasticTube {
 
 		if(v.getName().equals(getArea().getName())){
 			// derive selon area : -damp/dt - T1_E * (1/T1_A0) 
-			return "-damp/dt-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
+			return "-"+ModelSpecification.damp.getName()+"/"+ModelSpecification.dt.getName()+"-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -395,12 +395,12 @@ public class Arteriole extends ElasticTube {
 		if(v.getName().equals(getFlowin().getName())){
 			// derive selon flowin : damp2 * ((1/R_T1_A))/dt -T1_alfa ;
 			Variable ar = findVariableWithName(getArea().getName(),variables);
-			return "damp2*(1/"+ar.getName()+")/dt - "+getAlpha().getName();
+			return ""+ModelSpecification.damp2.getName()+"*(1/"+ar.getName()+")/"+ModelSpecification.dt.getName()+" - "+getAlpha().getName();
 		}else{
 			if(v.getName().equals(getArea().getName())){
 				// derive selon area : damp2 * (-R_T1_fi/R_T1_A²)/dt
 				Variable fi = findVariableWithName(getFlowin().getName(),variables);
-				return "(damp2 * (-"+fi.getName()+"/"+v.getName()+"^2)/dt)";
+				return "("+ModelSpecification.damp2.getName()+" * (-"+fi.getName()+"/"+v.getName()+"^2)/"+ModelSpecification.dt.getName()+")";
 			}else{
 				if(v.getName().equals(getPressure().getName())){
 					// derive selon pression : - 1.0f

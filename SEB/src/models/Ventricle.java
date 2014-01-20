@@ -193,33 +193,33 @@ public class Ventricle extends ElasticTube {
 
 	private float getContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(5) et equ(10)
-		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (- fi.getValue() + fo.getValue())/getLength().getValue();
+		return (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (- fi.getValue() + fo.getValue())/getLength().getValue();
 	}
 
 	private float getDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
 		// equ(20) et equ(25)
-		return -ModelSpecification.damp * (ar.getValue() - getArea().getValue())/ModelSpecification.dt + (pr.getValue()-pbrain.getValue())-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
+		return -ModelSpecification.damp.getValue() * (ar.getValue() - getArea().getValue())/ModelSpecification.dt.getValue() + (pr.getValue()-pbrain.getValue())-getElastance().getValue()*(ar.getValue()/getInitialArea().getValue()-1);
 	}
 
 	private float getMomentumEquation(Variable fi){
 		// equ(35) et equ(40)
-		return (fi.getValue() - (0.003f + ModelSpecification.OUT_D[ModelSpecification.currentIter]));
+		return (fi.getValue() - (0.003f + ModelSpecification.OUT_D[(int) ModelSpecification.currentIter.getValue()]));
 	}
 
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(Variable ar, Variable fi, Variable fo){
 		// equ(5) et equ(10)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/dt"+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(Variable ar, Variable pr, Variable pbrain){
 		// equ(20) et equ(25)
-		return " -damp * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/dt + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
+		return " -"+ModelSpecification.damp.getName()+" * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/"+ModelSpecification.dt.getName()+" + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
 	}
 
 	private String getSymbolicMomentumEquation(Variable fi){
 		// equ(35) et equ(40)
-		return "("+fi.getName()+" - ("+0.003f+" + OUT_D[currentIter]))";
+		return "("+fi.getName()+" - ("+0.003f+" + "+ModelSpecification.OUT_D_NAME+"("+ModelSpecification.currentIter.getName()+")))";
 	}
 
 	// ------- Derive -----------
@@ -227,8 +227,8 @@ public class Ventricle extends ElasticTube {
 		// equ(5) et equ(10)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return 1.0f/ModelSpecification.dt;
+			// derive selon area : 1/"+ModelSpecification.dt.getName()+" 
+			return 1.0f/ModelSpecification.dt.getValue();
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T4_l0;
@@ -248,8 +248,8 @@ public class Ventricle extends ElasticTube {
 		// equ(20) et equ(25)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : -damp/dt - T4_E * (1/T4_A0) 
-			return -ModelSpecification.damp/ModelSpecification.dt-getElastance().getValue()*(1.0f/getInitialArea().getValue());
+			// derive selon area : -damp/"+ModelSpecification.dt.getName()+" - T4_E * (1/T4_A0) 
+			return -ModelSpecification.damp.getValue()/ModelSpecification.dt.getValue()-getElastance().getValue()*(1.0f/getInitialArea().getValue());
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
@@ -280,8 +280,8 @@ public class Ventricle extends ElasticTube {
 		// equ(5) et equ(10)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : 1/dt 
-			return "" + 1.0f+"/dt";
+			// derive selon area : 1/"+ModelSpecification.dt.getName()+" 
+			return "" + 1.0f+"/"+ModelSpecification.dt.getName()+"";
 		}else{
 			if(v.getName().equals(getFlowin().getName())){
 				// derive selon flowin : - 1/T4_l0;
@@ -301,8 +301,8 @@ public class Ventricle extends ElasticTube {
 		// equ(20) et equ(25)
 
 		if(v.getName().equals(getArea().getName())){
-			// derive selon area : -damp/dt - T4_E * (1/T4_A0) 
-			return "-damp/dt-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
+			// derive selon area : -damp/"+ModelSpecification.dt.getName()+" - T4_E * (1/T4_A0) 
+			return "-"+ModelSpecification.damp.getName()+"/"+ModelSpecification.dt.getName()+"-"+getElastance().getName()+"*("+1.0f+"/"+getInitialArea().getName()+")";
 		}else{
 			if(v.getName().equals(getPressure().getName())){
 				// derive selon pression : 1.0f
