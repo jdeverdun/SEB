@@ -53,8 +53,8 @@ public class InitialInputsPanel extends JPanel {
 			@Override
 			public void run() {
 				try {
-					plot(0,ModelSpecification.time,ModelSpecification.P_INIT,"P_INIT","time", "First Artery pressure");
-					plot(1,ModelSpecification.time,ModelSpecification.P_OUT,"P_OUT","time", "Output pressure");
+					plot(0,ModelSpecification.time.getValue(),ModelSpecification.P_INIT.getValue(),ModelSpecification.P_INIT.getName(),ModelSpecification.time.getName(), "First Artery pressure");
+					plot(1,ModelSpecification.time.getValue(),ModelSpecification.P_OUT.getValue(),ModelSpecification.P_OUT.getName(),ModelSpecification.time.getName(), "Output pressure");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

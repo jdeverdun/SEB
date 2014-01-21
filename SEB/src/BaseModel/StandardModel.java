@@ -31,6 +31,7 @@ import models.SAS;
 import models.SpinalCord;
 import models.ThirdVentricle;
 import models.Tube;
+import models.SimpleVariable;
 import models.Variable;
 import models.Vein;
 import models.Veinule;
@@ -165,8 +166,8 @@ public class StandardModel {
 		///													   ///
 		//////////////////////////////////////////////////////////
 		
-		ArrayList<Variable> variables = new ArrayList<Variable>();
-		ArrayList<Variable> fixedvariables = new ArrayList<Variable>();
+		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
+		ArrayList<SimpleVariable> fixedvariables = new ArrayList<SimpleVariable>();
 		for(Tube tube : tubes){
 			variables.addAll(tube.getVariables());
 			fixedvariables.addAll(tube.getFixedVariables());

@@ -6,21 +6,17 @@ package models;
  * @author DEVERDUN Jeremy
  *
  */
-public class Variable {
-	public static float DEFAULT_VALUE = 123456789.0f;
-	private String name;
-	private float value;
-	private Tube sourceObj;
+public abstract class Variable {
+	protected String name;
+	protected Tube sourceObj;
 
-	public Variable(String name, float value, Tube obj) {
+	public Variable(String name, Tube obj) {
 		setName(name);
-		setValue(value);
 		setSourceObj(obj);
 	}
 
 	public Variable(String name) {
 		setName(name);
-		setValue(DEFAULT_VALUE);
 		setSourceObj(null);
 	}
 
@@ -32,13 +28,7 @@ public class Variable {
 		this.name = name;
 	}
 
-	public float getValue() {
-		return value;
-	}
 
-	public void setValue(float value) {
-		this.value = value;
-	}
 	/**
 	 * @return the sourceObj
 	 */
@@ -54,7 +44,7 @@ public class Variable {
 	}
 	
 	public String toString(){
-		return name + " || " + getValue() + " || " + sourceObj.getClass().getName();
+		return name + " || " + sourceObj.getClass().getName();
 	}
 
 	@Override
@@ -64,9 +54,7 @@ public class Variable {
 		}
 		return false;
 	}
-
-	public boolean hasValue() {
-		return getValue()!=DEFAULT_VALUE;
-	}
+	
+	public abstract boolean hasValue();
 
 }

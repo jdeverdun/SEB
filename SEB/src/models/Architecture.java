@@ -79,7 +79,7 @@ public class Architecture {
 		return (startPoint != null) && (endPoint != null) && (brain != null);
 	}
 	
-	public ArrayList<Matrix> eval(ArrayList<Variable> variables){
+	public ArrayList<Matrix> eval(ArrayList<SimpleVariable> variables){
 		ArrayList<Matrix> mats = new ArrayList<Matrix>(2);
 		try {
 			ArrayList<float[]> equations = new ArrayList<float[]>();

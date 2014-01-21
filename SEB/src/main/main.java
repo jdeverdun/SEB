@@ -33,7 +33,7 @@ import org.pushingpixels.substance.api.skin.SubstanceGraphiteLookAndFeel;
 import display.SEBWindow;
 
 import models.Hemisphere;
-import models.Variable;
+import models.SimpleVariable;
 import models.Vein;
 
 import params.SystemParams;

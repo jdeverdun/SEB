@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public abstract class Tube {
 	protected String name;
-	protected Variable length;
+	protected SimpleVariable length;
 	protected static String TUBE_LABEL = "T";
 	protected static int ID = 0;
 	public static final String LAST_ROUND_SUFFIX = "_PREV"; // suffixe a rajouter dans symbolic quand variable issue du tour precedent
@@ -24,11 +24,11 @@ public abstract class Tube {
 		setLength(len);
 	}
 	
-	protected abstract Variable getLength();
+	protected abstract SimpleVariable getLength();
 	protected abstract void setLength(float length);
-	public abstract ArrayList<Variable> getVariables();	
-	public abstract ArrayList<Variable> getFixedVariables();	// variables type lenght ou A0
-	public abstract ArrayList<Variable> getGlobalVariables();	// variables type lenght ou A0
+	public abstract ArrayList<SimpleVariable> getVariables();	
+	public abstract ArrayList<SimpleVariable> getFixedVariables();	// variables type lenght ou A0
+	public abstract ArrayList<SimpleVariable> getGlobalVariables();	// variables type lenght ou A0
 	protected String getName() {
 		return name;
 	}
@@ -42,10 +42,10 @@ public abstract class Tube {
 	public abstract String getTubeNum();
 	
 	// ---------    EQUATIONS ---------------
-	public abstract ArrayList<float[]> getEquations(ArrayList<Variable> variables) throws Exception;
-	public abstract ArrayList<String[]> getSymbolicEquations(ArrayList<Variable> variables) throws Exception;
-	public abstract ArrayList<float[]> getInitialEquations(ArrayList<Variable> variables) throws Exception;
-	public abstract ArrayList<String[]> getSymbolicInitialEquations(ArrayList<Variable> variables) throws Exception;
+	public abstract ArrayList<float[]> getEquations(ArrayList<SimpleVariable> variables) throws Exception;
+	public abstract ArrayList<String[]> getSymbolicEquations(ArrayList<SimpleVariable> variables) throws Exception;
+	public abstract ArrayList<float[]> getInitialEquations(ArrayList<SimpleVariable> variables) throws Exception;
+	public abstract ArrayList<String[]> getSymbolicInitialEquations(ArrayList<SimpleVariable> variables) throws Exception;
 	// ----- Methodes ----
 	public String toString(){
 		return "Name = "+getName()+" - Length = "+getLength();
@@ -58,8 +58,8 @@ public abstract class Tube {
 	 * @return
 	 * @throws Exception 
 	 */
-	public Variable findVariableWithName(String name,ArrayList<Variable> variables) throws Exception{
-		for(Variable lv : variables){
+	public SimpleVariable findVariableWithName(String name,ArrayList<SimpleVariable> variables) throws Exception{
+		for(SimpleVariable lv : variables){
 			if(lv.getName().equals(name)){
 				return lv;
 			}
@@ -76,12 +76,12 @@ public abstract class Tube {
 	 * @param variables
 	 * @return
 	 */
-	public ArrayList<Variable> findVariableWithStruct(Hemisphere hemisphere,
+	public ArrayList<SimpleVariable> findVariableWithStruct(Hemisphere hemisphere,
 			String tube_num, String param_label,
-			ArrayList<Variable> variables) {
-		ArrayList<Variable> results = new ArrayList<Variable>();
+			ArrayList<SimpleVariable> variables) {
+		ArrayList<SimpleVariable> results = new ArrayList<SimpleVariable>();
 		String code = buildNameFromStruct(hemisphere, tube_num, param_label);
-		for(Variable lv : variables){
+		for(SimpleVariable lv : variables){
 			if(lv.getName().startsWith(code)){
 				results.add(lv);
 			}

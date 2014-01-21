@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import models.Architecture;
 import models.Tube;
-import models.Variable;
+import models.SimpleVariable;
 
 import Jama.Matrix;
 import Jama.SingularValueDecomposition;
@@ -14,7 +14,7 @@ public class EquationSolver {
 
 
 	// Newton's method to find x* such that f(x*) = 0, starting at x
-	public static Matrix root(Architecture archi, ArrayList<Variable> variables) {
+	public static Matrix root(Architecture archi, ArrayList<SimpleVariable> variables) {
 		Matrix x = null;
 		int c=0;
 		while (true) {
@@ -39,7 +39,7 @@ public class EquationSolver {
 	 * @return
 	 */
 	private static void updateVariablesFromMatrix(
-			ArrayList<Variable> variables, Matrix x) {
+			ArrayList<SimpleVariable> variables, Matrix x) {
 		int m = x.getRowDimension();
 		for(int i = 0; i < m; i++){
 			variables.get(i).setValue((float) x.get(i, 0));

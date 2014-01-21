@@ -15,6 +15,8 @@ import params.ModelSpecification;
 import params.SystemParams;
 import params.WindowManager;
 
+import models.ArrayVariable;
+import models.SimpleVariable;
 import models.Tube;
 import models.Variable;
 
@@ -33,7 +35,7 @@ public class MatlabBuilder {
 	public static final String equResultLabel = "equ";
 	
 	public static MatlabModel buildModel(Path folder, ArrayList<Variable> globalvariables,
-			ArrayList<Variable> fixedvariables, ArrayList<Variable> variables,ArrayList<String[]> initEquations,ArrayList<String[]> equations) {
+			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables,ArrayList<String[]> initEquations,ArrayList<String[]> equations) {
 		if(!folder.toFile().canWrite()){
 			SwingUtilities.invokeLater(new Runnable() {
 				
@@ -58,8 +60,9 @@ public class MatlabBuilder {
 		mainFileContent +=  createDefaultUnknown(variables);
 		mainFileContent += "%% Fixed variables \n";
 		mainFileContent +=  createVariablesInitialization(fixedvariables);// on en aura peut etre besoin !
-		mainFileContent += createFsolveInitial();
+		mainFileContent += createFsolve(equationsInitialFunctionName);
 		mainFileContent += createRetrieveGlobal(globalvariables,variables); // a partir du x
+		mainFileContent += createTimeLoop(globalvariables,variables); // a partir du x
 				
 		// ============= Initial equations ============
 		String initialEqFileContent = "";
@@ -82,19 +85,41 @@ public class MatlabBuilder {
 	}
 	
 	/**
+	 * La boucle sur le temps
+	 * @param globalvariables
+	 * @param variables
+	 * @return
+	 */
+	private static String createTimeLoop(ArrayList<Variable> globalvariables,
+			ArrayList<SimpleVariable> variables) {
+		String content = "%% Time loop\n";
+		// on declare et definit les P_INIT etc
+		/*ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
+		for(Variable var : globalvariables){
+			if(modelvars.contains(var) && var.hasValue()){
+				content += var.getName() + " = " + var.getValue() + ";\n";
+			}
+		}
+		content += */
+		return content;
+	}
+
+	/**
 	 * On recupere le resultat du fsolve
 	 * @return
 	 */
-	private static String createRetrieveGlobal(ArrayList<Variable> globalvariables, ArrayList<Variable> variables) {
+	private static String createRetrieveGlobal(ArrayList<Variable> globalvariables, ArrayList<SimpleVariable> variables) {
 		String content = "%% retrieving results of fsolve\n";
 		ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
 		for(Variable var : globalvariables){
 			if(!modelvars.contains(var)){
-				String nname = var.getName().substring(0, var.getName().length() - Tube.LAST_ROUND_SUFFIX.length());
-				int ind = variables.indexOf(new Variable(nname));
-				if(ind == -1)
-					System.err.println("Unable to find variable "+nname+" in variables list");
-				content += var.getName() + " = " + unknownLabel + "(" + (ind+1) + ");\n";
+				if(var instanceof SimpleVariable){
+					String nname = var.getName().substring(0, var.getName().length() - Tube.LAST_ROUND_SUFFIX.length());
+					int ind = variables.indexOf(new SimpleVariable(nname));
+					if(ind == -1)
+						System.err.println("Unable to find variable "+nname+" in variables list");
+					content += var.getName() + " = " + unknownLabel + "(" + (ind+1) + ");\n";
+				}
 			}
 		}
 		return content;
@@ -102,12 +127,13 @@ public class MatlabBuilder {
 
 	/**
 	 * Commande fsolve
+	 * @param eqfilename 
 	 * @return
 	 */
-	private static String createFsolveInitial() {
+	private static String createFsolve(String eqfilename) {
 		String content = "%% fsolve resolution of the system\n";
 		content += previousUnknownLabel + " = " + unknownLabel + ";\n";
-		content += unknownLabel + " = fsolve(@" + equationsInitialFunctionName + "," + previousUnknownLabel + ");\n";
+		content += unknownLabel + " = fsolve(@" + eqfilename + "," + previousUnknownLabel + ");\n";
 		return content;
 	}
 
@@ -121,8 +147,17 @@ public class MatlabBuilder {
 		String content = "%% Some global initialization\n";
 		ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
 		for(Variable var : globalvariables){
-			if(modelvars.contains(var) && var.hasValue()){
-				content += var.getName() + " = " + var.getValue() + ";\n";
+			if(modelvars.contains(var)){
+				
+				if(var instanceof SimpleVariable){
+					content += var.getName() + " = " + ((SimpleVariable)var).getValue() + ";\n";
+				}else{
+					content += var.getName() + " = [";
+					for(float fl : ((ArrayVariable)var).getValue()){
+						content += fl + " ";
+					}
+					content += "];\n";
+				}
 			}
 		}
 		return content;
@@ -133,11 +168,11 @@ public class MatlabBuilder {
 	 * @param variables
 	 * @return
 	 */
-	private static String createDefaultUnknown(ArrayList<Variable> variables) {
+	private static String createDefaultUnknown(ArrayList<SimpleVariable> variables) {
 		String content = "%% Initialize unknown\n";
 		content += unknownLabel + " = [];\n";
 		int count = 1;
-		for(Variable var : variables){
+		for(SimpleVariable var : variables){
 			content += unknownLabel + "(" + (count++) + ") = " + var.getValue() + "; % "+var.getName()+"\n";
 		}
 		return content;
@@ -152,14 +187,14 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createEquations(
-			ArrayList<Variable> fixedvariables, ArrayList<Variable> variables, ArrayList<String[]> equations) {
+			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables, ArrayList<String[]> equations) {
 		String content = "%% Fixed variables \n";
 		// on commence par les variables fixes
 		content += createVariablesInitialization(fixedvariables);
 		// on init les variables x()
 		content += "\n\n%%Variables initialization\n";
 		int count = 1;
-		for(Variable var : variables){
+		for(SimpleVariable var : variables){
 			content += var.getName() + " = " + unknownLabel + "(" + (count++) + ");\n";  
 		}
 		
@@ -172,10 +207,10 @@ public class MatlabBuilder {
 		return content;
 	}
 
-	private static String createVariablesInitialization(ArrayList<Variable> variables){
+	private static String createVariablesInitialization(ArrayList<SimpleVariable> variables){
 		// les variables
 		String content = "";
-		for(Variable var : variables){
+		for(SimpleVariable var : variables){
 			content += var.getName() + " = " + var.getValue() + ";\n";
 		}
 		return content;

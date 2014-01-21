@@ -13,13 +13,13 @@ public abstract class ElasticTube extends Tube {
 	protected static String LENGTH_LABEL = "l0";
 	protected static String ALPHA_LABEL = "alfa";
 	protected static String ELASTANCE_LABEL = "E";
-	protected Variable flowin;
-	protected Variable flowout;
-	protected Variable pressure;
-	protected Variable area;
-	protected Variable alpha;
-	protected Variable elastance;
-	protected Variable initialArea;
+	protected SimpleVariable flowin;
+	protected SimpleVariable flowout;
+	protected SimpleVariable pressure;
+	protected SimpleVariable area;
+	protected SimpleVariable alpha;
+	protected SimpleVariable elastance;
+	protected SimpleVariable initialArea;
 	protected Hemisphere hemisphere;
 	protected ArrayList<ElasticTube> parents;
 	protected ArrayList<ElasticTube> children;
@@ -64,11 +64,11 @@ public abstract class ElasticTube extends Tube {
 		setChildren(child);
 	}
 
-	protected Variable getLength() {
+	protected SimpleVariable getLength() {
 		return length;
 	}
 	protected void setLength(float length) {
-		this.length = new Variable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL,length, (Tube)this);
+		this.length = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL,length, (Tube)this);
 	}
 	
 	protected ArrayList<ElasticTube> getParents() {
@@ -87,15 +87,15 @@ public abstract class ElasticTube extends Tube {
 		this.children = childrens;
 	}
 
-	protected Variable getElastance() {
+	protected SimpleVariable getElastance() {
 		return elastance;
 	}
 
 	protected void setElastance(float elastance) {
-		Variable v = new Variable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance, (Tube)this);
+		SimpleVariable v = new SimpleVariable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance, (Tube)this);
 		this.elastance = v;
 	}	
-	protected Variable getArea() {
+	protected SimpleVariable getArea() {
 		return area;
 	}
 	protected void setArea(float area){
@@ -105,28 +105,28 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_LABEL+"_"+ID,area, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_LABEL+"_"+ID,area, (Tube)this);
 		this.area = v;
 	}
 
-	protected Variable getAlpha() {
+	protected SimpleVariable getAlpha() {
 		return alpha;
 	}
 
 	protected void setAlpha(float alpha) {
-		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+ID,alpha, (Tube)this);
+		SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+ID,alpha, (Tube)this);
 		this.alpha = v;
 	}
-	public Variable getInitialArea() {
+	public SimpleVariable getInitialArea() {
 		return initialArea;
 	}
 
 	public void setInitialArea(float iArea) {
-		Variable v = new Variable(TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+ID,iArea, (Tube)this);
+		SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+ID,iArea, (Tube)this);
 		this.initialArea = v;
 	}
 
-	public Variable getFlowin() {
+	public SimpleVariable getFlowin() {
 		return flowin;
 	}
 
@@ -137,11 +137,11 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN_LABEL+"_"+ID,flowin, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN_LABEL+"_"+ID,flowin, (Tube)this);
 		this.flowin = v;
 	}
 
-	public Variable getFlowout() {
+	public SimpleVariable getFlowout() {
 		return flowout;
 	}
 
@@ -152,11 +152,11 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT_LABEL+"_"+ID,flowout, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT_LABEL+"_"+ID,flowout, (Tube)this);
 		this.flowout = v;
 	}
 
-	public Variable getPressure() {
+	public SimpleVariable getPressure() {
 		return pressure;
 	}
 
@@ -167,7 +167,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		Variable v = new Variable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+ID,pressure, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+ID,pressure, (Tube)this);
 		this.pressure = v;
 	}
 
@@ -205,16 +205,16 @@ public abstract class ElasticTube extends Tube {
 	}
 	
 	
-	public ArrayList<Variable> getVariables(){
-		ArrayList<Variable> variables = new ArrayList<Variable>();
+	public ArrayList<SimpleVariable> getVariables(){
+		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
 		variables.add(getFlowin());
 		variables.add(getFlowout());
 		variables.add(getPressure());
 		variables.add(getArea());
 		return variables;
 	}
-	public ArrayList<Variable> getFixedVariables(){
-		ArrayList<Variable> variables = new ArrayList<Variable>();
+	public ArrayList<SimpleVariable> getFixedVariables(){
+		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
 		variables.add(getInitialArea());
 		variables.add(getLength());
 		variables.add(getAlpha());
@@ -222,26 +222,26 @@ public abstract class ElasticTube extends Tube {
 		return variables;
 	}
 	
-	public ArrayList<Variable> getGlobalVariables(){
-		ArrayList<Variable> variables = new ArrayList<Variable>();
-		Variable temp = new Variable(getArea().getName()+LAST_ROUND_SUFFIX,getArea().getValue(),getArea().getSourceObj());
+	public ArrayList<SimpleVariable> getGlobalVariables(){
+		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
+		SimpleVariable temp = new SimpleVariable(getArea().getName()+LAST_ROUND_SUFFIX,getArea().getValue(),getArea().getSourceObj());
 		variables.add(temp);
-		temp = new Variable(getFlowin().getName()+LAST_ROUND_SUFFIX,getFlowin().getValue(),getFlowin().getSourceObj());
+		temp = new SimpleVariable(getFlowin().getName()+LAST_ROUND_SUFFIX,getFlowin().getValue(),getFlowin().getSourceObj());
 		variables.add(temp);
-		temp = new Variable(getFlowout().getName()+LAST_ROUND_SUFFIX,getFlowout().getValue(),getFlowout().getSourceObj());
+		temp = new SimpleVariable(getFlowout().getName()+LAST_ROUND_SUFFIX,getFlowout().getValue(),getFlowout().getSourceObj());
 		variables.add(temp);
 		return variables;
 	}
 	
-	public ArrayList<Variable> getRecursiveVariables(){
-		ArrayList<Variable> variables = new ArrayList<Variable>();
-		for(Variable var:getVariables()){
+	public ArrayList<SimpleVariable> getRecursiveVariables(){
+		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
+		for(SimpleVariable var:getVariables()){
 			if(!variables.contains(var))
 				variables.add(var);
 		}
 		if(getChildren().size() != 0){
 			for(ElasticTube child : getChildren()){
-				for(Variable var:child.getRecursiveVariables()){
+				for(SimpleVariable var:child.getRecursiveVariables()){
 					if(!variables.contains(var))
 						variables.add(var);
 				}
