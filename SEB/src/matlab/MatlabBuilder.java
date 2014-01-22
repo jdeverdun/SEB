@@ -69,26 +69,26 @@ public class MatlabBuilder {
 		// ================ Main File =================
 		String mainFileContent = "";
 		mainFileContent += createModelHeader();
-		mainFileContent +=  globalVarsDefinition(globalvariables);
+		//mainFileContent +=  globalVarsDefinition(globalvariables);
 		mainFileContent +=  mainGlobalVarsInitialization(globalvariables);
 		mainFileContent +=  createDefaultUnknown(variables);
 		mainFileContent += "%% Fixed variables "+NEWLINE_CHAR+"";
 		mainFileContent +=  createVariablesInitialization(fixedvariables);// on en aura peut etre besoin !
-		mainFileContent += createFsolve(equationsInitialFunctionName);
+		mainFileContent += createInitialFsolve(equationsInitialFunctionName, globalvariables);
 		mainFileContent += createRetrieveGlobal(globalvariables,variables); // a partir du x
 		mainFileContent += createTimeLoop(globalvariables,variables); // a partir du x
 				
 		// ============= Initial equations ============
 		String initialEqFileContent = "";
-		initialEqFileContent += createEquationInitialHeader();
-		initialEqFileContent += globalVarsDefinition(globalvariables);
+		initialEqFileContent += createEquationInitialHeader(globalvariables);
+		//initialEqFileContent += globalVarsDefinition(globalvariables);
 		initialEqFileContent += createEquations(fixedvariables, variables, initEquations);
 		
 		
 		// ============== Time equations ==============
 		String timeEqFileContent = "";
-		timeEqFileContent += createEquationTimeHeader();
-		timeEqFileContent += globalVarsDefinition(globalvariables);
+		timeEqFileContent += createEquationTimeHeader(globalvariables);
+		//timeEqFileContent += globalVarsDefinition(globalvariables);
 		timeEqFileContent += createEquations(fixedvariables, variables, equations);
 		
 		
@@ -146,7 +146,7 @@ public class MatlabBuilder {
 		SimpleVariable currentIter = ((SimpleVariable)globalvariables.get(globalvariables.indexOf(ModelSpecification.currentIter)));
 		SimpleVariable time_step = ((SimpleVariable)globalvariables.get(globalvariables.indexOf(ModelSpecification.time_step)));
 		content += "for "+currentIter.getName()+" = 1 : "+ time_step.getName() + ""+NEWLINE_CHAR+"";
-		content += addPrefixToContent(createFsolve(equationsTimeFunctionName),"\t");
+		content += addPrefixToContent(createTimeFsolve(equationsTimeFunctionName, globalvariables),"\t");
 		content += addPrefixToContent(createRetrieveGlobal(globalvariables, variables),"\t");
 		content += addPrefixToContent(createMonitoringVars(variables,currentIter.getName()),"\t");
 		content += "end" + NEWLINE_CHAR;
@@ -210,10 +210,50 @@ public class MatlabBuilder {
 	 * @param eqfilename 
 	 * @return
 	 */
-	private static String createFsolve(String eqfilename) {
+	private static String createTimeFsolve(String eqfilename, ArrayList<Variable> globalvariables ) {
+		/*
+		REF = [x,y,z];
+		f = @(y) myfun(y,REF); % function of dummy variable y
+		[out,fval]=fsolve(f,y0)
+		*/
 		String content = "%% fsolve resolution of the system"+NEWLINE_CHAR+"";
 		content += previousUnknownLabel + " = " + unknownLabel + ";"+NEWLINE_CHAR+"";
-		content += unknownLabel + " = fsolve(@" + eqfilename + "," + previousUnknownLabel + ");"+NEWLINE_CHAR+"";
+		
+		content += "func = @(" + unknownLabel + ") " + eqfilename + "(" + unknownLabel;
+		for(Variable var : globalvariables){
+			content += "," + var.getName(); 
+		}
+		content += ");" + NEWLINE_CHAR;
+		content += unknownLabel + " = fsolve(func," + previousUnknownLabel + ");"+NEWLINE_CHAR+"";
+		//content += unknownLabel + " = fsolve(@" + eqfilename + "," + previousUnknownLabel + ");"+NEWLINE_CHAR+"";
+		return content;
+	}
+	
+	/**
+	 * Commande fsolve
+	 * @param eqfilename 
+	 * @return
+	 */
+	private static String createInitialFsolve(String eqfilename, ArrayList<Variable> globalvariables ) {
+		/*
+		REF = [x,y,z];
+		f = @(y) myfun(y,REF); % function of dummy variable y
+		[out,fval]=fsolve(f,y0)
+		*/
+		String content = "%% fsolve resolution of the system"+NEWLINE_CHAR+"";
+		content += previousUnknownLabel + " = " + unknownLabel + ";"+NEWLINE_CHAR+"";
+		
+		content += "func = @(" + unknownLabel + ") " + eqfilename + "(" + unknownLabel;
+		ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
+		for(Variable var : globalvariables){
+			if(modelvars.contains(var)){
+				content += "," + var.getName(); 
+			}
+			
+		}
+		content += ");" + NEWLINE_CHAR;
+		content += unknownLabel + " = fsolve(func," + previousUnknownLabel + ");"+NEWLINE_CHAR+"";
+		//content += unknownLabel + " = fsolve(@" + eqfilename + "," + previousUnknownLabel + ");"+NEWLINE_CHAR+"";
 		return content;
 	}
 
@@ -314,7 +354,7 @@ public class MatlabBuilder {
 	 * Cree l'entete du fichier qui contient les equation initiales du modele
 	 * @return
 	 */
-	private static String createEquationInitialHeader() {
+	private static String createEquationInitialHeader(ArrayList<Variable> globalvariables) {
 		String content = "%% Model function"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
 		content += "% This file contains equations for the round of the fsolve"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
 		content += "% You should only call this file through "+mainFunctionName+""+NEWLINE_CHAR+"";
@@ -322,7 +362,16 @@ public class MatlabBuilder {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		content += "% Date : "+dateFormat.format(date)+""+NEWLINE_CHAR+"";
-		content += "function "+equResultLabel+" = "+equationsInitialFunctionName+"("+unknownLabel+")"+NEWLINE_CHAR+"";
+		content += "function "+equResultLabel+" = "+equationsInitialFunctionName+"("+unknownLabel;
+		
+		ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
+		for(Variable var : globalvariables){
+			if(modelvars.contains(var)){
+				content += "," + var.getName(); 
+			}
+			
+		}
+		content += ")"+NEWLINE_CHAR+"";
 		return content;
 	}
 
@@ -330,7 +379,7 @@ public class MatlabBuilder {
 	 * Cree l'entete du fichier qui contient les equation au cours du temps du modele
 	 * @return
 	 */
-	private static String createEquationTimeHeader() {
+	private static String createEquationTimeHeader(ArrayList<Variable> globalvariables) {
 		String content = "%% Model function"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
 		content += "% This file contains equations for the round of the fsolve"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
 		content += "% You should only call this file through "+mainFunctionName+""+NEWLINE_CHAR+"";
@@ -338,7 +387,12 @@ public class MatlabBuilder {
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
 		content += "% Date : "+dateFormat.format(date)+""+NEWLINE_CHAR+"";
-		content += "function "+equResultLabel+" = "+equationsTimeFunctionName+"("+unknownLabel+")"+NEWLINE_CHAR+"";
+		content += "function "+equResultLabel+" = "+equationsTimeFunctionName+"("+unknownLabel;
+		
+		for(Variable var : globalvariables){
+			content += "," + var.getName(); 
+		}
+		content += ")"+NEWLINE_CHAR+"";
 		return content;
 	}
 
