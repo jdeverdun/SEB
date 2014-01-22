@@ -1,15 +1,26 @@
 package matlab;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
 
 import params.ModelSpecification;
 import params.SystemParams;
@@ -26,13 +37,16 @@ import models.Variable;
  *
  */
 public class MatlabBuilder {
-
+	public final static Charset ENCODING = StandardCharsets.UTF_8;
+	 
 	private static final String mainFunctionName = "SEB_model_main";//fichier principal
 	private static final String equationsInitialFunctionName = "SEB_model_eqInit";//fichier equation initiales
 	private static final String equationsTimeFunctionName = "SEB_model_eqTime";//fichier equation Time
 	public static final String unknownLabel = "x";
 	public static final String previousUnknownLabel = "x_old";
 	public static final String equResultLabel = "equ";
+	public static final String NEWLINE_CHAR = "\n";
+	public static final String MONITORINGVARS_SUFFIX = "_GRAPH";
 	
 	public static MatlabModel buildModel(Path folder, ArrayList<Variable> globalvariables,
 			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables,ArrayList<String[]> initEquations,ArrayList<String[]> equations) {
@@ -50,7 +64,7 @@ public class MatlabBuilder {
 			});
 			return null;
 		}
-		
+
 
 		// ================ Main File =================
 		String mainFileContent = "";
@@ -58,7 +72,7 @@ public class MatlabBuilder {
 		mainFileContent +=  globalVarsDefinition(globalvariables);
 		mainFileContent +=  mainGlobalVarsInitialization(globalvariables);
 		mainFileContent +=  createDefaultUnknown(variables);
-		mainFileContent += "%% Fixed variables \n";
+		mainFileContent += "%% Fixed variables "+NEWLINE_CHAR+"";
 		mainFileContent +=  createVariablesInitialization(fixedvariables);// on en aura peut etre besoin !
 		mainFileContent += createFsolve(equationsInitialFunctionName);
 		mainFileContent += createRetrieveGlobal(globalvariables,variables); // a partir du x
@@ -78,10 +92,38 @@ public class MatlabBuilder {
 		timeEqFileContent += createEquations(fixedvariables, variables, equations);
 		
 		
-		System.out.println(initialEqFileContent);
 		
-		System.out.println(mainFileContent);
-		return null;
+		// ============== Writing files ===============
+		String mainfilepath = folder.toString() + File.separator + mainFunctionName + ".m";
+		String eqInitfilepath = folder.toString() + File.separator + equationsInitialFunctionName + ".m";
+		String eqTimefilepath = folder.toString() + File.separator + equationsTimeFunctionName + ".m";
+		
+		MatlabModel model = new MatlabModel(Paths.get(mainfilepath), Paths.get(eqInitfilepath), Paths.get(eqTimefilepath));
+		
+		List<String> mainContent = Arrays.asList(mainFileContent.split(NEWLINE_CHAR));  // convert string to array list
+		List<String> eqInitContent = Arrays.asList(initialEqFileContent.split(NEWLINE_CHAR));  // convert string to array list
+		List<String> eqTimeContent = Arrays.asList(timeEqFileContent.split(NEWLINE_CHAR));  // convert string to array list
+		try {
+			writeLargerTextFile(folder.toString() + File.separator + mainFunctionName + ".m",mainContent);
+			writeLargerTextFile(folder.toString() + File.separator + equationsInitialFunctionName + ".m",eqInitContent);
+			writeLargerTextFile(folder.toString() + File.separator + equationsTimeFunctionName + ".m",eqTimeContent);
+		} catch (IOException e) {
+			e.printStackTrace();
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					JDialog.setDefaultLookAndFeelDecorated(true);
+					JOptionPane.showMessageDialog(WindowManager.MAINWINDOW,
+						    "Can't write into specified file",
+						    "Permission denied",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+			});
+			return null;
+		}
+		System.out.println("Model files writed");
+		return model;
 	}
 	
 	/**
@@ -92,16 +134,54 @@ public class MatlabBuilder {
 	 */
 	private static String createTimeLoop(ArrayList<Variable> globalvariables,
 			ArrayList<SimpleVariable> variables) {
-		String content = "%% Time loop\n";
-		// on declare et definit les P_INIT etc
-		/*ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
-		for(Variable var : globalvariables){
-			if(modelvars.contains(var) && var.hasValue()){
-				content += var.getName() + " = " + var.getValue() + ";\n";
-			}
+		String content = "%% Time loop"+NEWLINE_CHAR+"";
+		// on verifie la presence des bonnes variables
+		if(!globalvariables.contains(ModelSpecification.currentIter)){
+			System.err.println("Error while creating time loop, unable to find "+ModelSpecification.currentIter.getName());
 		}
-		content += */
+		if(!globalvariables.contains(ModelSpecification.time_step)){
+			System.err.println("Error while creating time loop, unable to find "+ModelSpecification.time_step.getName());
+		}
+		// debut for
+		SimpleVariable currentIter = ((SimpleVariable)globalvariables.get(globalvariables.indexOf(ModelSpecification.currentIter)));
+		SimpleVariable time_step = ((SimpleVariable)globalvariables.get(globalvariables.indexOf(ModelSpecification.time_step)));
+		content += "for "+currentIter.getName()+" = 1 : "+ time_step.getName() + ""+NEWLINE_CHAR+"";
+		content += addPrefixToContent(createFsolve(equationsTimeFunctionName),"\t");
+		content += addPrefixToContent(createRetrieveGlobal(globalvariables, variables),"\t");
+		content += addPrefixToContent(createMonitoringVars(variables,currentIter.getName()),"\t");
+		content += "end" + NEWLINE_CHAR;
 		return content;
+	}
+
+	/**
+	 * Cree les lignes pour sauvegarder les valeurs des variables au cours du temps
+	 * @param variables
+	 * @param iterationVarName 
+	 * @return
+	 */
+	private static String createMonitoringVars(
+			ArrayList<SimpleVariable> variables, String iterationVarName) {
+		String content = "%% Saving variables values accross time"+NEWLINE_CHAR;
+		int count = 1;
+		for(SimpleVariable var : variables){
+			content += var.getName() + MONITORINGVARS_SUFFIX + "(" + iterationVarName + ") = " + unknownLabel + "(" + (count++) + ");" + NEWLINE_CHAR;
+		}
+		return content;
+	}
+
+	/**
+	 * Ajoute un prefixe a toute les lignes de la chaine de caractere
+	 * @param content
+	 * @param prefix
+	 * @return
+	 */
+	private static String addPrefixToContent(String content, String prefix) {
+		String newcontent = "";
+		String[] lines = content.split(NEWLINE_CHAR);
+		for(String line : lines){
+			newcontent += prefix + line + NEWLINE_CHAR;
+		}
+		return newcontent;
 	}
 
 	/**
@@ -109,7 +189,7 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createRetrieveGlobal(ArrayList<Variable> globalvariables, ArrayList<SimpleVariable> variables) {
-		String content = "%% retrieving results of fsolve\n";
+		String content = "%% retrieving results of fsolve"+NEWLINE_CHAR+"";
 		ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
 		for(Variable var : globalvariables){
 			if(!modelvars.contains(var)){
@@ -118,7 +198,7 @@ public class MatlabBuilder {
 					int ind = variables.indexOf(new SimpleVariable(nname));
 					if(ind == -1)
 						System.err.println("Unable to find variable "+nname+" in variables list");
-					content += var.getName() + " = " + unknownLabel + "(" + (ind+1) + ");\n";
+					content += var.getName() + " = " + unknownLabel + "(" + (ind+1) + ");"+NEWLINE_CHAR+"";
 				}
 			}
 		}
@@ -131,9 +211,9 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createFsolve(String eqfilename) {
-		String content = "%% fsolve resolution of the system\n";
-		content += previousUnknownLabel + " = " + unknownLabel + ";\n";
-		content += unknownLabel + " = fsolve(@" + eqfilename + "," + previousUnknownLabel + ");\n";
+		String content = "%% fsolve resolution of the system"+NEWLINE_CHAR+"";
+		content += previousUnknownLabel + " = " + unknownLabel + ";"+NEWLINE_CHAR+"";
+		content += unknownLabel + " = fsolve(@" + eqfilename + "," + previousUnknownLabel + ");"+NEWLINE_CHAR+"";
 		return content;
 	}
 
@@ -144,19 +224,18 @@ public class MatlabBuilder {
 	 */
 	private static String mainGlobalVarsInitialization(
 			ArrayList<Variable> globalvariables) {
-		String content = "%% Some global initialization\n";
+		String content = "%% Some global initialization"+NEWLINE_CHAR+"";
 		ArrayList<Variable> modelvars = ModelSpecification.getGlobalVariables();
 		for(Variable var : globalvariables){
 			if(modelvars.contains(var)){
-				
 				if(var instanceof SimpleVariable){
-					content += var.getName() + " = " + ((SimpleVariable)var).getValue() + ";\n";
+					content += var.getName() + " = " + ((SimpleVariable)var).getValue() + ";"+NEWLINE_CHAR+"";
 				}else{
 					content += var.getName() + " = [";
 					for(float fl : ((ArrayVariable)var).getValue()){
 						content += fl + " ";
 					}
-					content += "];\n";
+					content += "];"+NEWLINE_CHAR+"";
 				}
 			}
 		}
@@ -169,11 +248,11 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createDefaultUnknown(ArrayList<SimpleVariable> variables) {
-		String content = "%% Initialize unknown\n";
-		content += unknownLabel + " = [];\n";
+		String content = "%% Initialize unknown"+NEWLINE_CHAR+"";
+		content += unknownLabel + " = [];"+NEWLINE_CHAR+"";
 		int count = 1;
 		for(SimpleVariable var : variables){
-			content += unknownLabel + "(" + (count++) + ") = " + var.getValue() + "; % "+var.getName()+"\n";
+			content += unknownLabel + "(" + (count++) + ") = " + var.getValue() + "; % "+var.getName()+""+NEWLINE_CHAR+"";
 		}
 		return content;
 	}
@@ -188,21 +267,21 @@ public class MatlabBuilder {
 	 */
 	private static String createEquations(
 			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables, ArrayList<String[]> equations) {
-		String content = "%% Fixed variables \n";
+		String content = "%% Fixed variables "+NEWLINE_CHAR+"";
 		// on commence par les variables fixes
 		content += createVariablesInitialization(fixedvariables);
 		// on init les variables x()
-		content += "\n\n%%Variables initialization\n";
+		content += ""+NEWLINE_CHAR+""+NEWLINE_CHAR+"%%Variables initialization"+NEWLINE_CHAR+"";
 		int count = 1;
 		for(SimpleVariable var : variables){
-			content += var.getName() + " = " + unknownLabel + "(" + (count++) + ");\n";  
+			content += var.getName() + " = " + unknownLabel + "(" + (count++) + ");"+NEWLINE_CHAR+"";  
 		}
 		
 		// on init les variables x()
-		content += "\n\n%%Equations\n";
+		content += ""+NEWLINE_CHAR+""+NEWLINE_CHAR+"%%Equations"+NEWLINE_CHAR+"";
 		count = 1;
 		for(String[] equ : equations){
-			content += equResultLabel + "(" + (count++) + ") = " + equ[0] + ";\n";  
+			content += equResultLabel + "(" + (count++) + ") = " + equ[0] + ";"+NEWLINE_CHAR+"";  
 		}
 		return content;
 	}
@@ -211,7 +290,7 @@ public class MatlabBuilder {
 		// les variables
 		String content = "";
 		for(SimpleVariable var : variables){
-			content += var.getName() + " = " + var.getValue() + ";\n";
+			content += var.getName() + " = " + var.getValue() + ";"+NEWLINE_CHAR+"";
 		}
 		return content;
 	}
@@ -220,14 +299,14 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createModelHeader() {
-		String content = "%% Model script\n%%\n";
-		content += "% This file is the main matlab script for the model\n%%\n";
-		content += "% You can use it as a script\n";
-		content += "% File generated by "+SystemParams.PROGRAM_NAME+" Version : "+SystemParams.VERSION+"\n";
+		String content = "%% Model script"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
+		content += "% This file is the main matlab script for the model"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
+		content += "% You can use it as a script"+NEWLINE_CHAR+"";
+		content += "% File generated by "+SystemParams.PROGRAM_NAME+" Version : "+SystemParams.VERSION+""+NEWLINE_CHAR+"";
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
-		content += "% Date : "+dateFormat.format(date)+"\n";
-		content += "function "+mainFunctionName+"\n";
+		content += "% Date : "+dateFormat.format(date)+""+NEWLINE_CHAR+"";
+		content += "function "+mainFunctionName+""+NEWLINE_CHAR+"";
 		return content;
 	}
 
@@ -236,14 +315,14 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createEquationInitialHeader() {
-		String content = "%% Model function\n%%\n";
-		content += "% This file contains equations for the round of the fsolve\n%%\n";
-		content += "% You should only call this file through "+mainFunctionName+"\n";
-		content += "% File generated by "+SystemParams.PROGRAM_NAME+" Version : "+SystemParams.VERSION+"\n";
+		String content = "%% Model function"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
+		content += "% This file contains equations for the round of the fsolve"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
+		content += "% You should only call this file through "+mainFunctionName+""+NEWLINE_CHAR+"";
+		content += "% File generated by "+SystemParams.PROGRAM_NAME+" Version : "+SystemParams.VERSION+""+NEWLINE_CHAR+"";
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
-		content += "% Date : "+dateFormat.format(date)+"\n";
-		content += "function "+equResultLabel+" = "+equationsInitialFunctionName+"("+unknownLabel+")\n";
+		content += "% Date : "+dateFormat.format(date)+""+NEWLINE_CHAR+"";
+		content += "function "+equResultLabel+" = "+equationsInitialFunctionName+"("+unknownLabel+")"+NEWLINE_CHAR+"";
 		return content;
 	}
 
@@ -252,14 +331,14 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createEquationTimeHeader() {
-		String content = "%% Model function\n%%\n";
-		content += "% This file contains equations for the round of the fsolve\n%%\n";
-		content += "% You should only call this file through "+mainFunctionName+"\n";
-		content += "% File generated by "+SystemParams.PROGRAM_NAME+" Version : "+SystemParams.VERSION+"\n";
+		String content = "%% Model function"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
+		content += "% This file contains equations for the round of the fsolve"+NEWLINE_CHAR+"%%"+NEWLINE_CHAR+"";
+		content += "% You should only call this file through "+mainFunctionName+""+NEWLINE_CHAR+"";
+		content += "% File generated by "+SystemParams.PROGRAM_NAME+" Version : "+SystemParams.VERSION+""+NEWLINE_CHAR+"";
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
-		content += "% Date : "+dateFormat.format(date)+"\n";
-		content += "function "+equResultLabel+" = "+equationsTimeFunctionName+"("+unknownLabel+")\n";
+		content += "% Date : "+dateFormat.format(date)+""+NEWLINE_CHAR+"";
+		content += "function "+equResultLabel+" = "+equationsTimeFunctionName+"("+unknownLabel+")"+NEWLINE_CHAR+"";
 		return content;
 	}
 
@@ -269,13 +348,22 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	public static String globalVarsDefinition(ArrayList<Variable> globalvariables){
-		String content = "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
-		content += "%%       Declaring global variables     %%\n";
-		content += "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n";
+		String content = "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"+NEWLINE_CHAR+"";
+		content += "%%       Declaring global variables     %%"+NEWLINE_CHAR+"";
+		content += "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"+NEWLINE_CHAR+"";
 		for(Variable var:globalvariables){
-			content += "global "+var.getName()+";\n";
+			content += "global "+var.getName()+";"+NEWLINE_CHAR+"";
 		}
 		return content;
 	}
 
+	public static void writeLargerTextFile(String aFileName, List<String> aLines) throws IOException {
+		Path path = Paths.get(aFileName);
+		try (BufferedWriter writer = Files.newBufferedWriter(path, ENCODING)){
+			for(String line : aLines){
+				writer.write(line);
+				writer.newLine();
+			}
+		}
+	}
 }

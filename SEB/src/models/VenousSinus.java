@@ -868,12 +868,12 @@ public class VenousSinus extends ElasticTube {
 	//====== additional momentum ====
 	private float getInitialAddMomentumEquation(SimpleVariable pr, SimpleVariable fo){
 		// equ(72)
-		return (pr.getValue() - ModelSpecification.P_OUT.getValue()[(int) ModelSpecification.currentIter.getValue()]) - ModelSpecification.TPout_alfa.getValue() * fo.getValue();
+		return (pr.getValue() - ModelSpecification.P_OUT_INITIAL.getValue()) - ModelSpecification.TPout_alfa.getValue() * fo.getValue();
 	}
 
 	private String getSymbolicInitialAddMomentumEquation(SimpleVariable pr, SimpleVariable fo){
 		// equ(72)
-		return "("+pr.getName()+" - "+ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")) - "+ModelSpecification.TPout_alfa.getName()+" * "+fo.getName();
+		return "("+pr.getName()+" - "+ModelSpecification.P_OUT_INITIAL.getName()+") - "+ModelSpecification.TPout_alfa.getName()+" * "+fo.getName();
 	}
 
 	private float getInitialAddMomentumDerivative(SimpleVariable v, ArrayList<SimpleVariable> variables) throws Exception{

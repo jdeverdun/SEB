@@ -469,7 +469,7 @@ public class FirstArtery extends ElasticTube {
 
 	private float getInitialMomentumEquation(SimpleVariable pr, SimpleVariable fi){
 		// equ(75)
-		return (ModelSpecification.P_INIT.getValue()[(int) ModelSpecification.currentIter.getValue()] - pr.getValue()) - getAlpha().getValue() * fi.getValue();
+		return (ModelSpecification.P_INIT_INITIAL.getValue() - pr.getValue()) - getAlpha().getValue() * fi.getValue();
 	}
 
 	// symbolic equation (en chaine de caractere)
@@ -485,7 +485,7 @@ public class FirstArtery extends ElasticTube {
 
 	private String getSymbolicInitialMomentumEquation(SimpleVariable pr, SimpleVariable fi){
 		// equ(75)
-		return "("+ModelSpecification.P_INIT.getName()+"("+ModelSpecification.currentIter.getName()+")- "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
+		return "("+ModelSpecification.P_INIT_INITIAL.getName()+" - "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
 	}
 
 	// ------- Derive -----------

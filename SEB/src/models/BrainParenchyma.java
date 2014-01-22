@@ -99,7 +99,14 @@ public class BrainParenchyma extends Tube {
 	}
 
 	protected void setLength(float length) {
-		this.length = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL+BRAIN_LABEL,length, (Tube)this);
+		String prefix = "";
+		if(getHemi() == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(getHemi() == Hemisphere.RIGHT)
+				prefix = "R_";
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL+"_"+BRAIN_LABEL,length, (Tube)this);
+		this.length = v;
 	}
 
 	public SimpleVariable getAreaFluid() {
@@ -137,7 +144,13 @@ public class BrainParenchyma extends Tube {
 	}
 
 	public void setAlpha1(float alpha1) {
-		SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA1_LABEL+"_"+BRAIN_LABEL,alpha1, (Tube)this);
+		String prefix = "";
+		if(getHemi() == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(getHemi() == Hemisphere.RIGHT)
+				prefix = "R_";
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA1_LABEL+"_"+BRAIN_LABEL,alpha1, (Tube)this);
 		this.alpha1 = v;
 	}
 
@@ -146,7 +159,13 @@ public class BrainParenchyma extends Tube {
 	}
 
 	public void setAlpha2(float alpha2) {
-		SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA2_LABEL+"_"+BRAIN_LABEL,alpha2, (Tube)this);
+		String prefix = "";
+		if(getHemi() == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(getHemi() == Hemisphere.RIGHT)
+				prefix = "R_";
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA2_LABEL+"_"+BRAIN_LABEL,alpha2, (Tube)this);
 		this.alpha2 = v;
 	}
 
@@ -297,6 +316,7 @@ public class BrainParenchyma extends Tube {
 		variables.add(getAlpha2());
 		variables.add(getInitialAreaFluid());
 		variables.add(getInitialAreaSolid());
+		variables.add(getLength());
 		return variables;
 	}
 	
@@ -850,8 +870,8 @@ public class BrainParenchyma extends Tube {
 			res1 += (va.getValue() * ((Vein)va.getSourceObj()).getLength().getValue());
 			res2 += (((Vein)va.getSourceObj()).getInitialArea().getValue() * ((Vein)va.getSourceObj()).getLength().getValue());  
 		}
-		res1 += (vsinousArea.getValue() * ((VenousSinus)vsinousArea.getSourceObj()).getLength().getValue());  
-		res2 += (((VenousSinus)vsinousArea.getSourceObj()).getInitialArea().getValue() * ((VenousSinus)vsinousArea.getSourceObj()).getLength().getValue());  
+		res1 += (0.5f * vsinousArea.getValue() * ((VenousSinus)vsinousArea.getSourceObj()).getLength().getValue());  
+		res2 += (0.5f * ((VenousSinus)vsinousArea.getSourceObj()).getInitialArea().getValue() * ((VenousSinus)vsinousArea.getSourceObj()).getLength().getValue());  
 		res1 += (ventricleArea.getValue() * ((Ventricle)ventricleArea.getSourceObj()).getLength().getValue()); 
 		res2 += (((Ventricle)ventricleArea.getSourceObj()).getInitialArea().getValue() * ((Ventricle)ventricleArea.getSourceObj()).getLength().getValue());  
 		res1 += (0.5f * (thirdvArea.getValue() * ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getValue())); 
@@ -892,8 +912,8 @@ public class BrainParenchyma extends Tube {
 			res1 += "("+va.getName() +" * "+ ((Vein)va.getSourceObj()).getLength().getName()+") + ";
 			res2 += "("+((Vein)va.getSourceObj()).getInitialArea().getName() +" * "+ ((Vein)va.getSourceObj()).getLength().getName()+") + ";  
 		}
-		res1 += "("+vsinousArea.getName() +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getLength().getName()+") + ";  
-		res2 += "("+((VenousSinus)vsinousArea.getSourceObj()).getInitialArea().getName() +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getLength().getName()+") + ";  
+		res1 += "("+0.5f +" * "+ vsinousArea.getName() +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getLength().getName()+") + ";  
+		res2 += "("+0.5f +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getInitialArea().getName() +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getLength().getName()+") + ";  
 		res1 += "("+ventricleArea.getName() +" * "+ ((Ventricle)ventricleArea.getSourceObj()).getLength().getName()+") + "; 
 		res2 += "("+((Ventricle)ventricleArea.getSourceObj()).getInitialArea().getName() +" * "+ ((Ventricle)ventricleArea.getSourceObj()).getLength().getName()+") + ";  
 		res1 += "("+0.5f +" * "+ (thirdvArea.getName() +" * "+ ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getName())+") + "; 
@@ -931,7 +951,7 @@ public class BrainParenchyma extends Tube {
 				String sasname = buildNameFromStruct(Hemisphere.BOTH, SAS.TUBE_NUM, ElasticTube.AREA_LABEL);
 				if(v.getName().startsWith(sinousname) || v.getName().startsWith(thirdname) || v.getName().startsWith(fourthname)
 						|| v.getName().startsWith(sasname)){
-					// derive selon area de tube localises dans un hemi : 0.5*T1_l0  ;
+					// derive selon area de tube localises dans 2 hemi : 0.5*T1_l0  ;
 					return 0.5f * v.getSourceObj().getLength().getValue();
 				}else{
 					return 0.0f;

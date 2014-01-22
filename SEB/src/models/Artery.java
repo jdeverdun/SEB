@@ -443,7 +443,7 @@ public class Artery extends ElasticTube {
 	// momentum
 	private float getInitialMomentumEquation(SimpleVariable fi, SimpleVariable pr){
 		// eq (31)  (36)
-		return (ModelSpecification.P_INIT.getValue()[(int) ModelSpecification.currentIter.getValue()] - pr.getValue())-getAlpha().getValue()*fi.getValue();
+		return (ModelSpecification.P_INIT_INITIAL.getValue() - pr.getValue())-getAlpha().getValue()*fi.getValue();
 	}
 	private float getInitialMomentumDerivative(SimpleVariable v, ArrayList<SimpleVariable> variables){
 		// eq (31)  (36)
@@ -461,7 +461,7 @@ public class Artery extends ElasticTube {
 	}
 	private String getSymbolicInitialMomentumEquation(SimpleVariable fi, SimpleVariable pr){
 		// eq (31)  (36)
-		return "("+ModelSpecification.P_INIT.getName()+"("+ModelSpecification.currentIter.getName()+") - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
+		return "("+ModelSpecification.P_INIT_INITIAL.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
 	}
 	private String getSymbolicInitialMomentumDerivative(SimpleVariable v, ArrayList<SimpleVariable> variables){
 		// eq (31)  (36)

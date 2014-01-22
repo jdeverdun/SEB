@@ -266,7 +266,7 @@ public class StandardModel {
 		//////////////////////////////////////////////////////////
 		
 		System.out.println("============ Resolution ===========");
-		Path modelDir = Paths.get(".");
+		Path modelDir = Paths.get("C:\\Users\\Analyse\\Documents\\MATLAB\\Jeremy_these\\Modelisation\\linninger\\auto_generation_SEB");
 		//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
 		MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
 		return true;

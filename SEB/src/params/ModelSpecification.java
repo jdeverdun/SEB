@@ -31,6 +31,8 @@ public class ModelSpecification {
 	public static SimpleVariable damp2 = new SimpleVariable("damp2",0.0f,null);
 	public static SimpleVariable time_step = new SimpleVariable("time_step",120,null);
 	public static SimpleVariable currentIter = new SimpleVariable("currentIter");
+	public static SimpleVariable P_INIT_INITIAL = new SimpleVariable("P_INIT_INITIAL",(0.0f + 102.0f) * 1333.2240f,null);
+	public static SimpleVariable P_OUT_INITIAL = new SimpleVariable("P_OUT_INITIAL",(0.0f + 2.5f) * 1333.2240f,null);
 	public static Architecture architecture;
 	public static String P_INIT_NAME = "P_INIT";
 	public static String P_OUT_NAME = "P_OUT";
@@ -52,8 +54,11 @@ public class ModelSpecification {
 		vars.add(TPout_alfa);
 		vars.add(dt);
 		vars.add(damp);
+		vars.add(damp2);
 		vars.add(time_step);
 		vars.add(currentIter);
+		vars.add(P_INIT_INITIAL);
+		vars.add(P_OUT_INITIAL);
 		vars.add(P_INIT);
 		vars.add(P_OUT);
 		vars.add(OUT_D);
@@ -72,7 +77,7 @@ public class ModelSpecification {
 		OUT_D = new ArrayVariable(OUT_D_NAME,new float[(int) time_step.getValue()], null);
 		fourrier_funct = new ArrayVariable(FOURRIER_FUNCT_NAME,new float[(int) time_step.getValue()], null);
 		for(int i = 0; i<(int) time_step.getValue();i++){
-			time.getValue()[i] = i * dt.getValue();
+			time.getValue()[i] = (i+1) * dt.getValue();
 			fourrier_funct.getValue()[i] = (float) (  0.6 + 0.6*(0.70588472173953 - 0.05900572216651*Math.cos(2*Math.PI*time.getValue()[i]) 
                      - 0.0872254163115668*Math.cos(4*Math.PI*time.getValue()[i]) - 0.0456805350837203*Math.cos(6*Math.PI*time.getValue()[i]) 
                      - 0.0190254766060677*Math.cos(8*Math.PI*time.getValue()[i]) - 0.00227790528223953*Math.cos(10*Math.PI*time.getValue()[i]) 
@@ -82,6 +87,7 @@ public class ModelSpecification {
                      - 0.0120187782765389*Math.sin(8*Math.PI*time.getValue()[i]) - 0.0298121524913813*Math.sin(10*Math.PI*time.getValue()[i])
                      - 0.00705400623825701*Math.sin(12*Math.PI*time.getValue()[i])- 0.00711904276150898*Math.sin(14*Math.PI*time.getValue()[i])
                      + 0.000860786521170459*Math.sin(16*Math.PI*time.getValue()[i]) ) );
+			System.out.println(fourrier_funct.getValue()[i]);
 			P_INIT.getValue()[i] = 102.0f * 1333.2240f * fourrier_funct.getValue()[i];
 			P_OUT.getValue()[i] =  2.5f * 1333.2240f;
 			OUT_D.getValue()[i] = 0.0f;
