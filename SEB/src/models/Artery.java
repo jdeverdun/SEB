@@ -352,7 +352,81 @@ public class Artery extends ElasticTube {
 			}
 		}
 	}
-	
+	//====== Connectivity quand parent = artere only ====
+	/**
+	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
+	 * @param parentFlowout
+	 * @param fi
+	 * @return
+	 */
+	private float getConnectivityEquation(SimpleVariable fi){
+		// equ ajoute pour lien artere  - artere
+		float res = 0;
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			if(parent instanceof Artery){
+				Artery par = ((Artery)parent);
+				SimpleVariable pf = par.getFlowout();
+				float fact = par.getChildren().size();
+				res += (pf.getValue()/fact);
+			}
+		}
+		return (res - fi.getValue());
+	}
+
+	private String getSymbolicConnectivityEquation(SimpleVariable fi){
+		// equ(48) et equ(51)
+		String res = "(";
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			if(parent instanceof Artery){
+				if(!res.equals("("))
+					res += "+";
+				Artery par = ((Artery)parent);
+				SimpleVariable pf = par.getFlowout();
+				float fact = par.getChildren().size();
+				res += "("+pf.getName()+"/"+fact+")";
+			}
+		}
+		res += ")";
+		return "("+res+" - "+fi.getName()+")";
+	}
+
+	private float getConnectivityDerivative(SimpleVariable v, ArrayList<SimpleVariable> variables) throws Exception{
+		// equ(48) et equ(51)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return -1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				if(parent instanceof Artery){
+					SimpleVariable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
+					if(v.getName().equals(pr.getName())){
+						// derive selon flowoutParent :  1.0f
+						return 1.0f/(float)((Artery)parent).getChildren().size();		
+					}
+				}
+			}
+			return 0.0f;
+		}
+	}
+
+	private String getSymbolicConnectivityDerivative(SimpleVariable v, ArrayList<SimpleVariable> variables) throws Exception{
+		// equ(48) et equ(51)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return "-"+1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				if(parent instanceof Artery){
+					SimpleVariable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
+					if(v.getName().equals(pr.getName())){
+						// derive selon flowoutParent :  1.0f
+						return ""+1.0f+"/"+(float)((Artery)parent).getChildren().size();		
+					}
+				}
+			}
+			return ""+0.0f;
+		}
+	}
 	// ================= init ========================
 	
 	private float getInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo){
@@ -475,6 +549,80 @@ public class Artery extends ElasticTube {
 			}else{
 				return ""+0.0f;
 			}
+		}
+	}
+	/**
+	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
+	 * @param parentFlowout
+	 * @param fi
+	 * @return
+	 */
+	private float getInitialConnectivityEquation(SimpleVariable fi){
+		// equ(48) et equ(51)
+		float res = 0;
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			if(parent instanceof Artery){
+				Artery par = ((Artery)parent);
+				SimpleVariable pf = par.getFlowout();
+				float fact = par.getChildren().size();
+				res += (pf.getValue()/fact);
+			}
+		}
+		return (res - fi.getValue());
+	}
+	
+	private String getSymbolicInitialConnectivityEquation(SimpleVariable fi){
+		// equ(48) et equ(51)
+		String res = "(";
+		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
+			if(parent instanceof Artery){
+				if(!res.equals("("))
+					res += "+";
+				Artery par = ((Artery)parent);
+				SimpleVariable pf = par.getFlowout();
+				float fact = par.getChildren().size();
+				res += "("+pf.getName()+"/"+fact+")";
+			}
+		}
+		res += ")";
+		return "("+res+" - "+fi.getName()+")";
+	}
+	
+	private float getInitialConnectivityDerivative(SimpleVariable v, ArrayList<SimpleVariable> variables) throws Exception{
+		// equ(48) et equ(51)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return -1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				if(parent instanceof Artery){
+					SimpleVariable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
+					if(v.getName().equals(pr.getName())){
+						// derive selon flowoutParent :  1.0f
+						return 1.0f/(float)((Artery)parent).getChildren().size();		
+					}
+				}
+			}
+			return 0.0f;
+		}
+	}
+	
+	private String getSymbolicInitialConnectivityDerivative(SimpleVariable v, ArrayList<SimpleVariable> variables) throws Exception{
+		// equ(48) et equ(51)
+		if(v.getName().equals(getFlowin().getName())){
+			// derive selon flowin : -1;
+			return "-"+1.0f;
+		}else{
+			for(ElasticTube parent:getParents()){
+				if(parent instanceof Artery){
+					SimpleVariable pr = findVariableWithName(((Artery)parent).getFlowout().getName(),variables);
+					if(v.getName().equals(pr.getName())){
+						// derive selon flowoutParent :  1.0f
+						return ""+1.0f+"/"+(float)((Artery)parent).getChildren().size();		
+					}
+				}
+			}
+			return ""+0.0f;
 		}
 	}
 }

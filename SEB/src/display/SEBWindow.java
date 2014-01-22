@@ -1,8 +1,12 @@
 package display;
 
+import javax.swing.JButton;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,6 +22,7 @@ import javax.swing.JMenuItem;
 import params.WindowManager;
 
 import BaseModel.StandardModel;
+import javax.swing.JInternalFrame;
 
 public class SEBWindow extends JFrame {
 
@@ -31,6 +36,8 @@ public class SEBWindow extends JFrame {
 	private JPanel mainPanel;
 	private JTabbedPane tabbedPane;
 	private InitialInputsPanel initialInputPanel;
+	private JMenuItem mntmLinningerCustom;
+	private JInternalFrame internalFrame;
 
 	public SEBWindow() {
 		WindowManager.MAINWINDOW = this;
@@ -45,7 +52,21 @@ public class SEBWindow extends JFrame {
 		mainPanel.add(tabbedPane, "cell 0 1 2 1,grow");
 		initialInputPanel = new InitialInputsPanel();
 		tabbedPane.addTab("Initial values", initialInputPanel);
+		JPanel pan = new JPanel();
+		//pan.setDragMode(1);
+		// TESTS --------
+		tabbedPane.addTab("Test pan", new JScrollPane(pan));
+		pan.setLayout(null);
 		
+		internalFrame = new JInternalFrame("New JInternalFrame",true,true,true,true);
+		internalFrame.setBounds(374, 5, 112, 56);
+		internalFrame.getContentPane().add(new JButton("fds"));
+		//internalFrame.setd
+
+		pan.add(internalFrame);
+		internalFrame.setVisible(true);
+
+		// FIN TESTS --------
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -57,6 +78,9 @@ public class SEBWindow extends JFrame {
 		
 		mntmLinninger = new JMenuItem("Linninger");
 		mnStandardModels.add(mntmLinninger);
+		
+		mntmLinningerCustom = new JMenuItem("Linninger Custom");
+		mnStandardModels.add(mntmLinningerCustom);
 		
 		
 		// Menu listenner
@@ -72,6 +96,20 @@ public class SEBWindow extends JFrame {
 					@Override
 					public void run() {
 						StandardModel.run_linninger();
+					}
+				});
+				modelthread.start();
+			}
+		});
+		mntmLinningerCustom.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Thread modelthread = new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						StandardModel.run_linninger_with_added_tubes();
 					}
 				});
 				modelthread.start();
