@@ -42,10 +42,8 @@ public abstract class Tube {
 	public abstract String getTubeNum();
 	
 	// ---------    EQUATIONS ---------------
-	public abstract ArrayList<float[]> getEquations(ArrayList<SimpleVariable> variables) throws Exception;
-	public abstract ArrayList<String[]> getSymbolicEquations(ArrayList<SimpleVariable> variables) throws Exception;
-	public abstract ArrayList<float[]> getInitialEquations(ArrayList<SimpleVariable> variables) throws Exception;
-	public abstract ArrayList<String[]> getSymbolicInitialEquations(ArrayList<SimpleVariable> variables) throws Exception;
+	public abstract ArrayList<String> getSymbolicEquations(ArrayList<SimpleVariable> variables) throws Exception;
+	public abstract ArrayList<String> getSymbolicInitialEquations(ArrayList<SimpleVariable> variables) throws Exception;
 	// ----- Methodes ----
 	public String toString(){
 		return "Name = "+getName()+" - Length = "+getLength();

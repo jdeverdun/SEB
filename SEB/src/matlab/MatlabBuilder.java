@@ -49,7 +49,7 @@ public class MatlabBuilder {
 	public static final String MONITORINGVARS_SUFFIX = "_GRAPH";
 	
 	public static MatlabModel buildModel(Path folder, ArrayList<Variable> globalvariables,
-			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables,ArrayList<String[]> initEquations,ArrayList<String[]> equations) {
+			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables,ArrayList<String> initEquations,ArrayList<String> equations) {
 		if(!folder.toFile().canWrite()){
 			SwingUtilities.invokeLater(new Runnable() {
 				
@@ -301,12 +301,12 @@ public class MatlabBuilder {
 	 * Cree le contenu du fichier pour les equation au round 1
 	 * @param fixedvariables
 	 * @param variables
-	 * @param equations 
+	 * @param initEquations 
 	 * @param initEquations 
 	 * @return
 	 */
 	private static String createEquations(
-			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables, ArrayList<String[]> equations) {
+			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables, ArrayList<String> initEquations) {
 		String content = "%% Fixed variables "+NEWLINE_CHAR+"";
 		// on commence par les variables fixes
 		content += createVariablesInitialization(fixedvariables);
@@ -320,8 +320,8 @@ public class MatlabBuilder {
 		// on init les variables x()
 		content += ""+NEWLINE_CHAR+""+NEWLINE_CHAR+"%%Equations"+NEWLINE_CHAR+"";
 		count = 1;
-		for(String[] equ : equations){
-			content += equResultLabel + "(" + (count++) + ") = " + equ[0] + ";"+NEWLINE_CHAR+"";  
+		for(String equ : initEquations){
+			content += equResultLabel + "(" + (count++) + ") = " + equ + ";"+NEWLINE_CHAR+"";  
 		}
 		return content;
 	}

@@ -15,7 +15,6 @@ import Jama.Matrix;
 import params.ModelSpecification;
 import params.SystemParams;
 import params.WindowManager;
-import solver.EquationSolver;
 import matlab.MatlabBuilder;
 import matlab.MatlabModel;
 import models.Architecture;
@@ -201,19 +200,16 @@ public class StandardModel {
 		//////////////////////////////////////////////////////////
 		
 		System.out.println("============ Equations ===========");
-		ArrayList<String[]> equations = new ArrayList<String[]>();
-		ArrayList<String[]> initEquations = new ArrayList<String[]>();
+		ArrayList<String> equations = new ArrayList<String>();
+		ArrayList<String> initEquations = new ArrayList<String>();
 		try {
 			for(Tube tube : tubes){
 				initEquations.addAll(tube.getSymbolicInitialEquations(variables));
 				equations.addAll(tube.getSymbolicEquations(variables));
 			}
-			for(String[] bloceq : equations){
+			for(String bloceq : equations){
 				
-				for(String bloc1 : bloceq){
-					System.out.print(bloc1+"\t");
-				}
-				System.out.print("\n");
+				System.out.print(bloceq+"\n");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -447,19 +443,16 @@ public static boolean run_linninger_with_added_tubes(){
 		//////////////////////////////////////////////////////////
 		
 		System.out.println("============ Equations ===========");
-		ArrayList<String[]> equations = new ArrayList<String[]>();
-		ArrayList<String[]> initEquations = new ArrayList<String[]>();
+		ArrayList<String> equations = new ArrayList<String>();
+		ArrayList<String> initEquations = new ArrayList<String>();
 		try {
 			for(Tube tube : tubes){
 				initEquations.addAll(tube.getSymbolicInitialEquations(variables));
 				equations.addAll(tube.getSymbolicEquations(variables));
 			}
-			for(String[] bloceq : equations){
+			for(String bloceq : equations){
 				
-				for(String bloc1 : bloceq){
-					System.out.print(bloc1+"\t");
-				}
-				System.out.print("\n");
+				System.out.print(bloceq+"\n");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
