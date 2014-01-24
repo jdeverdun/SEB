@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -23,6 +24,11 @@ import params.WindowManager;
 
 import BaseModel.StandardModel;
 import javax.swing.JInternalFrame;
+import javax.swing.SwingConstants;
+
+import org.jscroll.JScrollDesktopPane;
+
+import com.display.ArchitectureToolbar;
 
 public class SEBWindow extends JFrame {
 
@@ -37,7 +43,8 @@ public class SEBWindow extends JFrame {
 	private JTabbedPane tabbedPane;
 	private InitialInputsPanel initialInputPanel;
 	private JMenuItem mntmLinningerCustom;
-	private JInternalFrame internalFrame;
+	private ArchitectureToolbar toolBarArchitect;
+	private JScrollDesktopPane graphicalModelPanel;
 
 	public SEBWindow() {
 		WindowManager.MAINWINDOW = this;
@@ -55,17 +62,14 @@ public class SEBWindow extends JFrame {
 		JPanel pan = new JPanel();
 		//pan.setDragMode(1);
 		// TESTS --------
-		tabbedPane.addTab("Test pan", new JScrollPane(pan));
-		pan.setLayout(null);
+		graphicalModelPanel = new JScrollDesktopPane();
+
+		pan.setLayout(new MigLayout("", "[grow,fill][fill]", "[grow,fill]"));
 		
-		internalFrame = new JInternalFrame("New JInternalFrame",true,true,true,true);
-		internalFrame.setBounds(374, 5, 112, 56);
-		internalFrame.getContentPane().add(new JButton("fds"));
-		//internalFrame.setd
-
-		pan.add(internalFrame);
-		internalFrame.setVisible(true);
-
+		toolBarArchitect = new ArchitectureToolbar();
+		pan.add(toolBarArchitect, "cell 1 0,alignx right,aligny top");
+		pan.add(graphicalModelPanel,"cell 0 0,alignx right,aligny top");
+		tabbedPane.addTab("Architecture", pan);
 		// FIN TESTS --------
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -141,5 +145,7 @@ public class SEBWindow extends JFrame {
 	public void setInitialInputPanel(InitialInputsPanel initialInputPanel) {
 		this.initialInputPanel = initialInputPanel;
 	}
-
+	public JScrollDesktopPane getGraphicalModelPanel() {
+		return graphicalModelPanel;
+	}
 }

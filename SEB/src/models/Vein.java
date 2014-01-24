@@ -62,13 +62,10 @@ public class Vein extends ElasticTube {
 
 		// momentum
 		for(ElasticTube parent:getParents()){
-			SimpleVariable parentPressure = findVariableWithName(((Veinule)parent).getPressure().getName(),variables);
+			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 		}
-
-		// connectivity
-		res.add(getSymbolicInitialConnectivityEquation(fi));
-
+		
 		return res;
 	}
 	
@@ -93,13 +90,25 @@ public class Vein extends ElasticTube {
 
 		// momentum
 		for(ElasticTube parent:getParents()){
-			SimpleVariable parentPressure = findVariableWithName(((Veinule)parent).getPressure().getName(),variables);
+			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
 		}
 
-		// connectivity
-		res.add(getSymbolicConnectivityEquation(fi));
-
+		// connectivite si besoin
+		boolean addconnectivity = true;
+		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+		for(ElasticTube child:getChildren()){
+			if(child instanceof VenousSinus){
+				addconnectivity = false;
+				break;
+			}
+			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+		}
+		if(!childFin.isEmpty() && !addconnectivity)
+			System.err.println("Why is there a vein connected to both a sinus and another vein?!");
+		if(addconnectivity)
+			res.add(getSymbolicConnectivityEquation(childFin, fo));
+		
 		return res;
 	}
 
@@ -119,23 +128,16 @@ public class Vein extends ElasticTube {
 		// equ(79) et equ(83)
 		return " "+ModelSpecification.damp2.getName()+" * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
 	}
-
-	private String getSymbolicConnectivityEquation(SimpleVariable fi){
-		// equ(49) et equ(52)
-		String res = "(";
-		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
-			if(!res.equals("("))
+	private String getSymbolicConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
+		// equ(80) (84)
+		String res = "";
+		for(SimpleVariable pf : childFin){
+			if(!res.equals(""))
 				res += "+";
-			Veinule par = ((Veinule)parent);
-			SimpleVariable pf = par.getFlowout();
-			float fact = par.getChildren().size();
-			res += "("+pf.getName()+"/"+fact+")";
+			res += pf.getName();
 		}
-		res += ")";
-		return "("+res+" - "+fi.getName()+")";
+		return ""+fo.getName()+" - ("+res+")";
 	}
-	
-	
 	
 	// ================= init ========================
 
@@ -151,18 +153,14 @@ public class Vein extends ElasticTube {
 		// eq (79)  (83)
 		return "("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
 	}
-	private String getSymbolicInitialConnectivityEquation(SimpleVariable fi){
-		// equ(80) et equ(84)
-		String res = "(";
-		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
-			if(!res.equals("("))
+	private String getSymbolicInitialConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
+		// equ jeremy connectivite vein - vein
+		String res = "";
+		for(SimpleVariable pf : childFin){
+			if(!res.equals(""))
 				res += "+";
-			Veinule par = ((Veinule)parent);
-			SimpleVariable pf = par.getFlowout();
-			float fact = par.getChildren().size();
-			res += "("+pf.getName()+"/"+fact+")";
+			res += pf.getName();
 		}
-		res += ")";
-		return "("+res+" - "+fi.getName()+")";
+		return ""+fo.getName()+" - ("+res+")";
 	}
 }

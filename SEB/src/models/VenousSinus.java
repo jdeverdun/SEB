@@ -74,7 +74,7 @@ public class VenousSinus extends ElasticTube {
 		ArrayList<SimpleVariable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
-			parentFlowout.add(findVariableWithName(((Vein)parent).getFlowout().getName(),variables));
+			parentFlowout.add(findVariableWithName(parent.getFlowout().getName(),variables));
 		}
 		res.add(getSymbolicInitialConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
 
@@ -118,7 +118,7 @@ public class VenousSinus extends ElasticTube {
 		ArrayList<SimpleVariable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
-			parentFlowout.add(findVariableWithName(((Vein)parent).getFlowout().getName(),variables));
+			parentFlowout.add(findVariableWithName(parent.getFlowout().getName(),variables));
 		}
 		res.add(getSymbolicConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
 

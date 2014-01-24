@@ -35,6 +35,13 @@ public abstract class ElasticTube extends Tube {
 		setInitialArea(-1.0f);
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+ID+"]");
 	}
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
@@ -49,6 +56,13 @@ public abstract class ElasticTube extends Tube {
 		setPressure(pressure);
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+ID+"]");
 	}	
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure, ArrayList<ElasticTube> par, ArrayList<ElasticTube> child){
@@ -62,6 +76,13 @@ public abstract class ElasticTube extends Tube {
 		setPressure(pressure);
 		setParents(par);
 		setChildren(child);
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+ID+"]");
 	}
 
 	protected SimpleVariable getLength() {

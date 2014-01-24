@@ -369,6 +369,16 @@ public static boolean run_linninger_with_added_tubes(){
 		ModelSpecification.init(architecture);
 		// on stock la liste des tubes
 		ArrayList<Tube> tubes = new ArrayList<Tube>();
+		// ajout
+		/*Artery arteryleft2 = new Artery("arteryleft2", Hemisphere.LEFT);
+		arteryleft2.addParent(arteryleft);
+		arteriolleft.addParent(arteryleft2);
+		tubes.add(arteryleft2);*/
+		Vein v = new Vein("vv",Hemisphere.LEFT);
+		v.addParent(vlleft);
+		vsinous.addParent(v);
+		tubes.add(v);
+		// fin ajout
 		tubes.add(firstArtery);
 		tubes.add(arteryleft);
 		tubes.add(arteryright);
@@ -378,16 +388,7 @@ public static boolean run_linninger_with_added_tubes(){
 		tubes.add(capright);
 		tubes.add(vlleft);
 		tubes.add(vlright);
-		for(int i = 0; i < 10;i++){
-			Veinule vlright2 = new Veinule("right_veinule_"+i, Hemisphere.RIGHT);
-			vlright2.addParent(capright);
-			tubes.add(vlright2);
-		}
-		for(int i = 0; i < 10;i++){
-			Veinule vlleft2 = new Veinule("left_veinule_"+i, Hemisphere.LEFT);
-			vlleft2.addParent(capleft);
-			tubes.add(vlleft2);
-		}
+
 		tubes.add(vleft);
 		tubes.add(vright);
 		tubes.add(vsinous);

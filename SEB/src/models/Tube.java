@@ -20,7 +20,6 @@ public abstract class Tube {
 	public Tube(String name,float len){
 		ID++;
 		myID = ID;
-		setName(name);
 		setLength(len);
 	}
 	
@@ -29,11 +28,11 @@ public abstract class Tube {
 	public abstract ArrayList<SimpleVariable> getVariables();	
 	public abstract ArrayList<SimpleVariable> getFixedVariables();	// variables type lenght ou A0
 	public abstract ArrayList<SimpleVariable> getGlobalVariables();	// variables type lenght ou A0
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 
-	protected void setName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 	public int getMyID(){

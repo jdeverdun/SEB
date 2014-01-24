@@ -64,12 +64,16 @@ public class Arteriole extends ElasticTube {
 
 		// momentum
 		for(ElasticTube parent:getParents()){
-			SimpleVariable parentPressure = findVariableWithName(((Artery)parent).getPressure().getName(),variables);
+			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
 		}
 		
 		// connectivity
-		res.add(getSymbolicConnectivityEquation(fi));
+		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+		for(ElasticTube child:getChildren()){
+			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+		}
+		res.add(getSymbolicConnectivityEquation(childFin, fo));
 				
 		return res;
 	}
@@ -95,12 +99,16 @@ public class Arteriole extends ElasticTube {
 
 		// momentum
 		for(ElasticTube parent:getParents()){
-			SimpleVariable parentPressure = findVariableWithName(((Artery)parent).getPressure().getName(),variables);
+			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 		}
 		
 		// connectivity
-		res.add(getSymbolicInitialConnectivityEquation(fi));
+		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+		for(ElasticTube child:getChildren()){
+			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+		}
+		res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 				
 		return res;
 	}
@@ -126,27 +134,16 @@ public class Arteriole extends ElasticTube {
 	}
 
 	//====== Connectivity ====
-	/**
-	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
-	 * @param parentFlowout
-	 * @param fi
-	 * @return
-	 */
-	private String getSymbolicConnectivityEquation(SimpleVariable fi){
-		// equ(48) et equ(51)
-		String res = "(";
-		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
-			if(!res.equals("("))
+	private String getSymbolicConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
+		// equ(49) (52)
+		String res = "";
+		for(SimpleVariable pf : childFin){
+			if(!res.equals(""))
 				res += "+";
-			Artery par = ((Artery)parent);
-			SimpleVariable pf = par.getFlowout();
-			float fact = par.getChildren().size();
-			res += "("+pf.getName()+"/"+fact+")";
+			res += pf.getName();
 		}
-		res += ")";
-		return "("+res+" - "+fi.getName()+")";
+		return ""+fo.getName()+" - ("+res+")";
 	}
-
 
 	// ================= init ========================
 
@@ -166,26 +163,16 @@ public class Arteriole extends ElasticTube {
 		return "("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
 	}
 	
-	/**
-	 * Pour l'equation de connectivite du flux on fait la somme du flux en amont qui doit etre egale au flux in
-	 * @param parentFlowout
-	 * @param fi
-	 * @return
-	 */
-	private String getSymbolicInitialConnectivityEquation(SimpleVariable fi){
-		// equ(48) et equ(51)
-		String res = "(";
-		for(ElasticTube parent : getParents()){//for(Variable pf : parentFlowout){
-			if(!res.equals("("))
-				res += "+";
-			Artery par = ((Artery)parent);
-			SimpleVariable pf = par.getFlowout();
-			float fact = par.getChildren().size();
-			res += "("+pf.getName()+"/"+fact+")";
-		}
-		res += ")";
-		return "("+res+" - "+fi.getName()+")";
-	}
 
+	private String getSymbolicInitialConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
+		// equ(49) (52)
+		String res = "";
+		for(SimpleVariable pf : childFin){
+			if(!res.equals(""))
+				res += "+";
+			res += pf.getName();
+		}
+		return ""+fo.getName()+" - ("+res+")";
+	}
 
 }
