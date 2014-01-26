@@ -68,7 +68,7 @@ public class JScrollInternalFrame extends JInternalFrame {
     public JScrollInternalFrame(String title, ImageIcon icon,
     		TubePanel frameContents,JScrollDesktopPane parentPane, boolean isClosable) {
         super(title, // title
-            true, //resizable
+            false, //resizable
             isClosable, //closable
             false, //maximizable
             false); //iconifiable
@@ -80,14 +80,15 @@ public class JScrollInternalFrame extends JInternalFrame {
 
         setBackground(Color.white);
         setForeground(Color.blue);
-
+        setSize(200, 120);
+        
         if (icon != null) {
             setFrameIcon(icon);
         }
 
         // add the window contents
         getContentPane().add(tubePanel);
-        pack();
+        //pack();
 
         saveSize();
 

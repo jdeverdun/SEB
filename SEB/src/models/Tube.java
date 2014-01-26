@@ -20,6 +20,7 @@ public abstract class Tube {
 	public Tube(String name,float len){
 		ID++;
 		myID = ID;
+		setName(name);
 		setLength(len);
 	}
 	

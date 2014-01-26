@@ -51,6 +51,7 @@ public class DesktopMediator implements DesktopConstants {
      */
     public DesktopMediator(JScrollDesktopPane mainPane) {
         desktopScrollpane = new DesktopScrollPane(this);
+        desktopScrollpane.addMouseListener(mainPane);
         desktopResizableToolbar = new DesktopResizableToolBar(this);
         dListener = new DesktopListener(this);
 
@@ -129,10 +130,10 @@ public class DesktopMediator implements DesktopConstants {
     private void createFrameAssociates(JScrollInternalFrame frame) {
         RootToggleButton button = null;
 
-        button = desktopResizableToolbar.add(frame.getTitle());
+        /*button = desktopResizableToolbar.add(frame.getTitle());
 
         button.setAssociatedFrame(frame);
-        frame.setAssociatedButton(button);
+        frame.setAssociatedButton(button);*/
 
         if (dMenu != null) {
             dMenu.add(frame);

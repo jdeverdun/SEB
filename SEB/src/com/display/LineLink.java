@@ -22,18 +22,18 @@ public class LineLink {
 		this.parent = parent;
 		this.child = child;
 		int x1 = (int) (this.parent.getX() + (this.parent.getWidth()/2.0f));
-		int y1 = (int) (this.parent.getY() + (this.parent.getHeight())) + 20;
+		int y1 = (int) (this.parent.getY() + (this.parent.getHeight())) + 22;
 		int x2 = (int) (this.child.getX() + (this.child.getWidth()/2.0f));
-		int y2 = (int) (this.child.getY()) + 20;
+		int y2 = (int) (this.child.getY()) + 22;
 		line = new Line2D.Float(x1, y1, x2, y2);
 		this.parent.addLineLinkAsParent(this);
 	}
 
 	public void update(){
 		int x1 = (int) (this.parent.getX() + (this.parent.getWidth()/2.0f));
-		int y1 = (int) (this.parent.getY() + (this.parent.getHeight())) + 20;
+		int y1 = (int) (this.parent.getY() + (this.parent.getHeight())) + 22;
 		int x2 = (int) (this.child.getX() + (this.child.getWidth()/2.0f));
-		int y2 = (int) (this.child.getY()) + 20;
+		int y2 = (int) (this.child.getY()) + 22;
 		line.setLine(x1, y1, x2, y2);
 		parent.getJsDesktopPane().repaint();
 	}
@@ -74,5 +74,10 @@ public class LineLink {
 			return parent == ((LineLink)v).getParent() && child == ((LineLink)v).getChild();
 		}
 		return false;
+	}
+
+	public void delete() {
+		parent.getTubePanel().removeLineLinkAsParent(this);
+		child.getTubePanel().removeLineLinkAsChild(this);
 	}
 }

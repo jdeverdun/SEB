@@ -100,19 +100,19 @@ public abstract class ElasticTube extends Tube {
 		this.length = v;
 	}
 	
-	protected ArrayList<ElasticTube> getParents() {
+	public ArrayList<ElasticTube> getParents() {
 		return parents;
 	}
 
-	protected void setParents(ArrayList<ElasticTube> parents) {
+	public void setParents(ArrayList<ElasticTube> parents) {
 		this.parents = parents;
 	}
 
-	protected ArrayList<ElasticTube> getChildren() {
+	public ArrayList<ElasticTube> getChildren() {
 		return children;
 	}
 
-	protected void setChildren(ArrayList<ElasticTube> childrens) {
+	public void setChildren(ArrayList<ElasticTube> childrens) {
 		this.children = childrens;
 	}
 
@@ -307,6 +307,14 @@ public abstract class ElasticTube extends Tube {
 			return getMyID() == ((ElasticTube)v).getMyID();
 		}
 		return false;
+	}
+
+	public boolean removeParent(ElasticTube tube) {
+		return getParents().remove(tube);
+	}
+	
+	public boolean removeChild(ElasticTube tube) {
+		return getChildren().remove(tube);
 	}
 	
 	

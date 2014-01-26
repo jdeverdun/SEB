@@ -38,10 +38,15 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 
@@ -113,7 +118,7 @@ import java.util.ArrayList;
  * @author <a href="mailto:tessier@gabinternet.com">Tom Tessier</a>
  * @version 1.0  12-Aug-2001
  */
-public class JScrollDesktopPane extends JPanel implements DesktopConstants {
+public class JScrollDesktopPane extends JPanel implements DesktopConstants, MouseListener{
 	private LineLink lineClicked = null;
 	private ArrayList<JScrollInternalFrame> internalFrames;
     private static int count; // count used solely to name untitled frames
@@ -153,42 +158,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants {
         internalFrames = new ArrayList<JScrollInternalFrame>();
         setLayout(new BorderLayout());
         desktopMediator = new DesktopMediator(this);
-        addMouseListener(new MouseListener() {
-			
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mousePressed(MouseEvent e) {
-				if(internalFrames.size()<2)
-					return;
-				int x = e.getX();
-		        int y = e.getY();
-
-		        lineClicked = getClickedLine(x, y);
-			}
-			
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+        addMouseListener(this);
 
     }
 
@@ -389,18 +359,15 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants {
 	}
 
 	public void mousePressed(MouseEvent e) {
-        int x = e.getX();
-        int y = e.getY();
-
-        lineClicked = getClickedLine(x, y);
+        
     }
 
     public LineLink getClickedLine(int x, int y) {
    	
     	for(JScrollInternalFrame jsf : internalFrames){
 	    	for (LineLink line : jsf.getLineLinks()) {
-	    		double dist = line.getLine().ptLineDist(new Point(x,y));
-	    		if(dist<5){
+	    		float dist = Math.abs((float) line.getLine().ptSegDist(new Point(x,y)) - 20.0f);
+	    		if(dist<20.0f){
 	    			return line;
 	    		}	
 	    	}
@@ -434,5 +401,53 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants {
 
 	public void addJIFrameToList(JScrollInternalFrame jScrollInternalFrame) {
 		internalFrames.add(jScrollInternalFrame);
-	}  
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		switch(e.getModifiers()) {
+		case InputEvent.BUTTON1_MASK: {
+			if(internalFrames.size()<2 && e.getButton() == MouseEvent.BUTTON1)
+				return;
+			int x = e.getX();
+			int y = e.getY();
+
+			lineClicked = getClickedLine(x, y);
+			repaint(); 
+			break;
+		}
+		case InputEvent.BUTTON2_MASK: { 
+			if(lineClicked != null){
+				lineClicked.delete();
+				lineClicked = null;
+				repaint();
+			}
+			break;
+		}
+		case InputEvent.BUTTON3_MASK: {
+			lineClicked = null;
+			repaint(); 
+			break;
+		}
+		}
+	}
+	 
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

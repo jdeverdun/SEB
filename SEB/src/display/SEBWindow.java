@@ -12,6 +12,7 @@ import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import models.Hemisphere;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JToolBar;
 import javax.swing.JTabbedPane;
@@ -29,6 +30,7 @@ import javax.swing.SwingConstants;
 import org.jscroll.JScrollDesktopPane;
 
 import com.display.ArchitectureToolbar;
+import com.display.images.IconLibrary;
 
 public class SEBWindow extends JFrame {
 
@@ -43,10 +45,12 @@ public class SEBWindow extends JFrame {
 	private JTabbedPane tabbedPane;
 	private InitialInputsPanel initialInputPanel;
 	private JMenuItem mntmLinningerCustom;
-	private ArchitectureToolbar toolBarArchitect;
+	private ArchitectureToolbar toolBarArchitectLeft;
+	private ArchitectureToolbar toolBarArchitectRight;
 	private JScrollDesktopPane graphicalModelPanel;
 
 	public SEBWindow() {
+		IconLibrary.load();
 		WindowManager.MAINWINDOW = this;
 		mainPanel = new JPanel();
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
@@ -66,8 +70,10 @@ public class SEBWindow extends JFrame {
 
 		pan.setLayout(new MigLayout("", "[grow,fill][fill]", "[grow,fill]"));
 		
-		toolBarArchitect = new ArchitectureToolbar();
-		pan.add(toolBarArchitect, "cell 1 0,alignx right,aligny top");
+		toolBarArchitectLeft = new ArchitectureToolbar(Hemisphere.LEFT);
+		toolBarArchitectRight = new ArchitectureToolbar(Hemisphere.RIGHT);
+		pan.add(toolBarArchitectLeft, "cell 1 0,alignx right,aligny top");
+		pan.add(toolBarArchitectRight, "cell 2 0,alignx right,aligny top");
 		pan.add(graphicalModelPanel,"cell 0 0,alignx right,aligny top");
 		tabbedPane.addTab("Architecture", pan);
 		// FIN TESTS --------
