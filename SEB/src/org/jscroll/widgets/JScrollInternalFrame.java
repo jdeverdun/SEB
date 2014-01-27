@@ -30,6 +30,7 @@ import com.display.TubePanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 
 /**
@@ -54,7 +55,7 @@ public class JScrollInternalFrame extends JInternalFrame {
     private int initialWidth;
     private int initialHeight;
     private JScrollDesktopPane jsDesktopPane;
-    
+    public static Dimension DEFAULT_DIMENSION = new Dimension(250, 140);
     private TubePanel tubePanel;
 
     /**
@@ -80,7 +81,7 @@ public class JScrollInternalFrame extends JInternalFrame {
 
         setBackground(Color.white);
         setForeground(Color.blue);
-        setSize(250, 140);
+        setSize(DEFAULT_DIMENSION);
         
         if (icon != null) {
             setFrameIcon(icon);
@@ -225,7 +226,7 @@ public class JScrollInternalFrame extends JInternalFrame {
 		this.tubePanel = tubePanel;
 	}
 
-	public ArrayList<LineLink> getLineLinks() {
+	public ConcurrentLinkedQueue<LineLink> getLineLinks() {
 		return getTubePanel().getLineLinks();
 	}
 
@@ -252,6 +253,12 @@ public class JScrollInternalFrame extends JInternalFrame {
 		for(LineLink ll : getTubePanel().getLineLinks()){
 			ll.update();
 		}
+	}
+
+	public void delete() {
+		getTubePanel().delete();
+		getLineLinks().clear();
+		dispose();
 	}
 
 

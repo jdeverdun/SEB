@@ -8,7 +8,20 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Image;
 
+import models.Arteriole;
+import models.Artery;
+import models.Capillary;
 import models.ElasticTube;
+import models.FirstArtery;
+import models.FourthVentricle;
+import models.Hemisphere;
+import models.SAS;
+import models.SpinalCord;
+import models.ThirdVentricle;
+import models.Vein;
+import models.Veinule;
+import models.VenousSinus;
+import models.Ventricle;
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JButton;
 
@@ -20,6 +33,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -30,7 +45,7 @@ public class TubePanel extends JPanel {
 	private static final Color activatedColor = Color.orange;
 	private JScrollInternalFrame parentInternalFrame;
 	private ElasticTube tube;
-	private ArrayList<LineLink> lineLinks;
+	private ConcurrentLinkedQueue<LineLink> lineLinks;
 	private TubeClass tubeType;
 	
 	private JButton btnAddLink;
@@ -52,10 +67,11 @@ public class TubePanel extends JPanel {
 	private JTextField txtValfout;
 	private JLabel lblPressure;
 	private JTextField txtValpressure;
+	private JButton btnRestore;
 	
 	public TubePanel( ElasticTube tube, TubeClass type) {
 		setTube(tube);
-        setLineLinks(new ArrayList<LineLink>());
+        setLineLinks(new ConcurrentLinkedQueue<LineLink>());
         setTubeType(type);
         
 		setPreferredSize(new Dimension(235, 111));
@@ -71,7 +87,7 @@ public class TubePanel extends JPanel {
 		
 		panel = new JPanel();
 		add(panel, "cell 0 0 4 1,grow");
-		panel.setLayout(new MigLayout("", "[grow,left][68.00,left][grow,left][grow,left][grow,left][grow,left][grow][]", "[center][center]"));
+		panel.setLayout(new MigLayout("", "[grow,left][38.00,left][grow,left][grow,left][grow,left][grow,left][grow][]", "[center][center]"));
 		
 		lblLength = new JLabel(ElasticTube.LENGTH_LABEL);
 		panel.add(lblLength, "cell 0 0,alignx trailing");
@@ -79,31 +95,31 @@ public class TubePanel extends JPanel {
 		txtVallength = new JTextField();
 		txtVallength.setEditable(false);
 		txtVallength.setText(""+tube.getLength().getValue());
-		panel.add(txtVallength, "cell 1 0,alignx center");
+		panel.add(txtVallength, "cell 1 0,alignx left");
 		txtVallength.setColumns(3);
 		
 		lblAlpha = new JLabel(ElasticTube.ALPHA_LABEL);
-		panel.add(lblAlpha, "cell 2 0");
+		panel.add(lblAlpha, "cell 2 0,alignx left");
 		
 		textValAlpha = new JTextField(""+tube.getAlpha().getValue());
 		textValAlpha.setEditable(false);
-		panel.add(textValAlpha, "cell 3 0,alignx center");
+		panel.add(textValAlpha, "cell 3 0,alignx left");
 		textValAlpha.setColumns(3);
 		
 		lblElastance = new JLabel(ElasticTube.ELASTANCE_LABEL);
-		panel.add(lblElastance, "cell 4 0");
+		panel.add(lblElastance, "cell 4 0,alignx left");
 		
 		txtValelastance = new JTextField(""+tube.getElastance().getValue());
 		txtValelastance.setEditable(false);
-		panel.add(txtValelastance, "cell 5 0,alignx center");
+		panel.add(txtValelastance, "cell 5 0,alignx left");
 		txtValelastance.setColumns(3);
 		
 		lblPressure = new JLabel(ElasticTube.PRESSURE_LABEL);
-		panel.add(lblPressure, "cell 6 0,alignx trailing");
+		panel.add(lblPressure, "cell 6 0,alignx left");
 		
 		txtValpressure = new JTextField(""+tube.getPressure().getValue());
 		txtValpressure.setEditable(false);
-		panel.add(txtValpressure, "cell 7 0,alignx center");
+		panel.add(txtValpressure, "cell 7 0,alignx left");
 		txtValpressure.setColumns(3);
 		
 		lblArea = new JLabel(ElasticTube.AREA_LABEL);
@@ -111,31 +127,37 @@ public class TubePanel extends JPanel {
 		
 		txtValarea = new JTextField(""+tube.getArea().getValue());
 		txtValarea.setEditable(false);
-		panel.add(txtValarea, "flowx,cell 1 1,alignx center");
+		panel.add(txtValarea, "flowx,cell 1 1,alignx left");
 		txtValarea.setColumns(3);
 		
 		lblFin = new JLabel(ElasticTube.FLOWIN_LABEL);
-		panel.add(lblFin, "cell 2 1");
+		panel.add(lblFin, "cell 2 1,alignx left");
 		
 		txtValfin = new JTextField(""+tube.getFlowin().getValue());
 		txtValfin.setEditable(false);
-		panel.add(txtValfin, "cell 3 1,alignx center");
+		panel.add(txtValfin, "cell 3 1,alignx left");
 		txtValfin.setColumns(3);
 		
 		lblFout = new JLabel(ElasticTube.FLOWOUT_LABEL);
-		panel.add(lblFout, "cell 4 1");
+		panel.add(lblFout, "cell 4 1,alignx left");
 		
 		txtValfout = new JTextField(""+tube.getFlowout().getValue());
 		txtValfout.setEditable(false);
-		panel.add(txtValfout, "cell 5 1,alignx center");
+		panel.add(txtValfout, "cell 5 1,alignx left");
 		txtValfout.setColumns(3);
-		btnAddLink.setIcon(new ImageIcon(img));
 		
-		add(btnAddLink, "cell 0 1,grow");
 
+		btnAddLink.setIcon(new ImageIcon(img));
+		add(btnAddLink, "cell 0 1,grow");
+		btnRestore = new JButton();
+		img = IconLibrary.RESTOREICON;
+		img = img.getScaledInstance(20, 20,  java.awt.Image.SCALE_SMOOTH); 
+		panel.add(btnRestore, "cell 6 1 2 1,grow");
+		btnRestore.setIcon(new ImageIcon(img));
 		
 		btnDisplayCharts = new JButton();
 		img = IconLibrary.CHARTICON;
+		btnDisplayCharts.setEnabled(false);
 		img = img.getScaledInstance(20, 20,  java.awt.Image.SCALE_SMOOTH); 
 		btnDisplayCharts.setIcon(new ImageIcon(img));
 		add(btnDisplayCharts, "cell 1 1,grow");
@@ -145,6 +167,8 @@ public class TubePanel extends JPanel {
 		btnRemovebloc = new JButton();
 		btnRemovebloc.setIcon(new ImageIcon(img));
 		add(btnRemovebloc, "cell 2 1,grow");
+		if(getTubeType() == TubeClass.VenousSinus || getTubeType() == TubeClass.FirstArtery)
+			btnRemovebloc.setEnabled(false);
 		
 		btnEditinit = new JButton();
 		add(btnEditinit, "cell 3 1,grow");
@@ -187,7 +211,7 @@ public class TubePanel extends JPanel {
 							if(tubeType == ltubep.getTubeType() && (tubeType == TubeClass.Artery || tubeType == TubeClass.Vein)){
 								ltubep.activateLinkMode();
 							}else{
-								if(ltubep.getTube().getHemisphere() == getTube().getHemisphere()){
+								if(ltubep.getTube().getHemisphere() == getTube().getHemisphere() || ltubep.getTube().getHemisphere() == Hemisphere.BOTH || (ltubep.getTubeType() == TubeClass.Artery && tubeType == TubeClass.FirstArtery)){
 									switch(tubeType){
 									case FirstArtery:
 										if(ltubep.getTubeType() == TubeClass.Artery)
@@ -239,6 +263,124 @@ public class TubePanel extends JPanel {
 
 
 		});
+		btnRestore.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				switch(getTubeType()){
+				case FirstArtery:
+					txtVallength.setText(""+FirstArtery.DEFAULT_LENGTH);
+					textValAlpha.setText(""+FirstArtery.DEFAULT_ALPHA);
+					txtValelastance.setText(""+FirstArtery.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+FirstArtery.DEFAULT_AREA);
+					txtValfin.setText(""+FirstArtery.DEFAULT_FLOWIN);
+					txtValfout.setText(""+FirstArtery.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+FirstArtery.DEFAULT_PRESSURE);
+					break;
+				case Artery:
+					txtVallength.setText(""+Artery.DEFAULT_LENGTH);
+					textValAlpha.setText(""+Artery.DEFAULT_ALPHA);
+					txtValelastance.setText(""+Artery.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+Artery.DEFAULT_AREA);
+					txtValfin.setText(""+Artery.DEFAULT_FLOWIN);
+					txtValfout.setText(""+Artery.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+Artery.DEFAULT_PRESSURE);
+					break;
+				case Arteriole:
+					txtVallength.setText(""+Arteriole.DEFAULT_LENGTH);
+					textValAlpha.setText(""+Arteriole.DEFAULT_ALPHA);
+					txtValelastance.setText(""+Arteriole.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+Arteriole.DEFAULT_AREA);
+					txtValfin.setText(""+Arteriole.DEFAULT_FLOWIN);
+					txtValfout.setText(""+Arteriole.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+Arteriole.DEFAULT_PRESSURE);
+					break;
+				case Capillary:
+					txtVallength.setText(""+Capillary.DEFAULT_LENGTH);
+					textValAlpha.setText(""+Capillary.DEFAULT_ALPHA);
+					txtValelastance.setText(""+Capillary.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+Capillary.DEFAULT_AREA);
+					txtValfin.setText(""+Capillary.DEFAULT_FLOWIN);
+					txtValfout.setText(""+Capillary.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+Capillary.DEFAULT_PRESSURE);
+					break;
+				case Veinule:
+					txtVallength.setText(""+Veinule.DEFAULT_LENGTH);
+					textValAlpha.setText(""+Veinule.DEFAULT_ALPHA);
+					txtValelastance.setText(""+Veinule.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+Veinule.DEFAULT_AREA);
+					txtValfin.setText(""+Veinule.DEFAULT_FLOWIN);
+					txtValfout.setText(""+Veinule.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+Veinule.DEFAULT_PRESSURE);
+					break;
+				case Vein:
+					txtVallength.setText(""+Vein.DEFAULT_LENGTH);
+					textValAlpha.setText(""+Vein.DEFAULT_ALPHA);
+					txtValelastance.setText(""+Vein.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+Vein.DEFAULT_AREA);
+					txtValfin.setText(""+Vein.DEFAULT_FLOWIN);
+					txtValfout.setText(""+Vein.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+Vein.DEFAULT_PRESSURE);
+					break;
+				case VenousSinus:
+					txtVallength.setText(""+VenousSinus.DEFAULT_LENGTH);
+					textValAlpha.setText(""+VenousSinus.DEFAULT_ALPHA);
+					txtValelastance.setText(""+VenousSinus.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+VenousSinus.DEFAULT_AREA);
+					txtValfin.setText(""+VenousSinus.DEFAULT_FLOWIN);
+					txtValfout.setText(""+VenousSinus.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+VenousSinus.DEFAULT_PRESSURE);
+					break;
+				case Ventricle:
+					txtVallength.setText(""+Ventricle.DEFAULT_LENGTH);
+					textValAlpha.setText(""+Ventricle.DEFAULT_ALPHA);
+					txtValelastance.setText(""+Ventricle.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+Ventricle.DEFAULT_AREA);
+					txtValfin.setText(""+Ventricle.DEFAULT_FLOWIN);
+					txtValfout.setText(""+Ventricle.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+Ventricle.DEFAULT_PRESSURE);
+					break;
+				case FourthVentricle:
+					txtVallength.setText(""+FourthVentricle.DEFAULT_LENGTH);
+					textValAlpha.setText(""+FourthVentricle.DEFAULT_ALPHA);
+					txtValelastance.setText(""+FourthVentricle.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+FourthVentricle.DEFAULT_AREA);
+					txtValfin.setText(""+FourthVentricle.DEFAULT_FLOWIN);
+					txtValfout.setText(""+FourthVentricle.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+FourthVentricle.DEFAULT_PRESSURE);
+					break;
+				case ThirdVentricle:
+					txtVallength.setText(""+ThirdVentricle.DEFAULT_LENGTH);
+					textValAlpha.setText(""+ThirdVentricle.DEFAULT_ALPHA);
+					txtValelastance.setText(""+ThirdVentricle.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+ThirdVentricle.DEFAULT_AREA);
+					txtValfin.setText(""+ThirdVentricle.DEFAULT_FLOWIN);
+					txtValfout.setText(""+ThirdVentricle.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+ThirdVentricle.DEFAULT_PRESSURE);
+					break;
+				case SAS:
+					txtVallength.setText(""+SAS.DEFAULT_LENGTH);
+					textValAlpha.setText(""+SAS.DEFAULT_ALPHA);
+					txtValelastance.setText(""+SAS.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+SAS.DEFAULT_AREA);
+					txtValfin.setText(""+SAS.DEFAULT_FLOWIN);
+					txtValfout.setText(""+SAS.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+SAS.DEFAULT_PRESSURE);
+					break;
+				case SpinalCord:
+					txtVallength.setText(""+SpinalCord.DEFAULT_LENGTH);
+					textValAlpha.setText(""+SpinalCord.DEFAULT_ALPHA);
+					txtValelastance.setText(""+SpinalCord.DEFAULT_ELASTANCE);
+					txtValarea.setText(""+SpinalCord.DEFAULT_AREA);
+					txtValfin.setText(""+SpinalCord.DEFAULT_FLOWIN);
+					txtValfout.setText(""+SpinalCord.DEFAULT_FLOWOUT);
+					txtValpressure.setText(""+SpinalCord.DEFAULT_PRESSURE);
+					break;
+				}
+				
+				fillTubeInfo();
+			}
+		});
 		btnRemovebloc.addActionListener(new ActionListener() {
 			
 			@Override
@@ -256,9 +398,34 @@ public class TubePanel extends JPanel {
 				
 			}
 		});
-		// display constraint
-		if(getTubeType() == TubeClass.VenousSinus)
-			btnAddLink.setEnabled(false);
+		btnEditinit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						if(btnEditinit.getBackground() == Color.cyan){
+							try{
+								fillTubeInfo();
+								setFieldsEditable(false);
+								btnEditinit.setBackground(null);
+							}catch(Exception e){
+								e.printStackTrace();
+							}
+						}else{
+							btnEditinit.setBackground(Color.cyan);
+							setFieldsEditable(true);
+						}
+						
+					}
+
+					
+				});
+				
+			}
+		});
 	}
 	
 	private boolean isLinkedWith(JScrollInternalFrame jsf) {
@@ -279,6 +446,26 @@ public class TubePanel extends JPanel {
 			}
 		}
 		return false;
+	}
+	
+	private void fillTubeInfo(){
+		getTube().setLength(Float.parseFloat(txtVallength.getText()));
+		getTube().setAlpha(Float.parseFloat(textValAlpha.getText()));
+		getTube().setElastance(Float.parseFloat(txtValelastance.getText()));
+		getTube().setArea(Float.parseFloat(txtValarea.getText()));
+		getTube().setInitialArea(Float.parseFloat(txtValarea.getText()));
+		getTube().setFlowin(Float.parseFloat(txtValfin.getText()));
+		getTube().setFlowout(Float.parseFloat(txtValfout.getText()));
+		getTube().setPressure(Float.parseFloat(txtValpressure.getText()));
+	}
+	private void setFieldsEditable(boolean b) {
+		txtVallength.setEditable(b);
+		textValAlpha.setEditable(b);
+		txtValelastance.setEditable(b);
+		txtValarea.setEditable(b);
+		txtValfin.setEditable(b);
+		txtValfout.setEditable(b);
+		txtValpressure.setEditable(b);
 	}
 	
 	private boolean iterativeCheckChildLink(JScrollInternalFrame jsf, LineLink currentLine){
@@ -317,7 +504,8 @@ public class TubePanel extends JPanel {
 			btnAddLink.setEnabled(false);
 		else
 			btnAddLink.setEnabled(true);
-		btnRemovebloc.setEnabled(true);
+		if(getTubeType() != TubeClass.VenousSinus && getTubeType() != TubeClass.FirstArtery)
+			btnRemovebloc.setEnabled(true);
 		btnDisplayCharts.setEnabled(true);
 		btnEditinit.setEnabled(true);
 		getParentInternalFrame().getJsDesktopPane().repaint();
@@ -326,14 +514,14 @@ public class TubePanel extends JPanel {
 	/**
 	 * @return the lineLinks
 	 */
-	public ArrayList<LineLink> getLineLinks() {
+	public ConcurrentLinkedQueue<LineLink> getLineLinks() {
 		return lineLinks;
 	}
 
 	/**
 	 * @param lineLinks the lineLinks to set
 	 */
-	public void setLineLinks(ArrayList<LineLink> lineLinks) {
+	public void setLineLinks(ConcurrentLinkedQueue<LineLink> lineLinks) {
 		this.lineLinks = lineLinks;
 	}
 	public void addLineLinkAsChild(LineLink line) {
@@ -394,6 +582,11 @@ public class TubePanel extends JPanel {
 	 */
 	public void setParentInternalFrame(JScrollInternalFrame parentInternalFrame) {
 		this.parentInternalFrame = parentInternalFrame;
+	}
+
+	public void delete() {
+		for(LineLink line : getLineLinks())
+			line.delete();
 	}
 
 }

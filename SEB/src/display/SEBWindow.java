@@ -30,6 +30,7 @@ import javax.swing.SwingConstants;
 import org.jscroll.JScrollDesktopPane;
 
 import com.display.ArchitectureToolbar;
+import com.display.MainToolbar;
 import com.display.images.IconLibrary;
 
 public class SEBWindow extends JFrame {
@@ -40,7 +41,7 @@ public class SEBWindow extends JFrame {
 	private JMenu mnStandardModels;
 	private JMenuItem mntmLinninger;
 	// Panels
-	private JToolBar toolBar;
+	private MainToolbar toolBar;
 	private JPanel mainPanel;
 	private JTabbedPane tabbedPane;
 	private InitialInputsPanel initialInputPanel;
@@ -56,7 +57,7 @@ public class SEBWindow extends JFrame {
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		mainPanel.setLayout(new MigLayout("", "[748.00,grow][]", "[][grow][][]"));
 		
-		toolBar = new JToolBar();
+		toolBar = new MainToolbar();
 		mainPanel.add(toolBar, "cell 0 0 2 1,grow");
 		
 		tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
@@ -134,10 +135,10 @@ public class SEBWindow extends JFrame {
 		this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 
 	}
-	public JToolBar getToolBar() {
+	public MainToolbar getToolBar() {
 		return toolBar;
 	}
-	public void setToolBar(JToolBar toolBar) {
+	public void setToolBar(MainToolbar toolBar) {
 		this.toolBar = toolBar;
 	}
 	public JTabbedPane getTabbedPane() {

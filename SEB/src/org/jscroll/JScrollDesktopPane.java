@@ -20,12 +20,20 @@
 
 package org.jscroll;
 
+import models.Arteriole;
 import models.ElasticTube;
+import models.FirstArtery;
+import models.Hemisphere;
+import models.VenousSinus;
 
 import org.jscroll.widgets.*;
 
+import params.WindowManager;
+
 import com.display.LineLink;
 import com.display.TubePanel;
+import com.display.TubePanel.TubeClass;
+import com.display.images.IconLibrary;
 
 import javax.swing.*;
 
@@ -33,6 +41,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -414,14 +423,6 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 
 			lineClicked = getClickedLine(x, y);
 			repaint(); 
-			Rectangle viewP = desktopMediator.getDesktopScrollpane().getViewport().getViewRect();
-
-            int maxX = viewP.width + viewP.x;
-            int maxY = viewP.height + viewP.y;
-            int minX = viewP.x;
-            int minY = viewP.y;
-            
-            System.out.println(viewP.width+"// "+viewP.x+" // "+viewP.y);
 			break;
 		}
 		case InputEvent.BUTTON2_MASK: { 
@@ -470,5 +471,27 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		for(JScrollInternalFrame jsf : internalFrames){
 			jsf.updateLineLink();
 		}
+	}
+
+	/**
+	 * Remove previous content and init new model
+	 */
+	public void initNew() {
+		if(!internalFrames.isEmpty()){
+			for(JScrollInternalFrame jsf : internalFrames){
+				jsf.delete();
+			}
+			internalFrames.clear();
+		}
+		Dimension panelSize = getSize();
+		Dimension iframeDim = JScrollInternalFrame.DEFAULT_DIMENSION;
+		Point fart_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), 10);
+		Point vsinous_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), (int) (panelSize.getHeight()-iframeDim.getHeight()-25));
+		
+		FirstArtery fart = new FirstArtery("");
+		add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y);
+		VenousSinus vsinous = new VenousSinus("");
+		add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y);
+		WindowManager.MAINWINDOW.getTabbedPane().setSelectedIndex(1);
 	}
 }

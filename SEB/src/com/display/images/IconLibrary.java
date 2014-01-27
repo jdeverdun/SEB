@@ -20,7 +20,8 @@ public class IconLibrary {
 	public static Image LINKICON = null;
 	public static Image CHARTICON = null;
 	public static Image RMBLOCKICON = null;
-	
+	public static Image RESTOREICON = null;
+	public static Image NEWICON = null;
 	/**
 	 * Load each icon
 	 */
@@ -37,6 +38,8 @@ public class IconLibrary {
 			CHARTICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/Charts-Line-icon.png"));
 			RMBLOCKICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/removeblock.png"));
 			EDITVARIABLESICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/Editing-Edit-icon.png"));
+			RESTOREICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/restore-icon.png"));
+			NEWICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/new-icon.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
