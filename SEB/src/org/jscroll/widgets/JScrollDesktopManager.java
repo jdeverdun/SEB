@@ -90,7 +90,7 @@ public class JScrollDesktopManager extends DefaultDesktopManager {
         // f.getAssociatedButton(), and then with a call to getParent() the item 
         // can be directly removed from its parent container, but I find the 
         // below message propogation to DesktopPane a cleaner implementation...
-        desktopPane.removeAssociatedComponents((JScrollInternalFrame) f);
+        //desktopPane.removeAssociatedComponents((JScrollInternalFrame) f);
         desktopPane.resizeDesktop();
     }
 

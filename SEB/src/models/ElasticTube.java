@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import params.ModelSpecification;
 
 public abstract class ElasticTube extends Tube {
-	protected static String AREA_LABEL = "A";
-	protected static String INITIAL_AREA_LABEL = "A0";
-	protected static String PRESSURE_LABEL = "P";
-	protected static String FLOWIN_LABEL = "fi";
-	protected static String FLOWOUT_LABEL = "fo";
-	protected static String LENGTH_LABEL = "l0";
-	protected static String ALPHA_LABEL = "alfa";
-	protected static String ELASTANCE_LABEL = "E";
+	public static String AREA_LABEL = "A";
+	public static String INITIAL_AREA_LABEL = "A0";
+	public static String PRESSURE_LABEL = "P";
+	public static String FLOWIN_LABEL = "fi";
+	public static String FLOWOUT_LABEL = "fo";
+	public static String LENGTH_LABEL = "l0";
+	public static String ALPHA_LABEL = "alfa";
+	public static String ELASTANCE_LABEL = "E";
 	protected SimpleVariable flowin;
 	protected SimpleVariable flowout;
 	protected SimpleVariable pressure;
@@ -85,10 +85,10 @@ public abstract class ElasticTube extends Tube {
 		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+ID+"]");
 	}
 
-	protected SimpleVariable getLength() {
+	public SimpleVariable getLength() {
 		return length;
 	}
-	protected void setLength(float length) {
+	public void setLength(float length) {
 		//this.length = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL,length, (Tube)this);
 		String prefix = "";
 		if(hemisphere == Hemisphere.LEFT)
@@ -116,11 +116,11 @@ public abstract class ElasticTube extends Tube {
 		this.children = childrens;
 	}
 
-	protected SimpleVariable getElastance() {
+	public SimpleVariable getElastance() {
 		return elastance;
 	}
 
-	protected void setElastance(float elastance) {
+	public void setElastance(float elastance) {
 		String prefix = "";
 		if(hemisphere == Hemisphere.LEFT)
 			prefix = "L_";
@@ -132,10 +132,10 @@ public abstract class ElasticTube extends Tube {
 		/*SimpleVariable v = new SimpleVariable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance, (Tube)this);
 		this.elastance = v;*/
 	}	
-	protected SimpleVariable getArea() {
+	public SimpleVariable getArea() {
 		return area;
 	}
-	protected void setArea(float area){
+	public void setArea(float area){
 		String prefix = "";
 		if(hemisphere == Hemisphere.LEFT)
 			prefix = "L_";
@@ -146,11 +146,11 @@ public abstract class ElasticTube extends Tube {
 		this.area = v;
 	}
 
-	protected SimpleVariable getAlpha() {
+	public SimpleVariable getAlpha() {
 		return alpha;
 	}
 
-	protected void setAlpha(float alpha) {
+	public void setAlpha(float alpha) {
 		String prefix = "";
 		if(hemisphere == Hemisphere.LEFT)
 			prefix = "L_";

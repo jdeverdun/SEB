@@ -131,6 +131,7 @@ public class SEBWindow extends JFrame {
 		this.setSize(800, 700);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 
 	}
 	public JToolBar getToolBar() {

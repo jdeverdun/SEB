@@ -366,7 +366,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
    	
     	for(JScrollInternalFrame jsf : internalFrames){
 	    	for (LineLink line : jsf.getLineLinks()) {
-	    		float dist = Math.abs((float) line.getLine().ptSegDist(new Point(x,y)) - 20.0f);
+	    		float dist = Math.abs((float) line.getLine().ptSegDist(new Point(x,y)));
 	    		if(dist<20.0f){
 	    			return line;
 	    		}	
@@ -414,6 +414,14 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 
 			lineClicked = getClickedLine(x, y);
 			repaint(); 
+			Rectangle viewP = desktopMediator.getDesktopScrollpane().getViewport().getViewRect();
+
+            int maxX = viewP.width + viewP.x;
+            int maxY = viewP.height + viewP.y;
+            int minX = viewP.x;
+            int minY = viewP.y;
+            
+            System.out.println(viewP.width+"// "+viewP.x+" // "+viewP.y);
 			break;
 		}
 		case InputEvent.BUTTON2_MASK: { 
@@ -450,4 +458,17 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		
 	}
 
+	public DesktopMediator getDesktopMediator() {
+		return desktopMediator;
+	}
+
+	public void setDesktopMediator(DesktopMediator desktopMediator) {
+		this.desktopMediator = desktopMediator;
+	}
+
+	public void updateLineLink(){
+		for(JScrollInternalFrame jsf : internalFrames){
+			jsf.updateLineLink();
+		}
+	}
 }

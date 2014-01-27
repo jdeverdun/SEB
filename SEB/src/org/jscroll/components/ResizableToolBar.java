@@ -76,8 +76,8 @@ public class ResizableToolBar extends JToolBar implements ComponentListener {
      * @param button the button to remove
      */
     public void remove(AbstractButton button) {
-        super.remove(button);
-        buttonGroup.remove(button);
+        //super.remove(button);
+        //buttonGroup.remove(button);
         resizeButtons();
         repaint();
     }

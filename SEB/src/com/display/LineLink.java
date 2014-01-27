@@ -1,11 +1,13 @@
 package com.display;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
 import javax.swing.JInternalFrame;
 
+import org.jscroll.widgets.DesktopMediator;
 import org.jscroll.widgets.JScrollInternalFrame;
 
 import models.Variable;
@@ -21,19 +23,25 @@ public class LineLink {
 	public LineLink(JScrollInternalFrame parent, JScrollInternalFrame child){
 		this.parent = parent;
 		this.child = child;
-		int x1 = (int) (this.parent.getX() + (this.parent.getWidth()/2.0f));
-		int y1 = (int) (this.parent.getY() + (this.parent.getHeight())) + 22;
-		int x2 = (int) (this.child.getX() + (this.child.getWidth()/2.0f));
-		int y2 = (int) (this.child.getY()) + 22;
+		DesktopMediator desktopMediator = parent.getJsDesktopPane().getDesktopMediator();
+		Rectangle viewP = desktopMediator.getDesktopScrollpane().getViewport().getViewRect();
+		
+		int x1 = (int) (this.parent.getX() + (this.parent.getWidth()/2.0f) - viewP.x);
+		int y1 = (int) (this.parent.getY() + (this.parent.getHeight()) - viewP.y);
+		int x2 = (int) (this.child.getX() + (this.child.getWidth()/2.0f) - viewP.x);
+		int y2 = (int) (this.child.getY() - viewP.y);
 		line = new Line2D.Float(x1, y1, x2, y2);
 		this.parent.addLineLinkAsParent(this);
 	}
 
 	public void update(){
-		int x1 = (int) (this.parent.getX() + (this.parent.getWidth()/2.0f));
-		int y1 = (int) (this.parent.getY() + (this.parent.getHeight())) + 22;
-		int x2 = (int) (this.child.getX() + (this.child.getWidth()/2.0f));
-		int y2 = (int) (this.child.getY()) + 22;
+		DesktopMediator desktopMediator = parent.getJsDesktopPane().getDesktopMediator();
+		Rectangle viewP = desktopMediator.getDesktopScrollpane().getViewport().getViewRect();
+
+		int x1 = (int) (this.parent.getX() + (this.parent.getWidth()/2.0f) - viewP.x);
+		int y1 = (int) (this.parent.getY() + (this.parent.getHeight()) - viewP.y);
+		int x2 = (int) (this.child.getX() + (this.child.getWidth()/2.0f) - viewP.x);
+		int y2 = (int) (this.child.getY() - viewP.y);
 		line.setLine(x1, y1, x2, y2);
 		parent.getJsDesktopPane().repaint();
 	}
@@ -79,5 +87,8 @@ public class LineLink {
 	public void delete() {
 		parent.getTubePanel().removeLineLinkAsParent(this);
 		child.getTubePanel().removeLineLinkAsChild(this);
+	}
+	public String toString(){
+		return getParent() + " ----> "+getChild();
 	}
 }

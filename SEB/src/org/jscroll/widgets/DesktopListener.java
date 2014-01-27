@@ -24,6 +24,8 @@ import java.awt.event.*;
 
 import javax.swing.JInternalFrame;
 
+import org.jscroll.JScrollDesktopPane;
+
 
 /**
  * This class provides common Component and Action Listeners for
@@ -56,8 +58,6 @@ public class DesktopListener implements ComponentListener, ActionListener {
      */
     public void componentResized(ComponentEvent e) {
         desktopMediator.resizeDesktop();
-        if(e.getSource() instanceof JScrollInternalFrame)
-        	((JScrollInternalFrame)e.getSource()).updateLineLink();
     }
 
     /**

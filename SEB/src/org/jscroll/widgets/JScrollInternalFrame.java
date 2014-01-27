@@ -80,7 +80,7 @@ public class JScrollInternalFrame extends JInternalFrame {
 
         setBackground(Color.white);
         setForeground(Color.blue);
-        setSize(200, 120);
+        setSize(250, 140);
         
         if (icon != null) {
             setFrameIcon(icon);

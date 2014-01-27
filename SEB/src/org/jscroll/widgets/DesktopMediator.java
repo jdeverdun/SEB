@@ -52,10 +52,10 @@ public class DesktopMediator implements DesktopConstants {
     public DesktopMediator(JScrollDesktopPane mainPane) {
         desktopScrollpane = new DesktopScrollPane(this);
         desktopScrollpane.addMouseListener(mainPane);
-        desktopResizableToolbar = new DesktopResizableToolBar(this);
+        //desktopResizableToolbar = new DesktopResizableToolBar(this);
         dListener = new DesktopListener(this);
 
-        mainPane.add(desktopResizableToolbar, BorderLayout.NORTH);
+       // mainPane.add(desktopResizableToolbar, BorderLayout.NORTH);
         mainPane.add(desktopScrollpane, BorderLayout.CENTER);
         mainPane.addComponentListener(dListener);
     }
@@ -251,4 +251,12 @@ public class DesktopMediator implements DesktopConstants {
     public void actionPerformed(ActionEvent e) {
         dListener.actionPerformed(e);
     }
+
+	public DesktopScrollPane getDesktopScrollpane() {
+		return desktopScrollpane;
+	}
+
+	public void setDesktopScrollpane(DesktopScrollPane desktopScrollpane) {
+		this.desktopScrollpane = desktopScrollpane;
+	}
 }

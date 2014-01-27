@@ -21,14 +21,20 @@
 package org.jscroll.widgets;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.jscroll.JScrollDesktopPane;
+
+import params.WindowManager;
 
 import com.display.TubePanel;
 
 import models.ElasticTube;
 
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.util.ArrayList;
 
 
@@ -51,7 +57,7 @@ public class DesktopScrollPane extends JScrollPane {
     public DesktopScrollPane(DesktopMediator desktopMediator) {
 
         this.desktopMediator = desktopMediator;
-
+        
         desktopPane = new RootDesktopPane(this);
         setViewportView(desktopPane);
 
@@ -64,6 +70,23 @@ public class DesktopScrollPane extends JScrollPane {
         // set scrollbars to scroll by 5 pixels each...
         getHorizontalScrollBar().setUnitIncrement(5);
         getVerticalScrollBar().setUnitIncrement(5);
+        getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                if(e.getValueIsAdjusting()){
+                    return;
+                }
+                WindowManager.MAINWINDOW.getGraphicalModelPanel().updateLineLink();//repaint();
+            }
+        });/*addChangeListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				System.out.println(e.getSource());
+                WindowManager.MAINWINDOW.getGraphicalModelPanel().updateLineLink();//repaint();
+			}
+		});*/
     }
 
     /**
@@ -379,6 +402,7 @@ public class DesktopScrollPane extends JScrollPane {
                         for (int i = 0; i < frames.length; i++) {
                             f = frames[i];
                             f.setLocation(f.getX() - minX, f.getY() - minY);
+                           // System.out.println((f.getX() - minX)+"///"+ (f.getY() - minY));
                         }
 
                         // have to scroll (set the viewport) to the right or up the amount 
@@ -390,10 +414,8 @@ public class DesktopScrollPane extends JScrollPane {
                                 (viewP.y - minY)));
                         setViewport(view);
                     }
-
                     // resize the desktop
                     setDesktopSize(new Dimension(maxX - minX, maxY - minY));
-
                     setVisible(true); // update the viewport again
                 }
             });
