@@ -207,7 +207,12 @@ public class TubePanel extends JPanel {
 								ltubep.deactivateLinkMode();
 								continue;
 							}
-							
+							if((ltubep.getTube().getHemisphere() == Hemisphere.LEFT || ltubep.getTube().getHemisphere() == Hemisphere.RIGHT)
+									&& (getTube().getHemisphere() == Hemisphere.LEFT || getTube().getHemisphere() == Hemisphere.RIGHT)
+									&& ltubep.getTube().getHemisphere() != getTube().getHemisphere()){
+								ltubep.deactivateLinkMode();
+								continue;
+							}
 							if(tubeType == ltubep.getTubeType() && (tubeType == TubeClass.Artery || tubeType == TubeClass.Vein)){
 								ltubep.activateLinkMode();
 							}else{
@@ -215,7 +220,7 @@ public class TubePanel extends JPanel {
 									ltubep.deactivateLinkMode();
 									continue;
 								}
-								if(ltubep.getTube().getHemisphere() == getTube().getHemisphere() || ltubep.getTube().getHemisphere() == Hemisphere.BOTH || (ltubep.getTubeType() == TubeClass.Artery && tubeType == TubeClass.FirstArtery)){
+								if(ltubep.getTube().getHemisphere() == getTube().getHemisphere() || ltubep.getTube().getHemisphere() == Hemisphere.BOTH || ( tubeType == TubeClass.FirstArtery)){
 									switch(tubeType){
 									case FirstArtery:
 										if(ltubep.getTubeType() == TubeClass.Artery)
