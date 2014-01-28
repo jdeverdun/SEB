@@ -211,6 +211,10 @@ public class TubePanel extends JPanel {
 							if(tubeType == ltubep.getTubeType() && (tubeType == TubeClass.Artery || tubeType == TubeClass.Vein)){
 								ltubep.activateLinkMode();
 							}else{
+								if(tubeType == TubeClass.Artery && ltubep.getTubeType() == TubeClass.FirstArtery){
+									ltubep.deactivateLinkMode();
+									continue;
+								}
 								if(ltubep.getTube().getHemisphere() == getTube().getHemisphere() || ltubep.getTube().getHemisphere() == Hemisphere.BOTH || (ltubep.getTubeType() == TubeClass.Artery && tubeType == TubeClass.FirstArtery)){
 									switch(tubeType){
 									case FirstArtery:
@@ -439,15 +443,39 @@ public class TubePanel extends JPanel {
 					return true;
 				}else{
 					if(line.getParent() == getParentInternalFrame()){
-						if(iterativeCheckChildLink(jsf,line))
+						if(iterativeCheckChildLink(jsf,line.getChild()))
 							return true;
 					}
 				}
 			}
 		}
+		for(LineLink line : lineLinks){
+			if(line.getChild() == getParentInternalFrame()){
+				if(iterativeCheckParentLink(jsf,line.getParent()))
+					return true;
+			}
+		}
 		return false;
 	}
 	
+	private boolean iterativeCheckParentLink(JScrollInternalFrame jsf, JScrollInternalFrame parent) {
+		if(parent == jsf)
+			return true;
+		
+		for(LineLink li2 : parent.getLineLinks()){
+			if(li2.getParent() == parent){
+				if(li2.getChild() == jsf)
+					return true;
+				continue;
+			}else{
+				
+				if(iterativeCheckParentLink(jsf,li2.getParent()))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	private void fillTubeInfo(){
 		getTube().setLength(Float.parseFloat(txtVallength.getText()));
 		getTube().setAlpha(Float.parseFloat(textValAlpha.getText()));
@@ -468,8 +496,21 @@ public class TubePanel extends JPanel {
 		txtValpressure.setEditable(b);
 	}
 	
-	private boolean iterativeCheckChildLink(JScrollInternalFrame jsf, LineLink currentLine){
-		for(LineLink li2 : currentLine.getChild().getLineLinks()){
+	private boolean iterativeCheckChildLink(JScrollInternalFrame jsf, JScrollInternalFrame child){
+		if(child == jsf)
+			return true;
+		
+		for(LineLink li2 : child.getLineLinks()){
+			if(li2.getChild() == child){
+				if(li2.getParent() == jsf)// A voir
+					return true;
+				continue;
+			}else{
+				if(iterativeCheckChildLink(jsf,li2.getChild()))
+					return true;
+			}
+		}
+		/*for(LineLink li2 : currentLine.getChild().getLineLinks()){
 			if(currentLine==li2)
 				continue;
 			if(li2.getChild() == jsf){
@@ -478,7 +519,7 @@ public class TubePanel extends JPanel {
 				if(iterativeCheckChildLink(jsf, li2))
 					return true;
 			}
-		}
+		}*/
 		return false;
 	}
 	/**

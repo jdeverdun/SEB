@@ -77,7 +77,8 @@ public class DesktopScrollPane extends JScrollPane {
                 if(e.getValueIsAdjusting()){
                     return;
                 }
-                WindowManager.MAINWINDOW.getGraphicalModelPanel().updateLineLink();//repaint();
+                if(WindowManager.MAINWINDOW != null)
+                	WindowManager.MAINWINDOW.getGraphicalModelPanel().updateLineLink();//repaint();
             }
         });/*addChangeListener(new ChangeListener() {
 			

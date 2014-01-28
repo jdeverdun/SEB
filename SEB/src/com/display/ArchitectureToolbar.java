@@ -96,40 +96,53 @@ public class ArchitectureToolbar extends JToolBar {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Artery art = new Artery("", getHemi());
-				WindowManager.MAINWINDOW.getGraphicalModelPanel().add(art.getName(), new ImageIcon(IconLibrary.ARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(art, TubeClass.Artery), false);
+				if(WindowManager.MAINWINDOW != null){					
+					Artery art = new Artery("", getHemi());
+					WindowManager.MAINWINDOW.getGraphicalModelPanel().add(art.getName(), new ImageIcon(IconLibrary.ARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(art, TubeClass.Artery), false);
+			
+				}
 			}
 		});
 		btnAddArteriole.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Arteriole art = new Arteriole("", getHemi());
-				WindowManager.MAINWINDOW.getGraphicalModelPanel().add(art.getName(),new ImageIcon(IconLibrary.ARTERIOLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(art, TubeClass.Arteriole), false);
+				if(WindowManager.MAINWINDOW != null){	
+					Arteriole art = new Arteriole("", getHemi());
+					WindowManager.MAINWINDOW.getGraphicalModelPanel().add(art.getName(),new ImageIcon(IconLibrary.ARTERIOLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(art, TubeClass.Arteriole), false);
+			
+				}
 			}
 		});
 		btnAddCapillary.addActionListener(new ActionListener() {
 					
 					@Override
 					public void actionPerformed(ActionEvent e) {
-						Capillary cap = new Capillary("", getHemi());
-						WindowManager.MAINWINDOW.getGraphicalModelPanel().add(cap.getName(),new ImageIcon(IconLibrary.CAPILLARY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(cap, TubeClass.Capillary), false);
+						if(WindowManager.MAINWINDOW != null){	
+							Capillary cap = new Capillary("", getHemi());
+							WindowManager.MAINWINDOW.getGraphicalModelPanel().add(cap.getName(),new ImageIcon(IconLibrary.CAPILLARY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(cap, TubeClass.Capillary), false);
+						}
 					}
 				});
 		btnAddVeinule.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Veinule vl = new Veinule("", getHemi());
-				WindowManager.MAINWINDOW.getGraphicalModelPanel().add(vl.getName(),new ImageIcon(IconLibrary.VEINULE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vl, TubeClass.Veinule), false);
+				if(WindowManager.MAINWINDOW != null){
+					Veinule vl = new Veinule("", getHemi());
+					WindowManager.MAINWINDOW.getGraphicalModelPanel().add(vl.getName(),new ImageIcon(IconLibrary.VEINULE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vl, TubeClass.Veinule), false);
+				}
 			}
 		});
 		btnAddVein.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Vein v = new Vein("", getHemi());
-				WindowManager.MAINWINDOW.getGraphicalModelPanel().add(v.getName(),new ImageIcon(IconLibrary.VEIN.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(v, TubeClass.Vein), false);
+				if(WindowManager.MAINWINDOW != null){
+					Vein v = new Vein("", getHemi());
+					WindowManager.MAINWINDOW.getGraphicalModelPanel().add(v.getName(),new ImageIcon(IconLibrary.VEIN.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(v, TubeClass.Vein), false);
+			
+				}
 			}
 		});
 	}

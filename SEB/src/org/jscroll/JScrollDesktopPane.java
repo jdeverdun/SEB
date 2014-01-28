@@ -130,6 +130,8 @@ import java.util.ArrayList;
 public class JScrollDesktopPane extends JPanel implements DesktopConstants, MouseListener{
 	private LineLink lineClicked = null;
 	private ArrayList<JScrollInternalFrame> internalFrames;
+	private JScrollInternalFrame firstArteryFrame;
+	private JScrollInternalFrame venousSinousFrame;
     private static int count; // count used solely to name untitled frames
     private DesktopMediator desktopMediator;
     private ImageIcon defaultFrameIcon;
@@ -489,9 +491,37 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		Point vsinous_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), (int) (panelSize.getHeight()-iframeDim.getHeight()-25));
 		
 		FirstArtery fart = new FirstArtery("");
-		add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y);
+		setFirstArteryFrame((JScrollInternalFrame) add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y));
 		VenousSinus vsinous = new VenousSinus("");
-		add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y);
+		setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));
 		WindowManager.MAINWINDOW.getTabbedPane().setSelectedIndex(1);
+	}
+
+	/**
+	 * @return the venousSinousFrame
+	 */
+	public JScrollInternalFrame getVenousSinousFrame() {
+		return venousSinousFrame;
+	}
+
+	/**
+	 * @param venousSinousFrame the venousSinousFrame to set
+	 */
+	public void setVenousSinousFrame(JScrollInternalFrame venousSinousFrame) {
+		this.venousSinousFrame = venousSinousFrame;
+	}
+
+	/**
+	 * @return the firstArteryFrame
+	 */
+	public JScrollInternalFrame getFirstArteryFrame() {
+		return firstArteryFrame;
+	}
+
+	/**
+	 * @param firstArteryFrame the firstArteryFrame to set
+	 */
+	public void setFirstArteryFrame(JScrollInternalFrame firstArteryFrame) {
+		this.firstArteryFrame = firstArteryFrame;
 	}
 }

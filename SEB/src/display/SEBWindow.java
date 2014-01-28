@@ -30,6 +30,7 @@ import javax.swing.SwingConstants;
 import org.jscroll.JScrollDesktopPane;
 
 import com.display.ArchitectureToolbar;
+import com.display.GlobalArchitectureToolbar;
 import com.display.MainToolbar;
 import com.display.images.IconLibrary;
 
@@ -49,6 +50,7 @@ public class SEBWindow extends JFrame {
 	private ArchitectureToolbar toolBarArchitectLeft;
 	private ArchitectureToolbar toolBarArchitectRight;
 	private JScrollDesktopPane graphicalModelPanel;
+	private GlobalArchitectureToolbar toolBarGlobalArchitect;
 
 	public SEBWindow() {
 		IconLibrary.load();
@@ -69,13 +71,15 @@ public class SEBWindow extends JFrame {
 		// TESTS --------
 		graphicalModelPanel = new JScrollDesktopPane();
 
-		pan.setLayout(new MigLayout("", "[grow,fill][fill]", "[grow,fill]"));
+		pan.setLayout(new MigLayout("", "[grow,fill][fill][]", "[grow,fill][grow]"));
 		
 		toolBarArchitectLeft = new ArchitectureToolbar(Hemisphere.LEFT);
 		toolBarArchitectRight = new ArchitectureToolbar(Hemisphere.RIGHT);
+		toolBarGlobalArchitect = new GlobalArchitectureToolbar();
 		pan.add(toolBarArchitectLeft, "cell 1 0,alignx right,aligny top");
 		pan.add(toolBarArchitectRight, "cell 2 0,alignx right,aligny top");
-		pan.add(graphicalModelPanel,"cell 0 0,alignx right,aligny top");
+		pan.add(toolBarGlobalArchitect, "cell 1 1 2 1,alignx right,aligny top");
+		pan.add(graphicalModelPanel,"cell 0 0 1 2,alignx right,aligny top");
 		tabbedPane.addTab("Architecture", pan);
 		// FIN TESTS --------
 		menuBar = new JMenuBar();

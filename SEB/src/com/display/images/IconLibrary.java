@@ -22,6 +22,7 @@ public class IconLibrary {
 	public static Image RMBLOCKICON = null;
 	public static Image RESTOREICON = null;
 	public static Image NEWICON = null;
+	public static Image ORGANIZEICON = null;
 	/**
 	 * Load each icon
 	 */
@@ -40,6 +41,7 @@ public class IconLibrary {
 			EDITVARIABLESICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/Editing-Edit-icon.png"));
 			RESTOREICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/restore-icon.png"));
 			NEWICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/new-icon.png"));
+			ORGANIZEICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/organize-icon.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
