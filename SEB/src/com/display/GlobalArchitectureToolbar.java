@@ -234,7 +234,6 @@ public class GlobalArchitectureToolbar extends JToolBar{
 	}
 	
 	private int[] setInternalFrameLocationLeft(JScrollInternalFrame jsf, int decalagex, int decalagey, int decalagexfinalVein, HashMap<TubeClass,Integer> longestPath){
-
 		int count = 0;
 		int[] decalagexarray = new int[2];
 		if(jsf.getTubePanel().getTubeType() == TubeClass.FirstArtery)
