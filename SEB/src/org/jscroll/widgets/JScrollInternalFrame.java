@@ -52,6 +52,7 @@ public class JScrollInternalFrame extends JInternalFrame {
     private JToggleButton associatedButton;
     private JRadioButtonMenuItem associatedMenuButton;
     private boolean isClosable;
+	private boolean moved; // voir si la frame a deja ete deplace par la fonction de tri
     private int initialWidth;
     private int initialHeight;
     private JScrollDesktopPane jsDesktopPane;
@@ -259,6 +260,24 @@ public class JScrollInternalFrame extends JInternalFrame {
 		getTubePanel().delete();
 		getLineLinks().clear();
 		dispose();
+	}
+
+	/**
+	 * @return the moved
+	 */
+	public boolean isMoved() {
+		return moved;
+	}
+
+	/**
+	 * @param moved the moved to set
+	 */
+	public void setMoved(boolean moved) {
+		this.moved = moved;
+	}
+
+	public void setLineLinks(ConcurrentLinkedQueue<LineLink> newqueue) {
+		getTubePanel().setLineLinks(newqueue);
 	}
 
 

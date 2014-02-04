@@ -21,9 +21,13 @@
 package org.jscroll;
 
 import models.Arteriole;
+import models.Artery;
+import models.Capillary;
 import models.ElasticTube;
 import models.FirstArtery;
 import models.Hemisphere;
+import models.Vein;
+import models.Veinule;
 import models.VenousSinus;
 
 import org.jscroll.widgets.*;
@@ -47,6 +51,7 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -227,6 +232,45 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
     		TubePanel frameContents, boolean isClosable) {
         return add(title, icon, frameContents, isClosable, -1, -1);
     }
+    
+
+    public JInternalFrame addArtery(Hemisphere hemi) {
+    	if(hemi != Hemisphere.LEFT && hemi != Hemisphere.RIGHT)
+    		return null;
+    	Artery art = new Artery("", hemi);
+    	return add(art.getName(), new ImageIcon(IconLibrary.ARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(art, TubeClass.Artery), false);
+    }
+    
+    public JInternalFrame addArteriole(Hemisphere hemi) {
+    	if(hemi != Hemisphere.LEFT && hemi != Hemisphere.RIGHT)
+    		return null;
+    	Arteriole art = new Arteriole("", hemi);
+    	return add(art.getName(),new ImageIcon(IconLibrary.ARTERIOLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(art, TubeClass.Arteriole), false);
+
+    }
+    
+    public JInternalFrame addCapillary(Hemisphere hemi) {
+    	if(hemi != Hemisphere.LEFT && hemi != Hemisphere.RIGHT)
+    		return null;
+    	Capillary cap = new Capillary("", hemi);
+		return add(cap.getName(),new ImageIcon(IconLibrary.CAPILLARY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(cap, TubeClass.Capillary), false);
+
+    }
+    
+    public JInternalFrame addVeinule(Hemisphere hemi) {
+    	if(hemi != Hemisphere.LEFT && hemi != Hemisphere.RIGHT)
+    		return null;
+    	Veinule vl = new Veinule("", hemi);
+    	return add(vl.getName(),new ImageIcon(IconLibrary.VEINULE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vl, TubeClass.Veinule), false);
+    }
+    
+    public JInternalFrame addVein(Hemisphere hemi) {
+    	if(hemi != Hemisphere.LEFT && hemi != Hemisphere.RIGHT)
+    		return null;
+    	Vein v = new Vein("", hemi);
+    	return add(v.getName(),new ImageIcon(IconLibrary.VEIN.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(v, TubeClass.Vein), false);
+    }
+ 
 
     /**
      * adds an internal frame to the scrollable desktop.
@@ -523,5 +567,9 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	 */
 	public void setFirstArteryFrame(JScrollInternalFrame firstArteryFrame) {
 		this.firstArteryFrame = firstArteryFrame;
+	}
+	
+	public void removeInternalFrame(JScrollInternalFrame jsf){
+		internalFrames.remove(jsf);
 	}
 }

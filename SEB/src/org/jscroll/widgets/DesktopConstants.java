@@ -34,7 +34,7 @@ public interface DesktopConstants {
     // all variables declared here are automatically public static final
 
     /** maximum number of internal frames allowed */
-    int MAX_FRAMES = 20;
+    int MAX_FRAMES = 800;
 
     /** default x offset of first frame in cascade mode,
      *     relative to desktop */

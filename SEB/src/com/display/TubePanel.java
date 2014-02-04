@@ -27,6 +27,8 @@ import javax.swing.JButton;
 
 import org.jscroll.widgets.JScrollInternalFrame;
 
+import params.WindowManager;
+
 import com.display.images.IconLibrary;
 
 import java.awt.Dimension;
@@ -47,6 +49,8 @@ public class TubePanel extends JPanel {
 	private ElasticTube tube;
 	private ConcurrentLinkedQueue<LineLink> lineLinks;
 	private TubeClass tubeType;
+
+	
 	
 	private JButton btnAddLink;
 	private JButton btnDisplayCharts;
@@ -190,10 +194,14 @@ public class TubePanel extends JPanel {
 					resetBtnAddLink();
 					linkModeActivated = false;
 					linkModeActivatedSource = null;
+					WindowManager.MAINWINDOW.getToolBarArchitectLeft().setEnabled(true);
+					WindowManager.MAINWINDOW.getToolBarArchitectRight().setEnabled(true);
 					for(JScrollInternalFrame jsf : parentInternalFrame.getJsDesktopPane().getInternalFrames()){
 						jsf.getTubePanel().resetBtnAddLink();
 					}
 				}else{
+					WindowManager.MAINWINDOW.getToolBarArchitectLeft().setEnabled(false);
+					WindowManager.MAINWINDOW.getToolBarArchitectRight().setEnabled(false);
 					btnRemovebloc.setEnabled(false);
 					btnDisplayCharts.setEnabled(false);
 					btnEditinit.setEnabled(false);
@@ -401,6 +409,7 @@ public class TubePanel extends JPanel {
 						for(LineLink line : getLineLinks()){
 							line.delete();
 						}
+						getParentInternalFrame().getJsDesktopPane().removeInternalFrame(getParentInternalFrame());
 						getParentInternalFrame().dispose();
 					}
 				});

@@ -160,4 +160,16 @@ public class SEBWindow extends JFrame {
 	public JScrollDesktopPane getGraphicalModelPanel() {
 		return graphicalModelPanel;
 	}
+	public ArchitectureToolbar getToolBarArchitectLeft() {
+		return toolBarArchitectLeft;
+	}
+	public void setToolBarArchitectLeft(ArchitectureToolbar toolBarArchitectLeft) {
+		this.toolBarArchitectLeft = toolBarArchitectLeft;
+	}
+	public ArchitectureToolbar getToolBarArchitectRight() {
+		return toolBarArchitectRight;
+	}
+	public void setToolBarArchitectRight(ArchitectureToolbar toolBarArchitectRight) {
+		this.toolBarArchitectRight = toolBarArchitectRight;
+	}
 }

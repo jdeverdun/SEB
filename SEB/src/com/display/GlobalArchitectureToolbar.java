@@ -7,6 +7,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -32,7 +34,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 
 	private JPanel panel;
 	private JButton btnOrganize;
-	
+	private JButton btnDefaultStruct;
 	// des variables pour le tri
 	private Dimension iframeDim;
 	private Dimension panelSize;
@@ -47,7 +49,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 		
 		panel = new JPanel();
 		add(panel);
-		panel.setLayout(new MigLayout("", "[]", "[]"));
+		panel.setLayout(new MigLayout("", "[][]", "[]"));
 		
 		btnOrganize = new JButton();
 		Image img = IconLibrary.ORGANIZEICON;
@@ -55,8 +57,55 @@ public class GlobalArchitectureToolbar extends JToolBar{
 		btnOrganize.setIcon(new ImageIcon(img));
 		panel.add(btnOrganize, "cell 0 0");
 		
+		btnDefaultStruct = new JButton("D");
+		panel.add(btnDefaultStruct, "cell 1 0");
+		
 		
 		// Events
+		btnDefaultStruct.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						JScrollDesktopPane jsd = WindowManager.MAINWINDOW.getGraphicalModelPanel();
+						// first artery & vsinous
+						jsd.initNew();
+						// tubes left
+						JScrollInternalFrame artleft = (JScrollInternalFrame) jsd.addArtery(Hemisphere.LEFT);
+						JScrollInternalFrame arteriolleft = (JScrollInternalFrame) jsd.addArteriole(Hemisphere.LEFT);
+						JScrollInternalFrame capleft = (JScrollInternalFrame) jsd.addCapillary(Hemisphere.LEFT);
+						JScrollInternalFrame vlleft = (JScrollInternalFrame) jsd.addVeinule(Hemisphere.LEFT);
+						JScrollInternalFrame vleft = (JScrollInternalFrame) jsd.addVein(Hemisphere.LEFT);
+						// tubes right
+						JScrollInternalFrame artright = (JScrollInternalFrame) jsd.addArtery(Hemisphere.RIGHT);
+						JScrollInternalFrame arteriolright = (JScrollInternalFrame) jsd.addArteriole(Hemisphere.RIGHT);
+						JScrollInternalFrame capright = (JScrollInternalFrame) jsd.addCapillary(Hemisphere.RIGHT);
+						JScrollInternalFrame vlright = (JScrollInternalFrame) jsd.addVeinule(Hemisphere.RIGHT);
+						JScrollInternalFrame vright = (JScrollInternalFrame) jsd.addVein(Hemisphere.RIGHT);
+						// links left
+						artleft.getTubePanel().addLineLinkAsChild(new LineLink(jsd.getFirstArteryFrame(),artleft));
+						arteriolleft.getTubePanel().addLineLinkAsChild(new LineLink(artleft,arteriolleft));
+						capleft.getTubePanel().addLineLinkAsChild(new LineLink(arteriolleft,capleft));
+						vlleft.getTubePanel().addLineLinkAsChild(new LineLink(capleft,vlleft));
+						vleft.getTubePanel().addLineLinkAsChild(new LineLink(vlleft,vleft));
+						jsd.getVenousSinousFrame().getTubePanel().addLineLinkAsChild(new LineLink(vleft,jsd.getVenousSinousFrame()));
+						// links right
+						artright.getTubePanel().addLineLinkAsChild(new LineLink(jsd.getFirstArteryFrame(),artright));
+						arteriolright.getTubePanel().addLineLinkAsChild(new LineLink(artright,arteriolright));
+						capright.getTubePanel().addLineLinkAsChild(new LineLink(arteriolright,capright));
+						vlright.getTubePanel().addLineLinkAsChild(new LineLink(capright,vlright));
+						vright.getTubePanel().addLineLinkAsChild(new LineLink(vlright,vright));
+						jsd.getVenousSinousFrame().getTubePanel().addLineLinkAsChild(new LineLink(vright,jsd.getVenousSinousFrame()));
+					}
+				});
+				
+			}
+		});
+		
+		
 		btnOrganize.addActionListener(new ActionListener() {
 			
 			@Override
@@ -95,7 +144,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 								break;
 						}
 						if(!isChild || !isParent){
-							errordlg("Error with architecture. Please ensure that everything is linked");
+							errordlg("Error with architecture. Please ensure that everything is linked ["+jsf+"]");
 							return;
 						}
 					}
@@ -152,33 +201,98 @@ public class GlobalArchitectureToolbar extends JToolBar{
 						}
 					}
 				}*/
+				
+				// on reset l'etat de la variable moved de chaque frame;
+				prepareInternalFrameForMove();
+				int decalagex_left = 0;
+				int decalagex_right = 0;
+				int decalagexfinalVein_left = 0;
+				int[] decalagexarray = setInternalFrameLocationLeft(jsd.getFirstArteryFrame(), decalagex_left, 2,decalagexfinalVein_left,longestPath);
 				for(LineLink line : jsd.getFirstArteryFrame().getLineLinks()){
-					if(line.getChild().getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT)
-						setInternalFrameLocation(line.getChild(), 0, 1);
+					/*if(line.getChild().getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT){
+						int[] decalagexarray = setInternalFrameLocationLeft(line.getChild(), decalagex_left, 2,decalagexfinalVein_left,longestPath);
+						decalagex_left = decalagexarray[0];
+						decalagexfinalVein_left = decalagexarray[1];
+						System.out.println(decalagex_left);
+						decalagex_left++;
+					}else{*/
+						if(line.getChild().getTubePanel().getTube().getHemisphere() == Hemisphere.RIGHT){
+							decalagex_right = setInternalFrameLocationRight(line.getChild(), decalagex_right, 2,longestPath);
+							decalagex_right++;
+						}
+					//}
 				}
 			}
+
+
 		});
 	}
 
-	private int setInternalFrameLocation(JScrollInternalFrame jsf, int decalagex, int decalagey){
-		int decalagefils = 0;
+	private void prepareInternalFrameForMove() {
+		for(JScrollInternalFrame jsf : WindowManager.MAINWINDOW.getGraphicalModelPanel().getInternalFrames())
+			jsf.setMoved(false);
+	}
+	
+	private int[] setInternalFrameLocationLeft(JScrollInternalFrame jsf, int decalagex, int decalagey, int decalagexfinalVein, HashMap<TubeClass,Integer> longestPath){
+
+		int count = 0;
+		int[] decalagexarray = new int[2];
+		if(jsf.getTubePanel().getTubeType() == TubeClass.FirstArtery)
+			decalagey = 1;
+		else
+			decalagey = Math.max(decalagey, longestPath.get(jsf.getTubePanel().getTubeType()));
+
 		for(LineLink line : jsf.getLineLinks()){
-			if
+			if(line.getParent().getTubePanel().getTubeType() == TubeClass.FirstArtery && line.getChild().getTubePanel().getTube().getHemisphere()==Hemisphere.RIGHT)
+				continue;
+			if(line.getParent() == jsf){
+				
+				if(!jsf.isMoved() && jsf.getTubePanel().getTubeType() != TubeClass.FirstArtery){
+					jsf.setLocation((int) (xcenter-defDistFromCenter-(iframeDim.getWidth()+xoffset)*(decalagex)-iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
+					jsf.setMoved(true);
+				}
+				if(count > 0 && !line.getChild().isMoved()){
+					decalagexarray = setInternalFrameLocationLeft(line.getChild(), decalagex+1,decalagey+1,decalagexfinalVein,longestPath);
+				}else{
+					decalagexarray = setInternalFrameLocationLeft(line.getChild(), decalagex,decalagey+1,decalagexfinalVein,longestPath);
+				}
+				decalagex = decalagexarray[0];
+				decalagexfinalVein = decalagexarray[1];
+				count++;
+			}
+		}
+		decalagexarray[0] = decalagex;
+		decalagexarray[1] = decalagexfinalVein;
+		return decalagexarray;
+	}
+
+	private int setInternalFrameLocationRight(JScrollInternalFrame jsf, int decalagex, int decalagey, HashMap<TubeClass,Integer> longestPath){
+		int count = 0;
+		boolean alreayMovedAsParent = false;
+		decalagey = Math.max(decalagey, longestPath.get(jsf.getTubePanel().getTubeType()));
+		for(LineLink line : jsf.getLineLinks()){
 			if(line.getChild().getTubePanel().getTubeType() == TubeClass.VenousSinus){
-				jsf.setLocation((int) (xcenter-defDistFromCenter-(iframeDim.getWidth()-xoffset)*decalagex-iframeDim.getWidth()), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
+				jsf.setLocation((int) (xcenter+defDistFromCenter+(iframeDim.getWidth()+xoffset)*decalagex-iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
 				
 				break;
 			}else{
 				if(line.getParent() == jsf){
-					jsf.setLocation((int) (xcenter-defDistFromCenter-(iframeDim.getWidth()-xoffset)*decalagex-iframeDim.getWidth()), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
-					decalagex = setInternalFrameLocation(line.getChild(), decalagex+decalagefils,decalagey++);
-					decalagefils++;
+					
+					if(!alreayMovedAsParent){
+						jsf.setLocation((int) (xcenter+defDistFromCenter+(iframeDim.getWidth()+xoffset)*(decalagex)-iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
+						alreayMovedAsParent = true;
+					}
+					if(count > 0 )
+						decalagex = setInternalFrameLocationRight(line.getChild(), decalagex+1,decalagey+1,longestPath);
+					else
+						decalagex = setInternalFrameLocationRight(line.getChild(), decalagex,decalagey+1,longestPath);
+
+					count++;
 				}
 			}
 		}
-		return decalagex+decalagefils;
+		return decalagex;
 	}
-	
 	private int calcLongestPathFromTo(
 			JScrollInternalFrame startPoint, TubeClass tclass) {
 		int max = 0;
@@ -245,6 +359,21 @@ public class GlobalArchitectureToolbar extends JToolBar{
 		res.put(TubeClass.VenousSinus, 1+max);
 		return res;
 	}
+	
+	private int calcShortestPathFromTo(
+			JScrollInternalFrame startPoint, TubeClass tclass) {
+		int min = 0;
+		if(startPoint.getTubePanel().getTubeType() == tclass)
+			return 1+min;
+		for(LineLink line : startPoint.getLineLinks()){
+			if(line.getChild() != startPoint){
+				min = Math.min(calcShortestPathFromTo(line.getChild(), tclass),min);
+			}
+		}
+		return 1+min;
+	}
+	
+	
 	
 	/**
 	 * Recursively count width of a level in a tree
