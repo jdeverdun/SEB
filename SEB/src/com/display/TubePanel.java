@@ -524,16 +524,6 @@ public class TubePanel extends JPanel {
 					return true;
 			}
 		}
-		/*for(LineLink li2 : currentLine.getChild().getLineLinks()){
-			if(currentLine==li2)
-				continue;
-			if(li2.getChild() == jsf){
-				return true;
-			}else{
-				if(iterativeCheckChildLink(jsf, li2))
-					return true;
-			}
-		}*/
 		return false;
 	}
 	/**

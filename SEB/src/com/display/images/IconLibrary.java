@@ -23,6 +23,7 @@ public class IconLibrary {
 	public static Image RESTOREICON = null;
 	public static Image NEWICON = null;
 	public static Image ORGANIZEICON = null;
+	public static Image RUNICON = null;
 	/**
 	 * Load each icon
 	 */
@@ -42,6 +43,7 @@ public class IconLibrary {
 			RESTOREICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/restore-icon.png"));
 			NEWICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/new-icon.png"));
 			ORGANIZEICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/organize-icon.png"));
+			RUNICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/run-icon.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

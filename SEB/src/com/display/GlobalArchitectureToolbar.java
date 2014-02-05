@@ -117,7 +117,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 					return;
 				}
 				if(jsd.getFirstArteryFrame().getLineLinks().isEmpty() || jsd.getVenousSinousFrame().getLineLinks().isEmpty()){
-					errordlg("First arter and/or vSinous are linked to nothing !");
+					errordlg("First artery and/or vSinous are linked to nothing !");
 					return;
 				}
 				// Etape 2 on verifie que chaque bloc est au moins une fois un fils et un parent et qu'on a bien 2 hemi!
@@ -191,37 +191,13 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				jsd.getVenousSinousFrame().setLocation((int) (xcenter - iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*longestPath.get(TubeClass.VenousSinus)-iframeDim.getHeight()-25));
 				// ensuite les frames 
 				// le positionnement commence à partir du centre
-				/*for(Integer level:largeurMaxLevel.keySet()){
-					int xpointer_left = 0;//les decalages gauche / droite
-					int xpointer_right = 0;
-					for(JScrollInternalFrame jsf : largeurMaxLevel.get(level)){
-						if(jsf.getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT){
-							jsf.setLocation((int) (xcenter-defDistFromCenter-(iframeDim.getWidth()-xoffset)*xpointer_left-iframeDim.getWidth()), (int) ((iframeDim.getHeight()+yoffset)*longestPath.get(jsf.getTubePanel().getTubeType())-iframeDim.getHeight()-25));
-							xpointer_left++;
-						}
-					}
-				}*/
 				
 				// on reset l'etat de la variable moved de chaque frame;
 				prepareInternalFrameForMove();
 				int decalagex_left = 0;
 				int decalagex_right = 0;
-				int decalagexfinalVein_left = 0;
-				int[] decalagexarray = setInternalFrameLocationLeft(jsd.getFirstArteryFrame(), decalagex_left, 2,decalagexfinalVein_left,longestPath);
-				for(LineLink line : jsd.getFirstArteryFrame().getLineLinks()){
-					/*if(line.getChild().getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT){
-						int[] decalagexarray = setInternalFrameLocationLeft(line.getChild(), decalagex_left, 2,decalagexfinalVein_left,longestPath);
-						decalagex_left = decalagexarray[0];
-						decalagexfinalVein_left = decalagexarray[1];
-						System.out.println(decalagex_left);
-						decalagex_left++;
-					}else{*/
-						if(line.getChild().getTubePanel().getTube().getHemisphere() == Hemisphere.RIGHT){
-							decalagex_right = setInternalFrameLocationRight(line.getChild(), decalagex_right, 2,longestPath);
-							decalagex_right++;
-						}
-					//}
-				}
+				decalagex_left = setInternalFrameLocationLeft(jsd.getFirstArteryFrame(), decalagex_left, 2,longestPath);
+				decalagex_right = setInternalFrameLocationRight(jsd.getFirstArteryFrame(), decalagex_right, 2,longestPath);
 			}
 
 
@@ -233,9 +209,8 @@ public class GlobalArchitectureToolbar extends JToolBar{
 			jsf.setMoved(false);
 	}
 	
-	private int[] setInternalFrameLocationLeft(JScrollInternalFrame jsf, int decalagex, int decalagey, int decalagexfinalVein, HashMap<TubeClass,Integer> longestPath){
+	private int setInternalFrameLocationLeft(JScrollInternalFrame jsf, int decalagex, int decalagey, HashMap<TubeClass,Integer> longestPath){
 		int count = 0;
-		int[] decalagexarray = new int[2];
 		if(jsf.getTubePanel().getTubeType() == TubeClass.FirstArtery)
 			decalagey = 1;
 		else
@@ -251,47 +226,42 @@ public class GlobalArchitectureToolbar extends JToolBar{
 					jsf.setMoved(true);
 				}
 				if(count > 0 && !line.getChild().isMoved()){
-					decalagexarray = setInternalFrameLocationLeft(line.getChild(), decalagex+1,decalagey+1,decalagexfinalVein,longestPath);
+					decalagex = setInternalFrameLocationLeft(line.getChild(), decalagex+1,decalagey+1,longestPath);
 				}else{
-					decalagexarray = setInternalFrameLocationLeft(line.getChild(), decalagex,decalagey+1,decalagexfinalVein,longestPath);
+					decalagex = setInternalFrameLocationLeft(line.getChild(), decalagex,decalagey+1,longestPath);
 				}
-				decalagex = decalagexarray[0];
-				decalagexfinalVein = decalagexarray[1];
 				count++;
-			}
-		}
-		decalagexarray[0] = decalagex;
-		decalagexarray[1] = decalagexfinalVein;
-		return decalagexarray;
-	}
-
-	private int setInternalFrameLocationRight(JScrollInternalFrame jsf, int decalagex, int decalagey, HashMap<TubeClass,Integer> longestPath){
-		int count = 0;
-		boolean alreayMovedAsParent = false;
-		decalagey = Math.max(decalagey, longestPath.get(jsf.getTubePanel().getTubeType()));
-		for(LineLink line : jsf.getLineLinks()){
-			if(line.getChild().getTubePanel().getTubeType() == TubeClass.VenousSinus){
-				jsf.setLocation((int) (xcenter+defDistFromCenter+(iframeDim.getWidth()+xoffset)*decalagex-iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
-				
-				break;
-			}else{
-				if(line.getParent() == jsf){
-					
-					if(!alreayMovedAsParent){
-						jsf.setLocation((int) (xcenter+defDistFromCenter+(iframeDim.getWidth()+xoffset)*(decalagex)-iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
-						alreayMovedAsParent = true;
-					}
-					if(count > 0 )
-						decalagex = setInternalFrameLocationRight(line.getChild(), decalagex+1,decalagey+1,longestPath);
-					else
-						decalagex = setInternalFrameLocationRight(line.getChild(), decalagex,decalagey+1,longestPath);
-
-					count++;
-				}
 			}
 		}
 		return decalagex;
 	}
+	private int setInternalFrameLocationRight(JScrollInternalFrame jsf, int decalagex, int decalagey, HashMap<TubeClass,Integer> longestPath){
+		int count = 0;
+		if(jsf.getTubePanel().getTubeType() == TubeClass.FirstArtery)
+			decalagey = 1;
+		else
+			decalagey = Math.max(decalagey, longestPath.get(jsf.getTubePanel().getTubeType()));
+
+		for(LineLink line : jsf.getLineLinks()){
+			if(line.getParent().getTubePanel().getTubeType() == TubeClass.FirstArtery && line.getChild().getTubePanel().getTube().getHemisphere()==Hemisphere.LEFT)
+				continue;
+			if(line.getParent() == jsf){
+				
+				if(!jsf.isMoved() && jsf.getTubePanel().getTubeType() != TubeClass.FirstArtery){
+					jsf.setLocation((int) (xcenter+defDistFromCenter+(iframeDim.getWidth()+xoffset)*(decalagex)-iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*decalagey-iframeDim.getHeight()-25));
+					jsf.setMoved(true);
+				}
+				if(count > 0 && !line.getChild().isMoved()){
+					decalagex = setInternalFrameLocationRight(line.getChild(), decalagex+1,decalagey+1,longestPath);
+				}else{
+					decalagex = setInternalFrameLocationRight(line.getChild(), decalagex,decalagey+1,longestPath);
+				}
+				count++;
+			}
+		}
+		return decalagex;
+	}
+
 	private int calcLongestPathFromTo(
 			JScrollInternalFrame startPoint, TubeClass tclass) {
 		int max = 0;
