@@ -2,6 +2,7 @@ package display;
 
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
@@ -11,6 +12,8 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.HashMap;
 
 import models.Hemisphere;
 import net.miginfocom.swing.MigLayout;
@@ -21,7 +24,9 @@ import display.containers.InitialInputsPanel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
+import params.SystemParams;
 import params.WindowManager;
+import utils.SEButils;
 
 import BaseModel.StandardModel;
 import javax.swing.JInternalFrame;
@@ -51,6 +56,9 @@ public class SEBWindow extends JFrame {
 	private ArchitectureToolbar toolBarArchitectRight;
 	private JScrollDesktopPane graphicalModelPanel;
 	private GlobalArchitectureToolbar toolBarGlobalArchitect;
+	private JMenu mnFile;
+	private JMenuItem mntmSaveModel;
+	private JMenuItem mntmLoadModel;
 
 	public SEBWindow() {
 		IconLibrary.load();
@@ -84,6 +92,15 @@ public class SEBWindow extends JFrame {
 		// FIN TESTS --------
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
+		
+		mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+		
+		mntmSaveModel = new JMenuItem("Save model");
+		mnFile.add(mntmSaveModel);
+		
+		mntmLoadModel = new JMenuItem("Load model");
+		mnFile.add(mntmLoadModel);
 		
 		mnRun = new JMenu("Run");
 		menuBar.add(mnRun);
@@ -128,6 +145,13 @@ public class SEBWindow extends JFrame {
 					}
 				});
 				modelthread.start();
+			}
+		});
+		mntmSaveModel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SEButils.saveModel();
 			}
 		});
 	}

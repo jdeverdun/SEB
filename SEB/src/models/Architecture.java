@@ -78,4 +78,80 @@ public class Architecture {
 	public boolean isFilled(){
 		return (startPoint != null) && (endPoint != null) && (brain != null);
 	}
+	
+	
+	public boolean checkArchitectureValidity(ElasticTube startPoint) {
+		if(startPoint instanceof VenousSinus)
+			return true;
+		if(!(startPoint instanceof FirstArtery) && !checkValidity(startPoint))
+			return false;
+		for(ElasticTube tube : startPoint.getChildren()){
+			if(!(startPoint instanceof FirstArtery) && !(tube instanceof VenousSinus) && tube.getHemisphere() != startPoint.getHemisphere())
+				return false;
+			if(startPoint instanceof FirstArtery && !(tube instanceof Artery))
+				return false;
+			if(startPoint instanceof Artery && !(tube instanceof Arteriole || tube instanceof Artery))
+				return false;
+			if(startPoint instanceof Arteriole && !(tube instanceof Capillary))
+				return false;
+			if(startPoint instanceof Capillary && !(tube instanceof Veinule))
+				return false;
+			if(startPoint instanceof Veinule && !(tube instanceof Vein))
+				return false;
+			if(startPoint instanceof Vein && !(tube instanceof VenousSinus || tube instanceof Vein))
+				return false;
+			if(!checkArchitectureValidity(tube))
+				return false;
+		}
+		return true;
+	}
+	private boolean checkValidity(ElasticTube t1) {
+		if((t1.getParents().isEmpty() && t1.getChildren().isEmpty()))
+			return false;
+		for(ElasticTube parent : t1.getParents()){
+			if(iterativeCheckIndirectParentLink(t1, parent,0))
+				return false;
+		}
+		for(ElasticTube child : t1.getChildren()){// A VOIR si il y a un soucis
+			if(iterativeCheckIndirectChildLink(t1, child,0))
+				return false;
+		}
+		return true;
+	}
+	
+	private boolean iterativeCheckIndirectParentLink(ElasticTube t1, ElasticTube parent,int level) {
+		if(parent.equals(t1))
+			return true;
+		
+		for(ElasticTube locparent : t1.getParents()){
+			if(locparent.equals(parent) && level == 0)
+				continue;
+			if(!locparent.equals(parent)){
+				if(iterativeCheckIndirectParentLink(locparent,parent,level+1))
+					return true;
+				continue;
+			}else{
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	private boolean iterativeCheckIndirectChildLink(ElasticTube t1, ElasticTube child, int level){
+		if(child.equals(t1))
+			return true;
+		
+		for(ElasticTube locchild : t1.getParents()){
+			if(locchild.equals(child) && level == 0)
+				continue;
+			if(!locchild.equals(child)){
+				if(iterativeCheckIndirectChildLink(locchild,child,level+1))
+					return true;
+				continue;
+			}else{
+				return true;
+			}
+		}
+		return false;
+	}
 }

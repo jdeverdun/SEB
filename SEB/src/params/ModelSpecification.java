@@ -87,7 +87,6 @@ public class ModelSpecification {
                      - 0.0120187782765389*Math.sin(8*Math.PI*time.getValue()[i]) - 0.0298121524913813*Math.sin(10*Math.PI*time.getValue()[i])
                      - 0.00705400623825701*Math.sin(12*Math.PI*time.getValue()[i])- 0.00711904276150898*Math.sin(14*Math.PI*time.getValue()[i])
                      + 0.000860786521170459*Math.sin(16*Math.PI*time.getValue()[i]) ) );
-			System.out.println(fourrier_funct.getValue()[i]);
 			P_INIT.getValue()[i] = 102.0f * 1333.2240f * fourrier_funct.getValue()[i];
 			P_OUT.getValue()[i] =  2.5f * 1333.2240f;
 			OUT_D.getValue()[i] = 0.0f;

@@ -24,6 +24,11 @@ public class IconLibrary {
 	public static Image NEWICON = null;
 	public static Image ORGANIZEICON = null;
 	public static Image RUNICON = null;
+	public static Image VENTRICLE = null;
+	public static Image THIRDVENTRICLE = null;
+	public static Image FOURTHVENTRICLE = null;
+	public static Image SAS = null;
+	public static Image SPINAL = null;
 	/**
 	 * Load each icon
 	 */
@@ -44,6 +49,12 @@ public class IconLibrary {
 			NEWICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/new-icon.png"));
 			ORGANIZEICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/organize-icon.png"));
 			RUNICON = ImageIO.read(ArchitectureToolbar.class.getResource("images/run-icon.png"));
+			VENTRICLE = ImageIO.read(ArchitectureToolbar.class.getResource("images/run-icon.png"));
+			THIRDVENTRICLE = ImageIO.read(ArchitectureToolbar.class.getResource("images/run-icon.png"));
+			FOURTHVENTRICLE = ImageIO.read(ArchitectureToolbar.class.getResource("images/run-icon.png"));
+			SAS = ImageIO.read(ArchitectureToolbar.class.getResource("images/run-icon.png"));
+			SPINAL = ImageIO.read(ArchitectureToolbar.class.getResource("images/run-icon.png"));
+					
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

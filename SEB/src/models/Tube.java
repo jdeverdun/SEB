@@ -62,7 +62,7 @@ public abstract class Tube {
 				return lv;
 			}
 		}
-		throw new Exception("Variable Area missing for momentum derivative in "+TUBE_LABEL+getTubeNum());
+		throw new Exception("Variable "+name+" missing for momentum derivative in "+TUBE_LABEL+getTubeNum());
 	}
 	
 	/**

@@ -28,6 +28,7 @@ import javax.swing.JButton;
 import org.jscroll.widgets.JScrollInternalFrame;
 
 import params.WindowManager;
+import utils.SEButils;
 
 import com.display.images.IconLibrary;
 
@@ -35,6 +36,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JLabel;
@@ -632,6 +635,28 @@ public class TubePanel extends JPanel {
 	public void delete() {
 		for(LineLink line : getLineLinks())
 			line.delete();
+	}
+
+	public void saveInfoTo(HashMap<String, String> paramsByTube,
+			HashSet<String> links) {
+		// on recupere les params du tube
+		String params = "";
+		params+=tube.getLength().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getLength().getValue();
+		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getAlpha().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getAlpha().getValue();
+		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getElastance().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getElastance().getValue();
+		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getArea().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getArea().getValue();
+		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getInitialArea().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getInitialArea().getValue();
+		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getFlowin().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getFlowin().getValue();
+		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getFlowout().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getFlowout().getValue();
+		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getPressure().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getPressure().getValue();
+		
+		paramsByTube.put(tube.getName(), params);
+		for(LineLink line : getLineLinks()){
+			if(line.getParent() == getParentInternalFrame()){
+				links.add(tube.getName()+SEButils.SAVE_LINK_SEPARATOR+line.getChild().getTubePanel().getTube().getName());
+				line.getChild().getTubePanel().saveInfoTo(paramsByTube, links);
+			}
+		}
 	}
 
 }
