@@ -582,6 +582,8 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		sas.addParent(fourthVent);
 		// sp. cord
 		spinal.addParent(sas);
+		
+		BUGGUE L'INTERFACE DE LIAISON
 		setVentricleleftFrame((JScrollInternalFrame) add(ventricleleft.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,fart_location.x,fart_location.y));		
 		setVentriclerightFrame((JScrollInternalFrame) add(ventricleright.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,fart_location.x,fart_location.y));		
 		setThirdVentFrame((JScrollInternalFrame) add(thirdVent.getName(),new ImageIcon(IconLibrary.THIRDVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.ThirdVentricle), false,fart_location.x,fart_location.y));
