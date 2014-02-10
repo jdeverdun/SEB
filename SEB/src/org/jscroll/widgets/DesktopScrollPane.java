@@ -107,9 +107,10 @@ public class DesktopScrollPane extends JScrollPane {
      * @return the JScrollInternalFrame that was created
      */
     public JScrollInternalFrame add(DesktopListener dListener, String title,
-        ImageIcon icon, TubePanel frameContents,JScrollDesktopPane parentPane, boolean isClosable, int x, int y) {
+        ImageIcon icon, TubePanel frameContents,JScrollDesktopPane parentPane, boolean isClosable,boolean visible, int x, int y) {
         JScrollInternalFrame f = new JScrollInternalFrame(title, icon,
                 frameContents,parentPane,  isClosable);
+        f.setVisible(visible);
         f.getTubePanel().setParentInternalFrame(f);
         f.addComponentListener(dListener);
 

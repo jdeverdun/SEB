@@ -307,7 +307,12 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
      */
     public JInternalFrame add(String title, ImageIcon icon,
     		TubePanel frameContents, boolean isClosable, int x, int y) {
-        return desktopMediator.add(title, icon, frameContents,this, isClosable, x, y);
+        return desktopMediator.add(title, icon, frameContents,this, isClosable,true, x, y);
+    }
+    
+    public JInternalFrame add(String title, ImageIcon icon,
+    		TubePanel frameContents, boolean isClosable, boolean visible, int x, int y) {
+        return desktopMediator.add(title, icon, frameContents,this, isClosable,visible, x, y);
     }
 
     /**
@@ -583,13 +588,13 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		// sp. cord
 		spinal.addParent(sas);
 		
-		BUGGUE L'INTERFACE DE LIAISON
-		setVentricleleftFrame((JScrollInternalFrame) add(ventricleleft.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,fart_location.x,fart_location.y));		
-		setVentriclerightFrame((JScrollInternalFrame) add(ventricleright.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,fart_location.x,fart_location.y));		
-		setThirdVentFrame((JScrollInternalFrame) add(thirdVent.getName(),new ImageIcon(IconLibrary.THIRDVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.ThirdVentricle), false,fart_location.x,fart_location.y));
-		setFourthVentSinousFrame((JScrollInternalFrame) add(fourthVent.getName(),new ImageIcon(IconLibrary.FOURTHVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.FourthVentricle), false,fart_location.x,fart_location.y));		
-		setSasFrame((JScrollInternalFrame) add(sas.getName(),new ImageIcon(IconLibrary.SAS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.SAS), false,fart_location.x,fart_location.y));		
-		setSpinalFrame((JScrollInternalFrame) add(spinal.getName(),new ImageIcon(IconLibrary.SPINAL.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.SpinalCord), false,fart_location.x,fart_location.y));		
+		//BUGGUE L'INTERFACE DE LIAISON
+		setVentricleleftFrame((JScrollInternalFrame) add(ventricleleft.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,false,fart_location.x,fart_location.y));		
+		setVentriclerightFrame((JScrollInternalFrame) add(ventricleright.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,false,fart_location.x,fart_location.y));		
+		setThirdVentFrame((JScrollInternalFrame) add(thirdVent.getName(),new ImageIcon(IconLibrary.THIRDVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.ThirdVentricle), false,false,fart_location.x,fart_location.y));
+		setFourthVentSinousFrame((JScrollInternalFrame) add(fourthVent.getName(),new ImageIcon(IconLibrary.FOURTHVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.FourthVentricle), false,false,fart_location.x,fart_location.y));		
+		setSasFrame((JScrollInternalFrame) add(sas.getName(),new ImageIcon(IconLibrary.SAS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.SAS), false,false,fart_location.x,fart_location.y));		
+		setSpinalFrame((JScrollInternalFrame) add(spinal.getName(),new ImageIcon(IconLibrary.SPINAL.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.SpinalCord), false,false,fart_location.x,fart_location.y));		
 		// on ne veut pas que ces frame apparaisse dans cette liste
 		getInternalFrames().remove(getVentricleleftFrame());
 		getInternalFrames().remove(getVentriclerightFrame());

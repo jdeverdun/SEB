@@ -90,12 +90,12 @@ public class DesktopMediator implements DesktopConstants {
      * @return the internal frame that was created
      */
     public JInternalFrame add(String title, ImageIcon icon,
-    		TubePanel frameContents, JScrollDesktopPane parentPane, boolean isClosable, int x, int y) {
+    		TubePanel frameContents, JScrollDesktopPane parentPane, boolean isClosable,boolean visible, int x, int y) {
         JScrollInternalFrame frame = null;
         
         if (desktopScrollpane.getNumberOfFrames() < MAX_FRAMES) {
             frame = desktopScrollpane.add(dListener, title, icon,
-                    frameContents, parentPane, isClosable, x, y);
+                    frameContents, parentPane, isClosable,visible, x, y);
 
             createFrameAssociates(frame);
         }
