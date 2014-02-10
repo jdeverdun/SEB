@@ -594,7 +594,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		setThirdVentFrame((JScrollInternalFrame) add(thirdVent.getName(),new ImageIcon(IconLibrary.THIRDVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.ThirdVentricle), false,false,fart_location.x,fart_location.y));
 		setFourthVentSinousFrame((JScrollInternalFrame) add(fourthVent.getName(),new ImageIcon(IconLibrary.FOURTHVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.FourthVentricle), false,false,fart_location.x,fart_location.y));		
 		setSasFrame((JScrollInternalFrame) add(sas.getName(),new ImageIcon(IconLibrary.SAS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.SAS), false,false,fart_location.x,fart_location.y));		
-		setSpinalFrame((JScrollInternalFrame) add(spinal.getName(),new ImageIcon(IconLibrary.SPINAL.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.SpinalCord), false,false,fart_location.x,fart_location.y));		
+		setSpinalFrame((JScrollInternalFrame) add(spinal.getName(),new ImageIcon(IconLibrary.SPINAL.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.SpinalCord), false,false,fart_location.x,fart_location.y));	
 		// on ne veut pas que ces frame apparaisse dans cette liste
 		getInternalFrames().remove(getVentricleleftFrame());
 		getInternalFrames().remove(getVentriclerightFrame());
