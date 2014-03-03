@@ -154,6 +154,13 @@ public class SEBWindow extends JFrame {
 				SEButils.saveModel();
 			}
 		});
+		mntmLoadModel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				SEButils.loadModel();
+			}
+		});
 	}
 	public void createAndShowGUI() {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -6,7 +6,8 @@ public abstract class Tube {
 	protected String name;
 	protected SimpleVariable length;
 	protected static String TUBE_LABEL = "T";
-	protected static int ID = 0;
+	public static int ID = 0;
+	public static String ID_LABEL = "GLOBALTUBEID";
 	public static final String LAST_ROUND_SUFFIX = "_PREV"; // suffixe a rajouter dans symbolic quand variable issue du tour precedent
 	protected int myID = -1;
 	
