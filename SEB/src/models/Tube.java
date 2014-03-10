@@ -9,8 +9,9 @@ public abstract class Tube {
 	public static int ID = 0;
 	public static String ID_LABEL = "GLOBALTUBEID";
 	public static final String LAST_ROUND_SUFFIX = "_PREV"; // suffixe a rajouter dans symbolic quand variable issue du tour precedent
-	protected int myID = -1;
+	public int myID = -1;
 	
+
 	public Tube(){
 		ID++;
 		myID = ID;
@@ -28,8 +29,8 @@ public abstract class Tube {
 	protected abstract SimpleVariable getLength();
 	protected abstract void setLength(float length);
 	public abstract ArrayList<SimpleVariable> getVariables();	
-	public abstract ArrayList<SimpleVariable> getFixedVariables();	// variables type lenght ou A0
-	public abstract ArrayList<SimpleVariable> getGlobalVariables();	// variables type lenght ou A0
+	public abstract ArrayList<SimpleVariable> getFixedVariables();	// variables type length ou A0
+	public abstract ArrayList<SimpleVariable> getGlobalVariables();	// variables type length ou A0
 	public String getName() {
 		return name;
 	}
@@ -40,6 +41,10 @@ public abstract class Tube {
 	public int getMyID(){
 		return myID;
 	}
+	public void setMyID(int myID) {
+		this.myID = myID;
+	}
+
 	public abstract String getTubeNum();
 	
 	// ---------    EQUATIONS ---------------

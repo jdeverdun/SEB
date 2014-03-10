@@ -505,6 +505,19 @@ public class TubePanel extends JPanel {
 		getTube().setFlowout(Float.parseFloat(txtValfout.getText()));
 		getTube().setPressure(Float.parseFloat(txtValpressure.getText()));
 	}
+	
+	/**
+	 * Refresh les valeurs affiche dans le panel a partir du tube
+	 */
+	public void refreshDisplayFromTube(){
+		txtVallength.setText(""+tube.getLength().getValue());
+		textValAlpha.setText(""+tube.getAlpha().getValue());
+		txtValelastance.setText(""+tube.getElastance().getValue());
+		txtValarea.setText(""+tube.getArea().getValue());
+		txtValfin.setText(""+tube.getFlowin().getValue());
+		txtValfout.setText(""+tube.getFlowout().getValue());
+		txtValpressure.setText(""+tube.getPressure().getValue());
+	}
 	private void setFieldsEditable(boolean b) {
 		txtVallength.setEditable(b);
 		textValAlpha.setEditable(b);
