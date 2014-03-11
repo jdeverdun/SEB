@@ -1,5 +1,6 @@
 package Thread;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -34,6 +35,8 @@ import params.SystemParams;
 import params.WindowManager;
 
 import com.display.LineLink;
+
+import display.ModelRunMonitor;
 
 public class ModelRun extends Thread {
 	private Architecture architecture;
@@ -147,13 +150,25 @@ public class ModelRun extends Thread {
 		
 		Path modelDir = Paths.get(SystemParams.MATLAB_MODEL_DIR);
 		//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
-		MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
+		final MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
+		SwingUtilities.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				ModelRunMonitor m = new ModelRunMonitor(mmodel.getMainScript().toFile(),variables);
+			}
+		});
+		
 	}
 	
 	
 	private void addAllTubesToList() {
 		recursivelyAddTubeToList(architecture.getStartPoint());
-		// ------------ Definition des blocs LCR -----------
+		// le LCR
+		recursivelyAddTubeToList(jsd.getVentricleleftFrame().getTubePanel().getTube());
+		recursivelyAddTubeToList(jsd.getVentriclerightFrame().getTubePanel().getTube());
+		/*// ------------ Definition des blocs LCR -----------
+		
 		// ventricle
 		Ventricle ventricleleft = new Ventricle("", Hemisphere.LEFT);
 		Ventricle ventricleright = new Ventricle("", Hemisphere.RIGHT);
@@ -183,7 +198,7 @@ public class ModelRun extends Thread {
 		tubes.add(thirdVent);
 		tubes.add(fourthVent);
 		tubes.add(sas);
-		tubes.add(spinal);
+		tubes.add(spinal);*/
 	}
 	private void recursivelyAddTubeToList(ElasticTube tube) {
 		if(!tubes.contains(tube))

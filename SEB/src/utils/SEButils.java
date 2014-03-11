@@ -132,7 +132,7 @@ public class SEButils {
 			selectedFile = fc.getSelectedFile();
 			if(WindowManager.MAINWINDOW != null)
 				WindowManager.MAINWINDOW.getGraphicalModelPanel().initNew();
-	        BufferedReader reader;
+	        BufferedReader reader = null;
 			try {
 				reader = Files.newBufferedReader(selectedFile.toPath(), ENCODING);
 		        String line = "";
@@ -161,9 +161,10 @@ public class SEButils {
 		            	break;
 		            }
 		        }
+		        reader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}
+			} 
 		}else{
 			return;
 		}

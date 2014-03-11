@@ -3,6 +3,10 @@ package matlab;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -14,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 
@@ -69,6 +74,7 @@ public class MatlabBuilder {
 		// ================ Main File =================
 		String mainFileContent = "";
 		mainFileContent += createModelHeader();
+		mainFileContent += createSocketDefinition();
 		//mainFileContent +=  globalVarsDefinition(globalvariables);
 		mainFileContent +=  mainGlobalVarsInitialization(globalvariables);
 		mainFileContent +=  createDefaultUnknown(variables);
@@ -77,7 +83,8 @@ public class MatlabBuilder {
 		mainFileContent += createInitialFsolve(equationsInitialFunctionName, globalvariables);
 		mainFileContent += createRetrieveGlobal(globalvariables,variables); // a partir du x
 		mainFileContent += createTimeLoop(globalvariables,variables); // a partir du x
-				
+		mainFileContent += createFooter(variables);		
+		
 		// ============= Initial equations ============
 		String initialEqFileContent = "";
 		initialEqFileContent += createEquationInitialHeader(globalvariables);
@@ -127,6 +134,18 @@ public class MatlabBuilder {
 	}
 	
 	/**
+	 * On quitte matlab
+	 * @return
+	 */
+	private static String createFooter(ArrayList<SimpleVariable> variables) {
+		String content = "%% Sending results and leaving matlab"+NEWLINE_CHAR;
+		content += createSendResults(variables);
+		content += createSocketDestroy();
+		content += "exit"+NEWLINE_CHAR;
+		return content;
+	}
+
+	/**
 	 * La boucle sur le temps
 	 * @param globalvariables
 	 * @param variables
@@ -146,13 +165,43 @@ public class MatlabBuilder {
 		SimpleVariable currentIter = ((SimpleVariable)globalvariables.get(globalvariables.indexOf(ModelSpecification.currentIter)));
 		SimpleVariable time_step = ((SimpleVariable)globalvariables.get(globalvariables.indexOf(ModelSpecification.time_step)));
 		content += "for "+currentIter.getName()+" = 1 : "+ time_step.getName() + ""+NEWLINE_CHAR+"";
+		
+		// on rajoute les controles pour interaction via socket
+		content += "\t% java interaction using socket"+NEWLINE_CHAR;
+		content += "\ttry"+NEWLINE_CHAR;
+		content += "\t\toutputstream.writeFloat("+currentIter.getName()+"/"+time_step.getName()+");"+NEWLINE_CHAR;
+		content += "\t\toutputstream.flush();"+NEWLINE_CHAR;
+		content += "\tcatch exception"+NEWLINE_CHAR;
+		content += addPrefixToContent(createSocketDestroy(),"\t\t");
+		content += "\t\texit;"+NEWLINE_CHAR;
+		content += "\tend;"+NEWLINE_CHAR;
+
+		
+		
 		content += addPrefixToContent(createTimeFsolve(equationsTimeFunctionName, globalvariables),"\t");
 		content += addPrefixToContent(createRetrieveGlobal(globalvariables, variables),"\t");
 		content += addPrefixToContent(createMonitoringVars(variables,currentIter.getName()),"\t");
 		content += "end" + NEWLINE_CHAR;
 		return content;
 	}
+	
+	private static String createSocketDefinition(){
+		String content = "% SOCKET definition to interact with java"+NEWLINE_CHAR;
+		content += "socket = java.net.Socket('localhost',"+SystemParams.SOCKET_FLOAT_PORT+");"+NEWLINE_CHAR;
+		content += "outputstream = java.io.DataOutputStream(socket.getOutputStream());"+NEWLINE_CHAR;
+		content += "socketObject = java.net.Socket('localhost',"+SystemParams.SOCKET_OBJECT_PORT+");"+NEWLINE_CHAR;
+		content += "outputstreamObject = java.io.ObjectOutputStream(socketObject.getOutputStream());"+NEWLINE_CHAR;
+		return content;
+	}
 
+	private static String createSocketDestroy(){
+		String content = "outputstream.flush();"+NEWLINE_CHAR;
+		content += "outputstream.close();"+NEWLINE_CHAR;
+		content += "outputstreamObject.close();"+NEWLINE_CHAR;
+		content += "socket.close();"+NEWLINE_CHAR;
+		content += "socketObject.close();"+NEWLINE_CHAR;
+		return content;
+	}
 	/**
 	 * Cree les lignes pour sauvegarder les valeurs des variables au cours du temps
 	 * @param variables
@@ -165,6 +214,27 @@ public class MatlabBuilder {
 		int count = 1;
 		for(SimpleVariable var : variables){
 			content += var.getName() + MONITORINGVARS_SUFFIX + "(" + iterationVarName + ") = " + unknownLabel + "(" + (count++) + ");" + NEWLINE_CHAR;
+		}
+		return content;
+	}
+	
+	/**
+	 * Cree la commande matlab pour renvoyer les resultats sous forme d'arraylist dans le bon ordre
+	 * @param variables
+	 * @return
+	 */
+	private static String createSendResults(
+			ArrayList<SimpleVariable> variables) {
+		String content = "% Format data as arrayList"+NEWLINE_CHAR;
+		for(SimpleVariable var : variables){
+			content += NEWLINE_CHAR+"% " + var.getName() + MONITORINGVARS_SUFFIX+NEWLINE_CHAR;
+			content += var.getName() + MONITORINGVARS_SUFFIX+"_arr = java.util.ArrayList();"+NEWLINE_CHAR;
+			String locvar = var.getName() + MONITORINGVARS_SUFFIX+"_arr";
+			content += "for i = 1 : numel("+var.getName() + MONITORINGVARS_SUFFIX+")"+NEWLINE_CHAR;
+			content += "\t"+locvar+".add("+var.getName() + MONITORINGVARS_SUFFIX+"(i));"+NEWLINE_CHAR;
+			content += "end;"+NEWLINE_CHAR;
+			content += "outputstreamObject.writeObject("+locvar+");"+NEWLINE_CHAR;
+			content += "outputstreamObject.flush();"+NEWLINE_CHAR;
 		}
 		return content;
 	}
