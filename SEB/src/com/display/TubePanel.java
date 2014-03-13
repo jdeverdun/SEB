@@ -16,6 +16,7 @@ import models.FirstArtery;
 import models.FourthVentricle;
 import models.Hemisphere;
 import models.SAS;
+import models.SimpleVariable;
 import models.SpinalCord;
 import models.ThirdVentricle;
 import models.Vein;
@@ -186,6 +187,19 @@ public class TubePanel extends JPanel {
 		
 		
 		// Listeners
+		btnDisplayCharts.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ArrayList<SimpleVariable> list = new ArrayList<SimpleVariable>();
+				list.add(getTube().getArea());
+				list.add(getTube().getPressure());
+				list.add(getTube().getFlowin());
+				list.add(getTube().getFlowout());
+				WindowManager.MAINWINDOW.getPlotPanel().setVarToDisplay(list);
+				WindowManager.MAINWINDOW.getTabbedPane().setSelectedIndex(2);
+			}
+		});
 		btnAddLink.addActionListener(new ActionListener() {
 			
 			@Override
@@ -517,6 +531,8 @@ public class TubePanel extends JPanel {
 		txtValfin.setText(""+tube.getFlowin().getValue());
 		txtValfout.setText(""+tube.getFlowout().getValue());
 		txtValpressure.setText(""+tube.getPressure().getValue());
+		btnDisplayCharts.setEnabled(tube.getArea().getValueInTime() != null || tube.getFlowin().getValueInTime() != null || tube.getFlowout().getValueInTime() != null
+				|| tube.getPressure().getValueInTime() != null);
 	}
 	private void setFieldsEditable(boolean b) {
 		txtVallength.setEditable(b);

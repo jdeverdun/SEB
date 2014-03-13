@@ -167,38 +167,6 @@ public class ModelRun extends Thread {
 		// le LCR
 		recursivelyAddTubeToList(jsd.getVentricleleftFrame().getTubePanel().getTube());
 		recursivelyAddTubeToList(jsd.getVentriclerightFrame().getTubePanel().getTube());
-		/*// ------------ Definition des blocs LCR -----------
-		
-		// ventricle
-		Ventricle ventricleleft = new Ventricle("", Hemisphere.LEFT);
-		Ventricle ventricleright = new Ventricle("", Hemisphere.RIGHT);
-		// 3V
-		ThirdVentricle thirdVent = new ThirdVentricle("");
-		// 4V
-		FourthVentricle fourthVent = new FourthVentricle("");
-		// SAS
-		SAS sas = new SAS("");
-		// sp. cord
-		SpinalCord spinal = new SpinalCord("");
-		
-		// ---------------- Liaisons des blocs CSF -------
-		// 3V
-		thirdVent.addParent(ventricleleft);
-		thirdVent.addParent(ventricleright);
-		// 4V
-		fourthVent.addParent(thirdVent);
-		// SAS
-		sas.addParent(fourthVent);
-		// sp. cord
-		spinal.addParent(sas);
-		
-		// on rajoute les tubes 
-		tubes.add(ventricleleft);
-		tubes.add(ventricleright);
-		tubes.add(thirdVent);
-		tubes.add(fourthVent);
-		tubes.add(sas);
-		tubes.add(spinal);*/
 	}
 	private void recursivelyAddTubeToList(ElasticTube tube) {
 		if(!tubes.contains(tube))

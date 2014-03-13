@@ -280,5 +280,12 @@ public class JScrollInternalFrame extends JInternalFrame {
 		getTubePanel().setLineLinks(newqueue);
 	}
 
+	/**
+	 * Met a jours le tubepanel (si les graphs sont dispo etc)
+	 */
+	public void updateButtons() {
+		getTubePanel().refreshDisplayFromTube();
+	}
+
 
 }

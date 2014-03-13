@@ -20,6 +20,7 @@ import net.miginfocom.swing.MigLayout;
 import javax.swing.JToolBar;
 import javax.swing.JTabbedPane;
 
+import display.containers.GraphsPanel;
 import display.containers.InitialInputsPanel;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -51,6 +52,7 @@ public class SEBWindow extends JFrame {
 	private JPanel mainPanel;
 	private JTabbedPane tabbedPane;
 	private InitialInputsPanel initialInputPanel;
+	private GraphsPanel plotPanel;
 	private JMenuItem mntmLinningerCustom;
 	private ArchitectureToolbar toolBarArchitectLeft;
 	private ArchitectureToolbar toolBarArchitectRight;
@@ -73,6 +75,7 @@ public class SEBWindow extends JFrame {
 		tabbedPane = new JTabbedPane(JTabbedPane.RIGHT);
 		mainPanel.add(tabbedPane, "cell 0 1 2 1,grow");
 		initialInputPanel = new InitialInputsPanel();
+		plotPanel = new GraphsPanel();
 		tabbedPane.addTab("Initial values", initialInputPanel);
 		JPanel pan = new JPanel();
 		//pan.setDragMode(1);
@@ -89,6 +92,7 @@ public class SEBWindow extends JFrame {
 		pan.add(toolBarGlobalArchitect, "cell 1 1 2 1,alignx right,aligny top");
 		pan.add(graphicalModelPanel,"cell 0 0 1 2,alignx right,aligny top");
 		tabbedPane.addTab("Architecture", pan);
+		tabbedPane.addTab("Curves", plotPanel);
 		// FIN TESTS --------
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -181,6 +185,12 @@ public class SEBWindow extends JFrame {
 	}
 	public void setTabbedPane(JTabbedPane tabbedPane) {
 		this.tabbedPane = tabbedPane;
+	}
+	public GraphsPanel getPlotPanel() {
+		return plotPanel;
+	}
+	public void setPlotPanel(GraphsPanel plotPanel) {
+		this.plotPanel = plotPanel;
 	}
 	public InitialInputsPanel getInitialInputPanel() {
 		return initialInputPanel;

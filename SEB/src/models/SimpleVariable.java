@@ -1,8 +1,11 @@
 package models;
 
+import java.util.ArrayList;
+
 public class SimpleVariable extends Variable {
 	public static float DEFAULT_VALUE = 123456789.0f;
 	private float value;
+	private float[] valueInTime;
 	
 	public SimpleVariable(String name, float value, Tube obj) {
 		super(name,obj);
@@ -38,5 +41,24 @@ public class SimpleVariable extends Variable {
 	@Override
 	public boolean hasValue() {
 		return getValue()!=DEFAULT_VALUE;
+	}
+
+	/**
+	 * Remplit dans le tube le followup de la variable au cours du temps
+	 * @param list
+	 */
+	public void setVariableInTime(ArrayList<Double> list) {
+		valueInTime = new float[list.size()];
+		int count = 0;
+		for(double v:list)
+			valueInTime[count++] = (float)v;
+	}
+
+	public float[] getValueInTime() {
+		return valueInTime;
+	}
+
+	public void setValueInTime(float[] valueInTime) {
+		this.valueInTime = valueInTime;
 	}
 }

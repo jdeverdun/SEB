@@ -691,4 +691,18 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	public void removeInternalFrame(JScrollInternalFrame jsf){
 		internalFrames.remove(jsf);
 	}
+
+	/**
+	 * Met a jours les frames a partir des info dans les tubes
+	 */
+	public void updateInternalFrame() {
+		for(JScrollInternalFrame frame : getInternalFrames()){
+			frame.updateButtons();
+		}
+		getThirdVentFrame().updateButtons();
+		getThirdVentFrame().updateButtons();
+		getFourthVentFrame().updateButtons();
+		getSasFrame().updateButtons();
+		getSpinalFrame().updateButtons();
+	}
 }
