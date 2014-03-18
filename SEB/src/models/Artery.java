@@ -64,10 +64,15 @@ public class Artery extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 		
 		// momentum
+		String initmomentum="";
 		for(ElasticTube el : getParents()){
 			SimpleVariable parentPressure = findVariableWithName(el.getPressure().getName(),variables);
-			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
+			if(initmomentum.equals(""))
+				initmomentum = "("+getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
+			else
+				initmomentum += "+ (" + getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
 		}
+		res.add(initmomentum);
 		// connectivity if needed
 		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
 		for(ElasticTube child:getChildren()){
@@ -98,10 +103,15 @@ public class Artery extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 		
 		// momentum
+		String momentum="";
 		for(ElasticTube el : getParents()){
 			SimpleVariable parentPressure = findVariableWithName(el.getPressure().getName(),variables);
-			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
+			if(momentum.equals(""))
+				momentum = "("+getSymbolicMomentumEquation(fi, ar, pr, parentPressure)+")";
+			else
+				momentum += "+ (" + getSymbolicMomentumEquation(fi, ar, pr, parentPressure)+")";
 		}
+		res.add(momentum);
 		// connectivity if needed
 		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
 		for(ElasticTube child:getChildren()){

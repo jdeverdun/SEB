@@ -61,10 +61,16 @@ public class Vein extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
+		String momentum = "";
 		for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
-			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
+			if(momentum.equals(""))
+				momentum = "("+getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
+			else
+				momentum += "+ (" + getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
+
 		}
+		res.add(momentum);
 		
 		return res;
 	}
@@ -89,11 +95,16 @@ public class Vein extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
+		String momentum = "";
 		for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
-			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
+			if(momentum.equals(""))
+				momentum = "("+getSymbolicMomentumEquation(fi, ar, pr, parentPressure)+")";
+			else
+				momentum += "+ (" + getSymbolicMomentumEquation(fi, ar, pr, parentPressure)+")";
+			
 		}
-
+		res.add(momentum);
 		// connectivite si besoin
 		boolean addconnectivity = true;
 		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
