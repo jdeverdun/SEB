@@ -23,6 +23,8 @@ public abstract class ElasticTube extends Tube {
 	protected Hemisphere hemisphere;
 	protected ArrayList<ElasticTube> parents;
 	protected ArrayList<ElasticTube> children;
+	protected boolean connectivityAdded = false;
+	protected boolean initialConnectivityAdded = false;
 	
 	public ElasticTube(){
 		super();
@@ -317,6 +319,26 @@ public abstract class ElasticTube extends Tube {
 		return getChildren().remove(tube);
 	}
 	
-	
+	/**
+	 * @return the connectivityAdded
+	 */
+	public boolean isConnectivityAdded() {
+		return connectivityAdded;
+	}
+
+	/**
+	 * @param connectivityAdded the connectivityAdded to set
+	 */
+	public void setConnectivityAdded(boolean connectivityAdded) {
+		this.connectivityAdded = connectivityAdded;
+	}
+
+	public boolean isInitialConnectivityAdded() {
+		return initialConnectivityAdded;
+	}
+
+	public void setInitialConnectivityAdded(boolean initialConnectivityAdded) {
+		this.initialConnectivityAdded = initialConnectivityAdded;
+	}
 	
 }

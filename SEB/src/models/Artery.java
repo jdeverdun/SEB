@@ -14,6 +14,7 @@ public class Artery extends ElasticTube {
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
 	public static final float DEFAULT_PRESSURE = 100.0f * 1333.2240f;
+
 	
 	public Artery(String name, Hemisphere hemi) {
 		super(name, hemi, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
@@ -64,21 +65,19 @@ public class Artery extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 		
 		// momentum
-		String initmomentum="";
 		for(ElasticTube el : getParents()){
 			SimpleVariable parentPressure = findVariableWithName(el.getPressure().getName(),variables);
-			if(initmomentum.equals(""))
-				initmomentum = "("+getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
-			else
-				initmomentum += "+ (" + getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
+			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 		}
-		res.add(initmomentum);
+		
 		// connectivity if needed
-		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
-		for(ElasticTube child:getChildren()){
-			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+		if(!isInitialConnectivityAdded()){
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+			}
+			res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 		}
-		res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 		
 		return res;
 	}
@@ -103,21 +102,19 @@ public class Artery extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 		
 		// momentum
-		String momentum="";
 		for(ElasticTube el : getParents()){
 			SimpleVariable parentPressure = findVariableWithName(el.getPressure().getName(),variables);
-			if(momentum.equals(""))
-				momentum = "("+getSymbolicMomentumEquation(fi, ar, pr, parentPressure)+")";
-			else
-				momentum += "+ (" + getSymbolicMomentumEquation(fi, ar, pr, parentPressure)+")";
+			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
 		}
-		res.add(momentum);
+		
 		// connectivity if needed
-		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
-		for(ElasticTube child:getChildren()){
-			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+		if(!isConnectivityAdded()){
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+			}
+			res.add(getSymbolicConnectivityEquation(childFin, fo));
 		}
-		res.add(getSymbolicConnectivityEquation(childFin, fo));
 		return res;
 	}
 
@@ -126,6 +123,8 @@ public class Artery extends ElasticTube {
 		// equ(1) et equ(6)
 		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
 	}
+	
+	
 	
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){
 		// equ(16) et equ(21)
@@ -141,7 +140,7 @@ public class Artery extends ElasticTube {
 
 	//====== Connectivity quand parent = artere only ====
 
-	private String getSymbolicConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
+	private String getSymbolicConnectivityEquationStandard(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
 		// equ(48) (51)
 		String res = "";
 		for(SimpleVariable pf : childFin){
@@ -151,6 +150,86 @@ public class Artery extends ElasticTube {
 		}
 		return ""+fo.getName()+" - ("+res+")";
 	}
+	
+	private String getSymbolicConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
+		String res = "";
+		
+		// Cas simples
+		if(childFin.size() == 1 && ((ElasticTube)childFin.get(0).getSourceObj()).getParents().size() == 1)
+			return getSymbolicConnectivityEquationStandard(childFin, fo);
+		boolean iseasy = true;
+		for(ElasticTube ch:getChildren()){
+			if(ch.getParents().size()>1)
+				iseasy = false;
+		}
+		if(iseasy)
+			return getSymbolicConnectivityEquationStandard(childFin, fo);
+		
+		// cas complique ....
+		ArrayList<ElasticTube> parentAdded = new ArrayList<ElasticTube>();
+		ArrayList<ElasticTube> childrenAdded = new ArrayList<ElasticTube>();
+		String pref = "";
+		parentAdded.add(this);
+		for(ElasticTube ch:getChildren()){
+			if(ch.getParents().size() == 1){
+				res += pref + ch.getFlowin().getName();
+				pref = "+";
+				childrenAdded.add(ch);
+			}else{
+				childrenAdded.add(ch);
+				res += pref + "(" + ch.getFlowin().getName() + " - " +  recursAdd(ch, parentAdded, childrenAdded) + ")";
+				pref = "+";
+			}
+		}
+		setConnectivityAdded(true);
+		return fo.getName()+" - ("+res+")";
+	}
+	private String recursAdd(ElasticTube base,
+			ArrayList<ElasticTube> parentAdded,
+			ArrayList<ElasticTube> childrenAdded) {
+		String res = "(";
+		String pref = "";
+		for(ElasticTube par:base.getParents()){
+			if(parentAdded.contains(par))
+				continue;
+			if(par.getChildren().size() == 1){
+				res += pref + par.getFlowout().getName();
+				pref = "-";
+				parentAdded.add(par);
+				par.setConnectivityAdded(true);
+			}else{
+				parentAdded.add(par);
+				par.setConnectivityAdded(true);
+				res += pref  + par.getFlowout().getName() + " - " +  recursAdd2(par, parentAdded, childrenAdded);
+				pref = "-";
+			}
+		}
+		return res+")";
+	}
+
+	private String recursAdd2(ElasticTube base,
+			ArrayList<ElasticTube> parentAdded,
+			ArrayList<ElasticTube> childrenAdded) {
+		String res = "(";
+		String pref = "";
+		
+		
+		for(ElasticTube ch:base.getChildren()){
+			if(childrenAdded.contains(ch))
+				continue;
+			if(ch.getParents().size() == 1){
+				res += pref + ch.getFlowin().getName();
+				pref = "+";
+				childrenAdded.add(ch);
+			}else{
+				childrenAdded.add(ch);
+				res += pref + ch.getFlowin().getName() + " - " +  recursAdd(ch, parentAdded, childrenAdded);
+				pref = "+";
+			}
+		}
+		return res+")";
+	}
+
 	// ================= init ========================
 	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo){
 		// eq (1)  (6)
@@ -174,11 +253,64 @@ public class Artery extends ElasticTube {
 	private String getSymbolicInitialConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
 		// equ(48) (51)
 		String res = "";
-		for(SimpleVariable pf : childFin){
-			if(!res.equals(""))
-				res += "+";
-			res += pf.getName();
+		
+		// Cas simples
+		if(childFin.size() == 1 && ((ElasticTube)childFin.get(0).getSourceObj()).getParents().size() == 1)
+			return getSymbolicConnectivityEquationStandard(childFin, fo);
+		boolean iseasy = true;
+		for(ElasticTube ch:getChildren()){
+			if(ch.getParents().size()>1)
+				iseasy = false;
 		}
-		return ""+fo.getName()+" - ("+res+")";
+		if(iseasy)
+			return getSymbolicConnectivityEquationStandard(childFin, fo);
+		
+		// cas complique ....
+		ArrayList<ElasticTube> parentAdded = new ArrayList<ElasticTube>();
+		ArrayList<ElasticTube> childrenAdded = new ArrayList<ElasticTube>();
+		String pref = "";
+		parentAdded.add(this);
+		for(ElasticTube ch:getChildren()){
+			if(ch.getParents().size() == 1){
+				res += pref + ch.getFlowin().getName();
+				pref = "+";
+				childrenAdded.add(ch);
+			}else{
+				childrenAdded.add(ch);
+				res += pref + "(" + ch.getFlowin().getName() + " - " +  recursInitAdd(ch, parentAdded, childrenAdded) + ")";
+				pref = "+";
+			}
+		}
+		setInitialConnectivityAdded(true);
+		return fo.getName()+" - ("+res+")";
 	}
+	private String recursInitAdd(ElasticTube base,
+			ArrayList<ElasticTube> parentAdded,
+			ArrayList<ElasticTube> childrenAdded) {
+		String res = "(";
+		String pref = "";
+		for(ElasticTube par:base.getParents()){
+			if(parentAdded.contains(par))
+				continue;
+			if(par.getChildren().size() == 1){
+				res += pref + par.getFlowout().getName();
+				pref = "-";
+				parentAdded.add(par);
+				par.setInitialConnectivityAdded(true);
+			}else{
+				parentAdded.add(par);
+				par.setInitialConnectivityAdded(true);
+				res += pref  + par.getFlowout().getName() + " - " +  recursInitAdd2(par, parentAdded, childrenAdded);
+				pref = "-";
+			}
+		}
+		return res+")";
+	}
+
+	private String recursInitAdd2(ElasticTube base,
+			ArrayList<ElasticTube> parentAdded,
+			ArrayList<ElasticTube> childrenAdded) {
+		return recursAdd2(base, parentAdded, childrenAdded);
+	}
+
 }

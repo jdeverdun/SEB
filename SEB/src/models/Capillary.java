@@ -62,16 +62,12 @@ public class Capillary extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		String momentum = "";
 		for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
-			if(momentum.equals(""))
-				momentum = "("+getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
-			else
-				momentum += "+ (" + getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
+			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 			
 		}
-		res.add(momentum);
+		
 		// bilan connectivity
 		ArrayList<SimpleVariable> folist = findVariableWithStruct(getHemisphere(),Capillary.TUBE_NUM, FLOWOUT_LABEL,variables);
 		ArrayList<SimpleVariable> ft4list = findVariableWithStruct(getHemisphere(),Ventricle.TUBE_NUM,FLOWIN_LABEL ,variables);
@@ -110,16 +106,11 @@ public class Capillary extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		String momentum = "";
 		for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
-			
-			if(momentum.equals(""))
-				momentum = "("+getSymbolicMomentumEquation(fi, ar, pr, parentPressure)+")";
-			else
-				momentum += "+ (" + getSymbolicInitialMomentumEquation(fi, pr, parentPressure)+")";
+			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
 		}
-		res.add(momentum);
+		
 		// bilan connectivity
 		ArrayList<SimpleVariable> folist = findVariableWithStruct(getHemisphere(),Capillary.TUBE_NUM, FLOWOUT_LABEL,variables);
 		ArrayList<SimpleVariable> ft4list = findVariableWithStruct(getHemisphere(),Ventricle.TUBE_NUM,FLOWIN_LABEL ,variables);
@@ -174,6 +165,7 @@ public class Capillary extends ElasticTube {
 		res2 += ")";
 		return res1+" - "+res2;
 	}
+	
 	
 	
 	// ================= init ========================

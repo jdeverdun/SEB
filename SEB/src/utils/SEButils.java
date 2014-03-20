@@ -290,22 +290,38 @@ public class SEButils {
 				nameparam = parts[1];
 			else
 				nameparam = parts[2];
-			if(nameparam.equals(ElasticTube.LENGTH_LABEL))
+			if(nameparam.equals(ElasticTube.LENGTH_LABEL)){
 				tube.setLength(value);
-			if(nameparam.equals(ElasticTube.ALPHA_LABEL))
+				tube.getLength().setName(name);
+			}
+			if(nameparam.equals(ElasticTube.ALPHA_LABEL)){
 				tube.setAlpha(value);
-			if(nameparam.equals(ElasticTube.ELASTANCE_LABEL))
+				tube.getAlpha().setName(name);
+			}
+			if(nameparam.equals(ElasticTube.ELASTANCE_LABEL)){
 				tube.setElastance(value);
-			if(nameparam.equals(ElasticTube.AREA_LABEL))
+				tube.getElastance().setName(name);
+			}
+			if(nameparam.equals(ElasticTube.AREA_LABEL)){
 				tube.setArea(value);
-			if(nameparam.equals(ElasticTube.INITIAL_AREA_LABEL))
+				tube.getArea().setName(name);
+			}	
+			if(nameparam.equals(ElasticTube.INITIAL_AREA_LABEL)){
 				tube.setInitialArea(value);
-			if(nameparam.equals(ElasticTube.FLOWIN_LABEL))
+				tube.getInitialArea().setName(name);
+			}
+			if(nameparam.equals(ElasticTube.FLOWIN_LABEL)){
 				tube.setFlowin(value);	
-			if(nameparam.equals(ElasticTube.FLOWOUT_LABEL))
+				tube.getFlowin().setName(name);
+			}
+			if(nameparam.equals(ElasticTube.FLOWOUT_LABEL)){
 				tube.setFlowout(value);
-			if(nameparam.equals(ElasticTube.PRESSURE_LABEL))
+				tube.getFlowout().setName(name);
+			}
+			if(nameparam.equals(ElasticTube.PRESSURE_LABEL)){
 				tube.setPressure(value);
+				tube.getPressure().setName(name);
+			}
 		}
 	}
 }
