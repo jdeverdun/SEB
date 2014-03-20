@@ -8,7 +8,7 @@ public class Arteriole extends ElasticTube {
 	public static final String TUBE_NUM = "1";
 	public static final float DEFAULT_LENGTH = 1.75f;
 	public static final float DEFAULT_AREA = 4.74f;
-	public static final float DEFAULT_ELASTANCE = 2735000.0f;// en Pa
+	public static final float DEFAULT_ELASTANCE = 2735000.0f;// en Pa 
 	public static final float DEFAULT_ALPHA = 3.076819468f * 1333.2240f;
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
