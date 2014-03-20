@@ -40,7 +40,7 @@ public class Vein extends ElasticTube {
 		return TUBE_NUM;
 	}
 
-	// ------------------- EQUATIONS -------------
+	// ------------------- EQUATIONS -------------//
 	/**
 	 * Renvoi les equations en format symbolic (en string)
 	 * @param variables
