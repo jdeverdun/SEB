@@ -180,12 +180,14 @@ public class ModelRunMonitor extends JFrame {
 		
 		statusThread = new Thread(){
 			public void run(){
+				DataInputStream in = null;
+				Socket s = null;
 				try {
 					if(serverFloat!=null)
 						serverFloat.close();
 					serverFloat = new ServerSocket(SystemParams.SOCKET_FLOAT_PORT);
-					Socket s = serverFloat.accept();
-					DataInputStream in = new DataInputStream(s.getInputStream());
+					s = serverFloat.accept();
+					in = new DataInputStream(s.getInputStream());
 					while(isRunning){
 						if(in.available()>0){
 							final float progress = in.readFloat();
@@ -200,12 +202,27 @@ public class ModelRunMonitor extends JFrame {
 							Thread.sleep(200);
 						}
 					}
-					in.close();
-					s.close();
-					serverFloat.close();
+					
 				} catch (Exception e) {
 					isRunning = false;
 					e.printStackTrace();
+				}finally {
+					try {
+						in.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					try {
+						s.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						serverFloat.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		};
@@ -213,12 +230,14 @@ public class ModelRunMonitor extends JFrame {
 		
 		statusThreadObject = new Thread(){
 			public void run(){
+				ObjectInputStream in = null;
+				Socket s = null;
 				try {
 					if(serverObject != null)
 						serverObject.close();
 					serverObject = new ServerSocket(SystemParams.SOCKET_OBJECT_PORT);
-					Socket s = serverObject.accept();
-					ObjectInputStream in = new ObjectInputStream(s.getInputStream());
+					s = serverObject.accept();
+					in = new ObjectInputStream(s.getInputStream());
 					for(SimpleVariable var:variables){
 						ArrayList<Double> list = (ArrayList<Double>) in.readObject();
 						var.setVariableInTime(list);
@@ -228,12 +247,26 @@ public class ModelRunMonitor extends JFrame {
 							Thread.sleep(200);
 						}*/
 					//}
-					in.close();
-					s.close();
-					serverObject.close();
 				} catch (Exception e) {
 					isRunning = false;
 					e.printStackTrace();
+				}finally {
+					try {
+						in.close();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					try {
+						s.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						serverObject.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		};

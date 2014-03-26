@@ -69,11 +69,13 @@ public class Arteriole extends ElasticTube {
 		}
 		
 		// connectivity
-		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
-		for(ElasticTube child:getChildren()){
-			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+		if(!isConnectivityAdded()){
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+			}
+			res.add(getSymbolicConnectivityEquation(childFin, fo));
 		}
-		res.add(getSymbolicConnectivityEquation(childFin, fo));
 				
 		return res;
 	}
@@ -104,11 +106,13 @@ public class Arteriole extends ElasticTube {
 		}
 		
 		// connectivity
-		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
-		for(ElasticTube child:getChildren()){
-			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+		if(!isInitialConnectivityAdded()){
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+			}
+			res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 		}
-		res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 				
 		return res;
 	}

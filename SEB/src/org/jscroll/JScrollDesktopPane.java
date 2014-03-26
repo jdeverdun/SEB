@@ -546,12 +546,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	 * Remove previous content and init new model
 	 */
 	public void initNew() {
-		if(!internalFrames.isEmpty()){
-			for(JScrollInternalFrame jsf : internalFrames){
-				jsf.delete();
-			}
-			internalFrames.clear();
-		}
+		removeAllFrame();
 		Dimension panelSize = getSize();
 		Dimension iframeDim = JScrollInternalFrame.DEFAULT_DIMENSION;
 		Point fart_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), 10);
@@ -611,6 +606,15 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		getInternalFrames().remove(getSpinalFrame());
 	}
 
+
+	private void removeAllFrame() {
+		if(!internalFrames.isEmpty()){
+			for(JScrollInternalFrame jsf : internalFrames){
+				jsf.delete();
+			}
+			internalFrames.clear();
+		}
+	}
 
 	/**
 	 * @return the venousSinousFrame

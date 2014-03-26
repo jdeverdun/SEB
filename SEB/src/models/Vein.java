@@ -65,6 +65,22 @@ public class Vein extends ElasticTube {
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 		}
+		// connectivite si besoin
+		if(!isInitialConnectivityAdded()){
+			boolean addconnectivity = true;
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				if(child instanceof VenousSinus){
+					addconnectivity = false;
+					break;
+				}
+				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+			}
+			if(!childFin.isEmpty() && !addconnectivity)
+				System.err.println("Why is there a vein connected to both a sinus and another vein?!");
+			if(addconnectivity)
+				res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
+		}
 		
 		
 		return res;
@@ -96,19 +112,21 @@ public class Vein extends ElasticTube {
 		}
 		
 		// connectivite si besoin
-		boolean addconnectivity = true;
-		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
-		for(ElasticTube child:getChildren()){
-			if(child instanceof VenousSinus){
-				addconnectivity = false;
-				break;
+		if(!isConnectivityAdded()){
+			boolean addconnectivity = true;
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				if(child instanceof VenousSinus){
+					addconnectivity = false;
+					break;
+				}
+				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
 			}
-			childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
+			if(!childFin.isEmpty() && !addconnectivity)
+				System.err.println("Why is there a vein connected to both a sinus and another vein?!");
+			if(addconnectivity)
+				res.add(getSymbolicConnectivityEquation(childFin, fo));
 		}
-		if(!childFin.isEmpty() && !addconnectivity)
-			System.err.println("Why is there a vein connected to both a sinus and another vein?!");
-		if(addconnectivity)
-			res.add(getSymbolicConnectivityEquation(childFin, fo));
 		
 		return res;
 	}
