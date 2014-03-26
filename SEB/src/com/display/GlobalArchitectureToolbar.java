@@ -188,7 +188,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				xcenter = (int) (panelSize.getWidth()/2);
 				
 				jsd.getFirstArteryFrame().setLocation((int) (xcenter - iframeDim.getWidth()/2), 10);
-				jsd.getVenousSinousFrame().setLocation((int) (xcenter - iframeDim.getWidth()/2), (int) ((iframeDim.getHeight()+yoffset)*longestPath.get(TubeClass.VenousSinus)-iframeDim.getHeight()-25));
+				
 				// ensuite les frames 
 				// le positionnement commence à partir du centre
 				
@@ -198,6 +198,13 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				int decalagex_right = 0;
 				decalagex_left = setInternalFrameLocationLeft(jsd.getFirstArteryFrame(), decalagex_left, 2,longestPath);
 				decalagex_right = setInternalFrameLocationRight(jsd.getFirstArteryFrame(), decalagex_right, 2,longestPath);
+				
+				double maxy = 0;
+				for(JScrollInternalFrame jsf:jsd.getInternalFrames())
+					if(jsf.getLocation().getY()>maxy)
+						maxy = jsf.getLocation().getY();
+				
+				jsd.getVenousSinousFrame().setLocation((int) (xcenter - iframeDim.getWidth()/2), (int) (2*(iframeDim.getHeight()+yoffset)+maxy-iframeDim.getHeight()-25));
 			}
 
 
