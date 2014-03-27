@@ -604,11 +604,15 @@ public class TubePanel extends JPanel {
 		this.lineLinks = lineLinks;
 	}
 	public void addLineLinkAsChild(LineLink line) {
+		if(this.lineLinks.contains(line))
+			return;
 		this.lineLinks.add(line);
 		tube.addParent(line.getParent().getTubePanel().getTube());
 	}
 	
 	public void addLineLinkAsParent(LineLink line){
+		if(this.lineLinks.contains(line))
+			return;
 		this.lineLinks.add(line);
 	}
 	

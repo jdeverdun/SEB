@@ -607,7 +607,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	}
 
 
-	private void removeAllFrame() {
+	public void removeAllFrame() {
 		if(!internalFrames.isEmpty()){
 			for(JScrollInternalFrame jsf : internalFrames){
 				jsf.delete();
