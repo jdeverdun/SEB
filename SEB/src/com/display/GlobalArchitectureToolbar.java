@@ -72,7 +72,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 					public void run() {
 						JScrollDesktopPane jsd = WindowManager.MAINWINDOW.getGraphicalModelPanel();
 						// first artery & vsinous
-						jsd.initNew();
+						jsd.initNew(true);
 						// tubes left
 						JScrollInternalFrame artleft = (JScrollInternalFrame) jsd.addArtery(Hemisphere.LEFT);
 						JScrollInternalFrame arteriolleft = (JScrollInternalFrame) jsd.addArteriole(Hemisphere.LEFT);

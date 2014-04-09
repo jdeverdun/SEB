@@ -47,7 +47,7 @@ public class ModelRun extends Thread {
 	private ArrayList<Variable> globalvariables;
 	private ArrayList<String> equations;
 	private ArrayList<String> initEquations;
-	
+
 	public ModelRun() {
 		jsd = WindowManager.MAINWINDOW.getGraphicalModelPanel();
 		tubes = new ArrayList<Tube>();
@@ -56,31 +56,33 @@ public class ModelRun extends Thread {
 		globalvariables = new ArrayList<Variable>();
 		equations = new ArrayList<String>();
 		initEquations = new ArrayList<String>();
-		
+
 	}
 	public void run() {
 		if(jsd.getFirstArteryFrame()==null || jsd.getVenousSinousFrame() == null){
 			SystemParams.errordlg("Missing first artery or venous sinous or both !");
 			return;
 		}
-		FirstArtery firstArtery = (FirstArtery) jsd.getFirstArteryFrame().getTubePanel().getTube();
+		ArrayList<FirstArtery> firstArtery = new ArrayList<FirstArtery>();
+		for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
+			firstArtery.add((FirstArtery) ljsf.getTubePanel().getTube());
 		VenousSinus vsinous = (VenousSinus) jsd.getVenousSinousFrame().getTubePanel().getTube();
-		if(firstArtery == null || vsinous == null){
+		if(firstArtery.isEmpty() || vsinous == null){
 			SystemParams.errordlg("Missing first artery or venous senous");
 			return;
 		}
-		
+
 		// on instancie le cerveau brain
 		BrainParenchyma left_brain = new BrainParenchyma("left_brain", Hemisphere.LEFT);
 		BrainParenchyma right_brain = new BrainParenchyma("right_brain", Hemisphere.RIGHT);
 		Brain brain = new Brain(left_brain, right_brain);
-		
+
 		architecture = new Architecture(firstArtery, vsinous, brain);
 		// on initialise le systeme (pression entree - sortie)
 		ModelSpecification.init(architecture);
 		// on verifie la structure
 		checkStructure();
-		
+
 		// on stock tout les tubes dans une liste et 
 		// ajout des blocs CSF
 		tubes.add(left_brain);
@@ -140,30 +142,31 @@ public class ModelRun extends Thread {
 			return;
 		}
 
-		
+
 		//////////////////////////////////////////////////////////
 		///                                                    ///
 		///                   Ecriture du modele               ///
 		///													   ///
 		//////////////////////////////////////////////////////////
-		
-		
+
+
 		Path modelDir = Paths.get(SystemParams.MATLAB_MODEL_DIR);
 		//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
 		final MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
 		SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				ModelRunMonitor m = new ModelRunMonitor(mmodel.getMainScript().toFile(),variables);
 			}
 		});
-		
+
 	}
-	
-	
+
+
 	private void addAllTubesToList() {
-		recursivelyAddTubeToList(architecture.getStartPoint());
+		for(ElasticTube tube : architecture.getStartPoints())
+			recursivelyAddTubeToList(tube);
 		// le LCR
 		recursivelyAddTubeToList(jsd.getVentricleleftFrame().getTubePanel().getTube());
 		recursivelyAddTubeToList(jsd.getVentriclerightFrame().getTubePanel().getTube());
@@ -178,8 +181,12 @@ public class ModelRun extends Thread {
 	private boolean checkStructure() {
 
 		// ==========  Check de la structure ==================
-		if(jsd.getFirstArteryFrame().getLineLinks().isEmpty() || jsd.getVenousSinousFrame().getLineLinks().isEmpty()){
-			SystemParams.errordlg("First artery and/or vSinous are linked to nothing !");
+		boolean farterror = false;
+		for(JScrollInternalFrame jsf : jsd.getFirstArteryFrame())
+			if(jsf.getLineLinks().isEmpty())
+				farterror = true;
+		if( farterror || jsd.getVenousSinousFrame().getLineLinks().isEmpty()){
+			SystemParams.errordlg("First arteries and/or vSinous are linked to nothing !");
 			return false;
 		}
 		//  on verifie que chaque bloc est au moins une fois un fils et un parent et qu'on a bien 2 hemi!
@@ -188,7 +195,11 @@ public class ModelRun extends Thread {
 		boolean atLeastOneLeftHemi = false;
 		boolean atLeastOneRightHemi = false;
 		for(JScrollInternalFrame jsf : jsd.getInternalFrames()){
-			if(jsf != jsd.getFirstArteryFrame() && jsf != jsd.getVenousSinousFrame()){
+			boolean jsfequals = false;
+			for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
+				if(jsf == ljsf)
+					jsfequals = true;
+			if(!jsfequals && jsf != jsd.getVenousSinousFrame()){
 				isChild = false;
 				isParent = false;
 				if(jsf.getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT)
@@ -215,9 +226,13 @@ public class ModelRun extends Thread {
 			SystemParams.errordlg("Do you know that a brain has 2 hemispheres ? :)");
 			return false;
 		}
-		
+
 		// check la validite des liens
-		if(!architecture.checkArchitectureValidity(architecture.getStartPoint())){
+		boolean hasIntegrityError = false;
+		for(ElasticTube eltube : architecture.getStartPoints())
+			if(architecture.checkArchitectureValidity(eltube))
+				hasIntegrityError = true;
+		if(hasIntegrityError){
 			SystemParams.errordlg("Incorrect architecture ...");
 			return false;
 		}

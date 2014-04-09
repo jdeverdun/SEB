@@ -108,7 +108,7 @@ public class MainToolbar extends JToolBar {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(WindowManager.MAINWINDOW != null)
-					WindowManager.MAINWINDOW.getGraphicalModelPanel().initNew();
+					WindowManager.MAINWINDOW.getGraphicalModelPanel().initNew(true);
 			}
 		});
 		btnRun.addActionListener(new ActionListener() {

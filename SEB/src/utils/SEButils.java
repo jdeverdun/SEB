@@ -80,7 +80,8 @@ public class SEButils {
 		HashMap<String, String> paramsByTube = new HashMap<String,String>();
 		HashSet<String> links = new HashSet<String>();
 		// on recupere les infos de facon recursive a partir de first artery
-		WindowManager.MAINWINDOW.getGraphicalModelPanel().getFirstArteryFrame().getTubePanel().saveInfoTo(paramsByTube,links);
+		for(JScrollInternalFrame ljsf : WindowManager.MAINWINDOW.getGraphicalModelPanel().getFirstArteryFrame())
+			ljsf.getTubePanel().saveInfoTo(paramsByTube,links);
 		// on integre le LCR
 		WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentricleleftFrame().getTubePanel().saveInfoTo(paramsByTube,links);
 		WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentriclerightFrame().getTubePanel().saveInfoTo(paramsByTube,links);
@@ -131,7 +132,7 @@ public class SEButils {
 		if( fc.showOpenDialog( WindowManager.MAINWINDOW ) == JFileChooser.APPROVE_OPTION ){
 			selectedFile = fc.getSelectedFile();
 			if(WindowManager.MAINWINDOW != null)
-				WindowManager.MAINWINDOW.getGraphicalModelPanel().initNew();
+				WindowManager.MAINWINDOW.getGraphicalModelPanel().initNew(false);
 	        BufferedReader reader = null;
 			try {
 				reader = Files.newBufferedReader(selectedFile.toPath(), ENCODING);
@@ -223,7 +224,7 @@ public class SEButils {
 		TubePanel tubepan = null;
 		switch(tubenum){
 		case FirstArtery.TUBE_NUM:
-			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getFirstArteryFrame().getTubePanel();
+			tubepan = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addFirstArteryFrame()).getTubePanel();
 			break;
 		case VenousSinus.TUBE_NUM:
 			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getVenousSinousFrame().getTubePanel();

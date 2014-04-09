@@ -11,14 +11,14 @@ import Jama.Matrix;
  */
 public class Architecture {
 
-	private FirstArtery startPoint;
+	private ArrayList<FirstArtery> startPoints;
 	private VenousSinus endPoint;
 	private Brain brain;
 	private ArrayList<Tube> tubes;
 	
 	
-	public Architecture(FirstArtery sp, VenousSinus ep, Brain br) {
-		setStartPoint(sp);
+	public Architecture(ArrayList<FirstArtery> firstArtery, VenousSinus ep, Brain br) {
+		setStartPoints(firstArtery);
 		setEndPoint(ep);
 		setBrain(br);
 	}
@@ -49,14 +49,14 @@ public class Architecture {
 	/**
 	 * @return the startPoint
 	 */
-	public FirstArtery getStartPoint() {
-		return startPoint;
+	public ArrayList<FirstArtery> getStartPoints() {
+		return startPoints;
 	}
 	/**
 	 * @param startPoint the startPoint to set
 	 */
-	public void setStartPoint(FirstArtery startPoint) {
-		this.startPoint = startPoint;
+	public void setStartPoints(ArrayList<FirstArtery> startPoint) {
+		this.startPoints = startPoint;
 	}
 	
 	/**
@@ -76,7 +76,7 @@ public class Architecture {
 	 * @return
 	 */
 	public boolean isFilled(){
-		return (startPoint != null) && (endPoint != null) && (brain != null);
+		return (startPoints != null) && (endPoint != null) && (brain != null);
 	}
 	
 	
@@ -86,8 +86,8 @@ public class Architecture {
 		if(!(startPoint instanceof FirstArtery) && !checkValidity(startPoint))
 			return false;
 		for(ElasticTube tube : startPoint.getChildren()){
-			if(!(startPoint instanceof FirstArtery) && !(tube instanceof VenousSinus) && tube.getHemisphere() != startPoint.getHemisphere())
-				return false;
+		//	if(!(startPoint instanceof FirstArtery) && !(tube instanceof VenousSinus) && tube.getHemisphere() != startPoint.getHemisphere())
+		//		return false;
 			if(startPoint instanceof FirstArtery && !(tube instanceof Artery))
 				return false;
 			if(startPoint instanceof Artery && !(tube instanceof Arteriole || tube instanceof Artery))

@@ -146,7 +146,7 @@ import java.util.HashSet;
 public class JScrollDesktopPane extends JPanel implements DesktopConstants, MouseListener{
 	private LineLink lineClicked = null;
 	private ArrayList<JScrollInternalFrame> internalFrames;
-	private JScrollInternalFrame firstArteryFrame;
+	private ArrayList<JScrollInternalFrame> firstArteryFrame;
 	private JScrollInternalFrame venousSinousFrame;
 	private JScrollInternalFrame ventricleleftFrame;
 	private JScrollInternalFrame ventriclerightFrame;
@@ -170,6 +170,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
     public JScrollDesktopPane(JMenuBar mb, ImageIcon defaultFrameIcon) {
         this();
     	internalFrames = new ArrayList<JScrollInternalFrame>();
+    	firstArteryFrame = new ArrayList<JScrollInternalFrame>();
         //registerMenuBar(mb);
         this.defaultFrameIcon = defaultFrameIcon;
     }
@@ -545,15 +546,21 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	/**
 	 * Remove previous content and init new model
 	 */
-	public void initNew() {
+	public void initNew(boolean withFirstArtery) {
 		removeAllFrame();
 		Dimension panelSize = getSize();
 		Dimension iframeDim = JScrollInternalFrame.DEFAULT_DIMENSION;
 		Point fart_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), 10);
 		Point vsinous_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), (int) (panelSize.getHeight()-iframeDim.getHeight()-25));
 		
-		FirstArtery fart = new FirstArtery("");
-		setFirstArteryFrame((JScrollInternalFrame) add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y));
+		if(withFirstArtery){
+			FirstArtery fart = new FirstArtery("");
+			addFirstArteryFrame((JScrollInternalFrame) add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y));
+			FirstArtery fart2 = new FirstArtery("");
+			addFirstArteryFrame((JScrollInternalFrame) add(fart2.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart2, TubeClass.FirstArtery), false,(int) (fart_location.x-panelSize.getWidth()),fart_location.y));
+			FirstArtery fart3 = new FirstArtery("");
+			addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+panelSize.getWidth()*2),fart_location.y));
+		}
 		VenousSinus vsinous = new VenousSinus("");
 		setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));
 		WindowManager.MAINWINDOW.getTabbedPane().setSelectedIndex(1);
@@ -633,15 +640,26 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	/**
 	 * @return the firstArteryFrame
 	 */
-	public JScrollInternalFrame getFirstArteryFrame() {
+	public ArrayList<JScrollInternalFrame> getFirstArteryFrame() {
 		return firstArteryFrame;
 	}
 
 	/**
 	 * @param firstArteryFrame the firstArteryFrame to set
 	 */
-	public void setFirstArteryFrame(JScrollInternalFrame firstArteryFrame) {
+	public void setFirstArteryFrame(ArrayList<JScrollInternalFrame> firstArteryFrame) {
 		this.firstArteryFrame = firstArteryFrame;
+	}
+	
+	public void addFirstArteryFrame(JScrollInternalFrame frame){
+		this.firstArteryFrame.add(frame);
+	}
+	
+	public JScrollInternalFrame addFirstArteryFrame(){
+    	FirstArtery fart = new FirstArtery("");
+    	JScrollInternalFrame jsf = (JScrollInternalFrame) add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false);
+    	addFirstArteryFrame(jsf);
+    	return jsf;
 	}
 	
 	public JScrollInternalFrame getVentricleleftFrame() {
