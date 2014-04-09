@@ -146,7 +146,7 @@ import java.util.HashSet;
 public class JScrollDesktopPane extends JPanel implements DesktopConstants, MouseListener{
 	private LineLink lineClicked = null;
 	private ArrayList<JScrollInternalFrame> internalFrames;
-	private JScrollInternalFrame firstArteryFrame;
+	private JScrollInternalFrame firstArteryFrame; 
 	private JScrollInternalFrame venousSinousFrame;
 	private JScrollInternalFrame ventricleleftFrame;
 	private JScrollInternalFrame ventriclerightFrame;
