@@ -234,12 +234,12 @@ public class TubePanel extends JPanel {
 								continue;
 							}
 							
-							if((ltubep.getTube().getHemisphere() == Hemisphere.LEFT || ltubep.getTube().getHemisphere() == Hemisphere.RIGHT)
+							/*if((ltubep.getTube().getHemisphere() == Hemisphere.LEFT || ltubep.getTube().getHemisphere() == Hemisphere.RIGHT)
 									&& (getTube().getHemisphere() == Hemisphere.LEFT || getTube().getHemisphere() == Hemisphere.RIGHT)
 									&& ltubep.getTube().getHemisphere() != getTube().getHemisphere()){
 								ltubep.deactivateLinkMode();
 								continue;
-							}
+							}*/
 							if(tubeType == ltubep.getTubeType() && (tubeType == TubeClass.Artery || tubeType == TubeClass.Vein)){
 								ltubep.activateLinkMode();
 							}else{

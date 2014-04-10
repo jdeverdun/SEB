@@ -131,7 +131,9 @@ public class StandardModel {
 		///             Definition de l'architecture           ///
 		///													   ///
 		//////////////////////////////////////////////////////////
-		Architecture architecture = new Architecture(firstArtery, vsinous, brain);
+		ArrayList<FirstArtery> firstArteries = new ArrayList<FirstArtery>();
+		firstArteries.add(firstArtery);
+		Architecture architecture = new Architecture(firstArteries, vsinous, brain);
 		// on initialise le systeme (pression entree - sortie)
 		ModelSpecification.init(architecture);
 		// on stock la liste des tubes
@@ -364,7 +366,9 @@ public static boolean run_linninger_with_added_tubes(){
 		///             Definition de l'architecture           ///
 		///													   ///
 		//////////////////////////////////////////////////////////
-		Architecture architecture = new Architecture(firstArtery, vsinous, brain);
+		ArrayList<FirstArtery> firstArteries = new ArrayList<FirstArtery>();
+		firstArteries.add(firstArtery);
+		Architecture architecture = new Architecture(firstArteries, vsinous, brain);
 		// on initialise le systeme (pression entree - sortie)
 		ModelSpecification.init(architecture);
 		// on stock la liste des tubes

@@ -86,14 +86,14 @@ public class GlobalArchitectureToolbar extends JToolBar{
 						JScrollInternalFrame vlright = (JScrollInternalFrame) jsd.addVeinule(Hemisphere.RIGHT);
 						JScrollInternalFrame vright = (JScrollInternalFrame) jsd.addVein(Hemisphere.RIGHT);
 						// links left
-						artleft.getTubePanel().addLineLinkAsChild(new LineLink(jsd.getFirstArteryFrame(),artleft));
+						artleft.getTubePanel().addLineLinkAsChild(new LineLink(jsd.getFirstArteryFrame().get(0),artleft));
 						arteriolleft.getTubePanel().addLineLinkAsChild(new LineLink(artleft,arteriolleft));
 						capleft.getTubePanel().addLineLinkAsChild(new LineLink(arteriolleft,capleft));
 						vlleft.getTubePanel().addLineLinkAsChild(new LineLink(capleft,vlleft));
 						vleft.getTubePanel().addLineLinkAsChild(new LineLink(vlleft,vleft));
 						jsd.getVenousSinousFrame().getTubePanel().addLineLinkAsChild(new LineLink(vleft,jsd.getVenousSinousFrame()));
 						// links right
-						artright.getTubePanel().addLineLinkAsChild(new LineLink(jsd.getFirstArteryFrame(),artright));
+						artright.getTubePanel().addLineLinkAsChild(new LineLink(jsd.getFirstArteryFrame().get(0),artright));
 						arteriolright.getTubePanel().addLineLinkAsChild(new LineLink(artright,arteriolright));
 						capright.getTubePanel().addLineLinkAsChild(new LineLink(arteriolright,capright));
 						vlright.getTubePanel().addLineLinkAsChild(new LineLink(capright,vlright));
@@ -112,11 +112,16 @@ public class GlobalArchitectureToolbar extends JToolBar{
 			public void actionPerformed(ActionEvent arg0) {
 				// Etape 1 : on verifie la presence d'un sinus veineux et de la premiere artere
 				JScrollDesktopPane jsd = WindowManager.MAINWINDOW.getGraphicalModelPanel();
-				if(jsd.getFirstArteryFrame() == null || jsd.getVenousSinousFrame() == null){
+				boolean farterror = false;
+				if((jsd.getFirstArteryFrame() == null || jsd.getFirstArteryFrame().size()==0) || jsd.getVenousSinousFrame() == null){
 					errordlg("Please ensure that you have FirstArtery & vSinous");
 					return;
 				}
-				if(jsd.getFirstArteryFrame().getLineLinks().isEmpty() || jsd.getVenousSinousFrame().getLineLinks().isEmpty()){
+				for(JScrollInternalFrame jsf : jsd.getFirstArteryFrame())
+					if(jsf.getLineLinks().isEmpty())
+						farterror = true;
+
+				if(farterror || jsd.getVenousSinousFrame().getLineLinks().isEmpty()){
 					errordlg("First artery and/or vSinous are linked to nothing !");
 					return;
 				}
@@ -126,7 +131,11 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				boolean atLeastOneLeftHemi = false;
 				boolean atLeastOneRightHemi = false;
 				for(JScrollInternalFrame jsf : jsd.getInternalFrames()){
-					if(jsf != jsd.getFirstArteryFrame() && jsf != jsd.getVenousSinousFrame()){
+					boolean jsfequals = false;
+					for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
+						if(jsf == ljsf)
+							jsfequals = true;
+					if(!jsfequals && jsf != jsd.getVenousSinousFrame()){
 						isChild = false;
 						isParent = false;
 						if(jsf.getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT)
@@ -156,9 +165,9 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				// Si tout est bon on peut commencer à faire l'agencement
 				// d'abord on calcul les largeurs max et profondeur max en nb de bloc
 				HashMap<Integer,ArrayList<JScrollInternalFrame>> largeurMaxLevel = new HashMap<Integer, ArrayList<JScrollInternalFrame>>();
-				HashMap<TubeClass,Integer> longestPath = calcLongestPathFromFirstArtery(jsd.getFirstArteryFrame());
+				HashMap<TubeClass,Integer> longestPath = calcLongestPathFromFirstArtery(jsd.getFirstArteryFrame().get(0));
 				for(int i = 1; i <=longestPath.get(TubeClass.VenousSinus); i++) largeurMaxLevel.put(i, new ArrayList<JScrollInternalFrame>());
-				largeurMaxLevel = recursiveCountLevelWidth(jsd.getFirstArteryFrame(), 1, largeurMaxLevel);
+				largeurMaxLevel = recursiveCountLevelWidth(jsd.getFirstArteryFrame().get(0), 1, largeurMaxLevel);
 				// maintenant qu'on sait tout on cherche le nombre de blocs max dans hemi gauche et droit
 				int nMaxLeftHemi = 0;
 				int nMaxRightHemi = 0;
@@ -187,7 +196,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				defDistFromCenter = (int) iframeDim.getWidth(); // espace au centre
 				xcenter = (int) (panelSize.getWidth()/2);
 				
-				jsd.getFirstArteryFrame().setLocation((int) (xcenter - iframeDim.getWidth()/2), 10);
+				jsd.getFirstArteryFrame().get(0).setLocation((int) (xcenter - iframeDim.getWidth()/2), 10);
 				
 				// ensuite les frames 
 				// le positionnement commence à partir du centre
@@ -196,8 +205,8 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				prepareInternalFrameForMove();
 				int decalagex_left = 0;
 				int decalagex_right = 0;
-				decalagex_left = setInternalFrameLocationLeft(jsd.getFirstArteryFrame(), decalagex_left, 2,longestPath);
-				decalagex_right = setInternalFrameLocationRight(jsd.getFirstArteryFrame(), decalagex_right, 2,longestPath);
+				decalagex_left = setInternalFrameLocationLeft(jsd.getFirstArteryFrame().get(0), decalagex_left, 2,longestPath);
+				decalagex_right = setInternalFrameLocationRight(jsd.getFirstArteryFrame().get(0), decalagex_right, 2,longestPath);
 				
 				double maxy = 0;
 				for(JScrollInternalFrame jsf:jsd.getInternalFrames())

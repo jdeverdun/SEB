@@ -169,8 +169,6 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
      */
     public JScrollDesktopPane(JMenuBar mb, ImageIcon defaultFrameIcon) {
         this();
-    	internalFrames = new ArrayList<JScrollInternalFrame>();
-    	firstArteryFrame = new ArrayList<JScrollInternalFrame>();
         //registerMenuBar(mb);
         this.defaultFrameIcon = defaultFrameIcon;
     }
@@ -182,7 +180,6 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
      */
     public JScrollDesktopPane(JMenuBar mb) {
         this();
-    	internalFrames = new ArrayList<JScrollInternalFrame>();
         //registerMenuBar(mb);
     }
 
@@ -191,6 +188,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
      */
     public JScrollDesktopPane() {
         internalFrames = new ArrayList<JScrollInternalFrame>();
+        firstArteryFrame = new ArrayList<JScrollInternalFrame>();
         setLayout(new BorderLayout());
         desktopMediator = new DesktopMediator(this);
         addMouseListener(this);
@@ -557,9 +555,9 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 			FirstArtery fart = new FirstArtery("");
 			addFirstArteryFrame((JScrollInternalFrame) add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y));
 			FirstArtery fart2 = new FirstArtery("");
-			addFirstArteryFrame((JScrollInternalFrame) add(fart2.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart2, TubeClass.FirstArtery), false,(int) (fart_location.x-panelSize.getWidth()),fart_location.y));
+			addFirstArteryFrame((JScrollInternalFrame) add(fart2.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart2, TubeClass.FirstArtery), false,(int) (fart_location.x-JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
 			FirstArtery fart3 = new FirstArtery("");
-			addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+panelSize.getWidth()*2),fart_location.y));
+			addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+JScrollInternalFrame.DEFAULT_DIMENSION.width*3.5),fart_location.y));
 		}
 		VenousSinus vsinous = new VenousSinus("");
 		setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));
@@ -611,6 +609,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		getInternalFrames().remove(getFourthVentFrame());
 		getInternalFrames().remove(getSasFrame());
 		getInternalFrames().remove(getSpinalFrame());
+		
 	}
 
 
