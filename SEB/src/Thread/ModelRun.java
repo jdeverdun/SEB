@@ -81,7 +81,8 @@ public class ModelRun extends Thread {
 		// on initialise le systeme (pression entree - sortie)
 		ModelSpecification.init(architecture);
 		// on verifie la structure
-		checkStructure();
+		if(!checkStructure())
+			return;
 
 		// on stock tout les tubes dans une liste et 
 		// ajout des blocs CSF
@@ -230,8 +231,9 @@ public class ModelRun extends Thread {
 		// check la validite des liens
 		boolean hasIntegrityError = false;
 		for(ElasticTube eltube : architecture.getStartPoints())
-			if(architecture.checkArchitectureValidity(eltube))
+			if(!architecture.checkArchitectureValidity(eltube)){
 				hasIntegrityError = true;
+			}
 		if(hasIntegrityError){
 			SystemParams.errordlg("Incorrect architecture ...");
 			return false;

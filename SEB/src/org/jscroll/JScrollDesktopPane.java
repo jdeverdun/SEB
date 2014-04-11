@@ -557,7 +557,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 			FirstArtery fart2 = new FirstArtery("");
 			addFirstArteryFrame((JScrollInternalFrame) add(fart2.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart2, TubeClass.FirstArtery), false,(int) (fart_location.x-JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
 			FirstArtery fart3 = new FirstArtery("");
-			addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+JScrollInternalFrame.DEFAULT_DIMENSION.width*3.5),fart_location.y));
+			addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
 		}
 		VenousSinus vsinous = new VenousSinus("");
 		setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));

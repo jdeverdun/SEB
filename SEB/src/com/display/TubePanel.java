@@ -684,7 +684,7 @@ public class TubePanel extends JPanel {
 		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getFlowin().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getFlowin().getValue();
 		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getFlowout().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getFlowout().getValue();
 		params+=SEButils.SAVE_PARAM_SEPARATOR+tube.getPressure().getName()+SEButils.SAVE_PARAM_VALUE_SEPARATOR+tube.getPressure().getValue();
-		
+		params+=SEButils.SAVE_FRAMELOCATION_SEPARATOR+getParentInternalFrame().getLocation().x+SEButils.SAVE_PARAM_VALUE_SEPARATOR+getParentInternalFrame().getLocation().y;
 		paramsByTube.put(tube.getName(), params);
 		for(LineLink line : getLineLinks()){
 			if(line.getParent() == getParentInternalFrame()){

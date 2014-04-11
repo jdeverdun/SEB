@@ -48,6 +48,7 @@ import params.WindowManager;
 public class SEButils {
 	public static final String SAVE_PARAM_SEPARATOR = "@@";
 	public static final String SAVE_NAME_PARAM_SEPARATOR = "==";
+	public static final String SAVE_FRAMELOCATION_SEPARATOR = "%%";
 	public static final String SAVE_LINK_SEPARATOR = "-->";
 	public static final String SAVE_PARAM_VALUE_SEPARATOR = ":";
 	public static final String SAVE_COMMENT_CHAR = "#";
@@ -98,6 +99,7 @@ public class SEButils {
 		content.add(SAVE_TAG+SAVE_TUBEDEF_TAG);
 		for(String key:paramsByTube.keySet())
 			content.add(key+SAVE_NAME_PARAM_SEPARATOR+paramsByTube.get(key));
+
 		content.add(SAVE_COMMENT_CHAR+" Now the links");
 		// on gere les liens
 		content.add(SAVE_TAG+SAVE_LINKDEF_TAG);
@@ -219,14 +221,20 @@ public class SEButils {
 			tubeid = Integer.parseInt(cont[1].substring(0, cont[1].length()-1));
 		}
 		// on recupere les params
-		String[] params = base[1].split(SAVE_PARAM_SEPARATOR);
+		String[] loc = base[1].split(SAVE_FRAMELOCATION_SEPARATOR);
+		String[] params = loc[0].split(SAVE_PARAM_SEPARATOR);
+		String[] coord = loc[1].split(SAVE_PARAM_VALUE_SEPARATOR);
 		// on cree des tubes
 		TubePanel tubepan = null;
+		JScrollInternalFrame ljsf;
 		switch(tubenum){
 		case FirstArtery.TUBE_NUM:
-			tubepan = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addFirstArteryFrame()).getTubePanel();
+			ljsf = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addFirstArteryFrame());
+			ljsf.setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
+			tubepan = ljsf.getTubePanel();
 			break;
 		case VenousSinus.TUBE_NUM:
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getVenousSinousFrame().setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getVenousSinousFrame().getTubePanel();
 			break;
 		case Ventricle.TUBE_NUM:
@@ -234,33 +242,48 @@ public class SEButils {
 				tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentricleleftFrame().getTubePanel();
 			else
 				tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentriclerightFrame().getTubePanel();
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentriclerightFrame().setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 			break;
 		case ThirdVentricle.TUBE_NUM:
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getThirdVentFrame().setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getThirdVentFrame().getTubePanel();
 			break;
 		case FourthVentricle.TUBE_NUM:
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getFourthVentFrame().setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getFourthVentFrame().getTubePanel();
 			break;
 		case SAS.TUBE_NUM:
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getSasFrame().setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getSasFrame().getTubePanel();
 			break;
 		case SpinalCord.TUBE_NUM:
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getSpinalFrame().setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getSpinalFrame().getTubePanel();
 			break;
 		case Artery.TUBE_NUM:
-			tubepan = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addArtery(hemi)).getTubePanel();
+			ljsf = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addArtery(hemi));
+			ljsf.setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
+			tubepan = ljsf.getTubePanel();
 			break;
 		case Arteriole.TUBE_NUM:
-			tubepan = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addArteriole(hemi)).getTubePanel();
+			ljsf = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addArteriole(hemi));
+			ljsf.setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
+			tubepan = ljsf.getTubePanel();
 			break;
 		case Capillary.TUBE_NUM:
-			tubepan = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addCapillary(hemi)).getTubePanel();
+			ljsf = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addCapillary(hemi));
+			ljsf.setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
+			tubepan = ljsf.getTubePanel();
 			break;
 		case Veinule.TUBE_NUM:
-			tubepan = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addVeinule(hemi)).getTubePanel();
+			ljsf = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addVeinule(hemi));
+			ljsf.setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
+			tubepan = ljsf.getTubePanel();
 			break;
 		case Vein.TUBE_NUM:
-			tubepan = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addVein(hemi)).getTubePanel();
+			ljsf = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addVein(hemi));
+			ljsf.setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
+			tubepan = ljsf.getTubePanel();
 			break;
 		default:
 			System.err.println("Unknown tube ...");

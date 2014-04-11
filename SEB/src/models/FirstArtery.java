@@ -66,11 +66,13 @@ public class FirstArtery extends ElasticTube {
 		res.add(getSymbolicInitialMomentumEquation(pr,fi));
 
 		// Connectivity
-		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
-		for(ElasticTube child:getChildren()){
-			childFin.add(findVariableWithName(((Artery)child).getFlowin().getName(),variables));
+		if(!isInitialConnectivityAdded()){
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				childFin.add(findVariableWithName(((Artery)child).getFlowin().getName(),variables));
+			}
+			res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 		}
-		res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 
 		return res;
 	}
@@ -99,11 +101,13 @@ public class FirstArtery extends ElasticTube {
 		res.add(getSymbolicMomentumEquation(pr,fi));
 
 		// Connectivity
-		ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
-		for(ElasticTube child:getChildren()){
-			childFin.add(findVariableWithName(((Artery)child).getFlowin().getName(),variables));
+		if(!isConnectivityAdded()){
+			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
+			for(ElasticTube child:getChildren()){
+				childFin.add(findVariableWithName(((Artery)child).getFlowin().getName(),variables));
+			}
+			res.add(getSymbolicConnectivityEquation(childFin, fo));
 		}
-		res.add(getSymbolicConnectivityEquation(childFin, fo));
 
 		return res;
 	}
