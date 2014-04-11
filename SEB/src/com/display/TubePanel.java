@@ -226,7 +226,6 @@ public class TubePanel extends JPanel {
 					linkModeActivated = true;
 					btnAddLink.setBackground(Color.cyan);
 					for(JScrollInternalFrame jsf : parentInternalFrame.getJsDesktopPane().getInternalFrames()){
-						System.out.println(jsf);
 						TubePanel ltubep = jsf.getTubePanel();
 						if(jsf != parentInternalFrame){
 							if(isLinkedWith(jsf)){
