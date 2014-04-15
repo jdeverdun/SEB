@@ -486,7 +486,7 @@ public class BrainParenchyma extends Tube {
 		res2 += "("+0.5f +" * "+((SAS)sasArea.getSourceObj()).getInitialArea().getName() +" * "+ ((SAS)sasArea.getSourceObj()).getLength().getName()+") + ";  
 		res1 += "(("+brainFluidArea.getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
 		res2 += "(("+getInitialAreaFluid().getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
-
+		
 		return res1+")"+" - "+res2+")";
 	}
 
