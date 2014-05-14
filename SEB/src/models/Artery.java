@@ -148,6 +148,8 @@ public class Artery extends ElasticTube {
 				res += "+";
 			res += pf.getName();
 		}
+		if(res.isEmpty())
+			res  = fo.getName();
 		return ""+fo.getName()+" - ("+res+")";
 	}
 	
@@ -182,6 +184,8 @@ public class Artery extends ElasticTube {
 			}
 		}
 		setConnectivityAdded(true);
+		if(res.isEmpty())
+			res  = fo.getName();
 		return fo.getName()+" - ("+res+")";
 	}
 	private String recursAdd(ElasticTube base,
@@ -282,6 +286,8 @@ public class Artery extends ElasticTube {
 			}
 		}
 		setInitialConnectivityAdded(true);
+		if(res.isEmpty())
+			res  = fo.getName();
 		return fo.getName()+" - ("+res+")";
 	}
 	private String recursInitAdd(ElasticTube base,

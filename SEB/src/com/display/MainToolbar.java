@@ -1,5 +1,6 @@
 package com.display;
 
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JToolBar;
 import javax.swing.JButton;
@@ -47,6 +48,7 @@ public class MainToolbar extends JToolBar {
 	private JButton btnNew;
 	private JButton btnRun;
 	private JPanel panel;
+	private AbstractButton btnNewRaw;
 	
 	public MainToolbar() {
 		
@@ -85,12 +87,20 @@ public class MainToolbar extends JToolBar {
 		btnNew = new JButton();
 		btnNew.setHorizontalAlignment(SwingConstants.LEFT);
 		btnNew.setIcon(new ImageIcon(img));
+		btnNewRaw = new JButton("RAW");
+		btnNewRaw.setHorizontalAlignment(SwingConstants.LEFT);
 		GridBagConstraints gbc_btnNew = new GridBagConstraints();
 		gbc_btnNew.anchor = GridBagConstraints.NORTHWEST;
 		gbc_btnNew.insets = new Insets(0, 0, 0, 5);
 		gbc_btnNew.gridx = 0;
 		gbc_btnNew.gridy = 1;
 		panel.add(btnNew, gbc_btnNew);
+		GridBagConstraints gbc_btnNewRaw = new GridBagConstraints();
+		gbc_btnNewRaw.fill = GridBagConstraints.BOTH;
+		gbc_btnNewRaw.insets = new Insets(0, 0, 0, 5);
+		gbc_btnNewRaw.gridx = 1;
+		gbc_btnNewRaw.gridy = 1;
+		panel.add(btnNewRaw, gbc_btnNewRaw);
 		img = IconLibrary.RUNICON;
 		img = img.getScaledInstance(25, 25,  java.awt.Image.SCALE_SMOOTH);
 		btnRun = new JButton();
@@ -99,7 +109,7 @@ public class MainToolbar extends JToolBar {
 		GridBagConstraints gbc_btnRun = new GridBagConstraints();
 		gbc_btnRun.insets = new Insets(0, 0, 0, 5);
 		gbc_btnRun.anchor = GridBagConstraints.NORTHWEST;
-		gbc_btnRun.gridx = 1;
+		gbc_btnRun.gridx = 2;
 		gbc_btnRun.gridy = 1;
 		panel.add(btnRun, gbc_btnRun);
 		// listeners
@@ -109,6 +119,14 @@ public class MainToolbar extends JToolBar {
 			public void actionPerformed(ActionEvent e) {
 				if(WindowManager.MAINWINDOW != null)
 					WindowManager.MAINWINDOW.getGraphicalModelPanel().initNew(true);
+			}
+		});
+		btnNewRaw.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(WindowManager.MAINWINDOW != null)
+					WindowManager.MAINWINDOW.getGraphicalModelPanel().removeAllFrame();
 			}
 		});
 		btnRun.addActionListener(new ActionListener() {

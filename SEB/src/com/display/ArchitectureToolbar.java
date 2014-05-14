@@ -1,6 +1,7 @@
 package com.display;
 
 import javax.imageio.ImageIO;
+import javax.swing.AbstractButton;
 import javax.swing.ImageIcon;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -31,7 +32,11 @@ public class ArchitectureToolbar extends JToolBar {
 	private JButton btnAddCapillary;
 	private JButton btnAddVeinule;
 	private JButton btnAddVein;
+	private AbstractButton btnAddFirstArtery;
 	
+	/**
+	 * @wbp.parser.constructor
+	 */
 	public ArchitectureToolbar(Hemisphere hemi) {
 		setHemi(hemi);
 		init();
@@ -61,8 +66,14 @@ public class ArchitectureToolbar extends JToolBar {
 	private void init(){
 		this.setOrientation(SwingConstants.VERTICAL);
 		
-		btnAddArtery = new JButton();
+		btnAddFirstArtery = new JButton();
 		Image img = IconLibrary.ARTERY;
+		img = img.getScaledInstance(25, 25,  java.awt.Image.SCALE_SMOOTH); 
+		btnAddFirstArtery.setIcon(new ImageIcon(img));
+		add(btnAddFirstArtery);
+		
+		btnAddArtery = new JButton();
+		img = IconLibrary.ARTERY;
 		img = img.getScaledInstance(25, 25,  java.awt.Image.SCALE_SMOOTH); 
 		btnAddArtery.setIcon(new ImageIcon(img));
 
@@ -98,6 +109,16 @@ public class ArchitectureToolbar extends JToolBar {
 			public void actionPerformed(ActionEvent e) {
 				if(WindowManager.MAINWINDOW != null){					
 					WindowManager.MAINWINDOW.getGraphicalModelPanel().addArtery(getHemi());
+			
+				}
+			}
+		});
+		btnAddFirstArtery.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(WindowManager.MAINWINDOW != null){					
+					WindowManager.MAINWINDOW.getGraphicalModelPanel().addFirstArteryFrame();
 			
 				}
 			}

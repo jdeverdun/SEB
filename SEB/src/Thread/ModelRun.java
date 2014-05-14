@@ -1,31 +1,24 @@
 package Thread;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import matlab.MatlabBuilder;
 import matlab.MatlabModel;
 import models.Architecture;
+import models.Artery;
 import models.Brain;
 import models.BrainParenchyma;
 import models.ElasticTube;
 import models.FirstArtery;
-import models.FourthVentricle;
 import models.Hemisphere;
-import models.SAS;
 import models.SimpleVariable;
-import models.SpinalCord;
-import models.ThirdVentricle;
 import models.Tube;
 import models.Variable;
 import models.VenousSinus;
-import models.Ventricle;
 
 import org.jscroll.JScrollDesktopPane;
 import org.jscroll.widgets.JScrollInternalFrame;
@@ -59,118 +52,233 @@ public class ModelRun extends Thread {
 
 	}
 	public void run() {
-		if(jsd.getFirstArteryFrame()==null || jsd.getVenousSinousFrame() == null){
-			SystemParams.errordlg("Missing first artery or venous sinous or both !");
-			return;
-		}
-		ArrayList<FirstArtery> firstArtery = new ArrayList<FirstArtery>();
-		for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
-			firstArtery.add((FirstArtery) ljsf.getTubePanel().getTube());
-		VenousSinus vsinous = (VenousSinus) jsd.getVenousSinousFrame().getTubePanel().getTube();
-		if(firstArtery.isEmpty() || vsinous == null){
-			SystemParams.errordlg("Missing first artery or venous senous");
-			return;
-		}
+		if(jsd.getVenousSinousFrame() == null && jsd.getFirstArteryFrame()!=null && containsOnlyArteries() && jsd.getVenousSinousFrame() == null){
+			for( JScrollInternalFrame jsf : jsd.getInternalFrames())
+				if(!(jsf.getTubePanel().getTube() instanceof FirstArtery) && !(jsf.getTubePanel().getTube() instanceof Artery)){
+					SystemParams.errordlg("Does not contains only arteries!!!!!");
+					return;
+				}
+			BrainParenchyma left_brain = new BrainParenchyma("left_brain", Hemisphere.LEFT);
+			BrainParenchyma right_brain = new BrainParenchyma("right_brain", Hemisphere.RIGHT);
+			Brain brain = new Brain(left_brain, right_brain);	
+			ArrayList<FirstArtery> firstArtery = new ArrayList<FirstArtery>();
+			for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
+				firstArtery.add((FirstArtery) ljsf.getTubePanel().getTube());
+			architecture = new Architecture(firstArtery, null, brain);
+			// on initialise le systeme (pression entree - sortie)
+			ModelSpecification.init(architecture);
+			tubes.add(left_brain);
+			tubes.add(right_brain);
+			addAllTubesToList();
+			
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///             Recuperation des variables             ///
+			///													   ///
+			//////////////////////////////////////////////////////////
 
-		// on instancie le cerveau brain
-		BrainParenchyma left_brain = new BrainParenchyma("left_brain", Hemisphere.LEFT);
-		BrainParenchyma right_brain = new BrainParenchyma("right_brain", Hemisphere.RIGHT);
-		Brain brain = new Brain(left_brain, right_brain);
-
-		architecture = new Architecture(firstArtery, vsinous, brain);
-		// on initialise le systeme (pression entree - sortie)
-		ModelSpecification.init(architecture);
-		// on verifie la structure
-		if(!checkStructure())
-			return;
-
-		// on stock tout les tubes dans une liste et 
-		// ajout des blocs CSF
-		tubes.add(left_brain);
-		tubes.add(right_brain);
-		addAllTubesToList();
-
-		//////////////////////////////////////////////////////////
-		///                                                    ///
-		///             Recuperation des variables             ///
-		///													   ///
-		//////////////////////////////////////////////////////////
-
-		for(Tube tube : tubes){
-			variables.addAll(tube.getVariables());
-			fixedvariables.addAll(tube.getFixedVariables());
-		}
-		/*for(int i = 0; i<variables.size();i++)
-			System.out.println(variables.get(i));
-
-		System.out.println("------------- FIXED ----------");
-
-		for(int i = 0; i<fixedvariables.size();i++)
-			System.out.println(fixedvariables.get(i));*/
-
-		//////////////////////////////////////////////////////////
-		///                                                    ///
-		///             Recuperation des variables             ///
-		///					    Globales					   ///
-		//////////////////////////////////////////////////////////
-
-		for(Tube tube : tubes){
-			globalvariables.addAll(tube.getGlobalVariables());
-		}
-		globalvariables.addAll(ModelSpecification.getGlobalVariables());
-
-
-
-		//////////////////////////////////////////////////////////
-		///                                                    ///
-		///             Recuperation des equations             ///
-		///													   ///
-		//////////////////////////////////////////////////////////
-
-		System.out.println("============ Equations ===========");
-		try {
 			for(Tube tube : tubes){
-				initEquations.addAll(tube.getSymbolicInitialEquations(variables));
-				equations.addAll(tube.getSymbolicEquations(variables));
+				variables.addAll(tube.getVariables());
+				fixedvariables.addAll(tube.getFixedVariables());
 			}
-			for(String bloceq : equations){
 
-				System.out.print(bloceq+"\n");
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///             Recuperation des variables             ///
+			///					    Globales					   ///
+			//////////////////////////////////////////////////////////
+
+			for(Tube tube : tubes){
+				globalvariables.addAll(tube.getGlobalVariables());
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			SystemParams.errordlg("Error while retrieving equations ["+e.toString()+"]");
-			return;
+			globalvariables.addAll(ModelSpecification.getGlobalVariables());
+
+
+
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///             Recuperation des equations             ///
+			///													   ///
+			//////////////////////////////////////////////////////////
+
+			System.out.println("============ Equations ===========");
+			try {
+				for(Tube tube : tubes){
+					initEquations.addAll(tube.getSymbolicInitialEquations(variables));
+					equations.addAll(tube.getSymbolicEquations(variables));
+				}
+				for(String bloceq : equations){
+
+					System.out.print(bloceq+"\n");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				SystemParams.errordlg("Error while retrieving equations ["+e.toString()+"]");
+				return;
+			}
+
+
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///                   Ecriture du modele               ///
+			///													   ///
+			//////////////////////////////////////////////////////////
+
+
+			Path modelDir = Paths.get(SystemParams.MATLAB_MODEL_DIR);
+			//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
+			final MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					ModelRunMonitor m = new ModelRunMonitor(mmodel.getMainScript().toFile(),variables);
+				}
+			});
+		}else{
+			if(jsd.getFirstArteryFrame()==null || jsd.getVenousSinousFrame() == null){
+				SystemParams.errordlg("Missing first artery or venous sinous or both !");
+				return;
+			}
+			ArrayList<FirstArtery> firstArtery = new ArrayList<FirstArtery>();
+			for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
+				firstArtery.add((FirstArtery) ljsf.getTubePanel().getTube());
+			VenousSinus vsinous = (VenousSinus) jsd.getVenousSinousFrame().getTubePanel().getTube();
+			if(firstArtery.isEmpty() || vsinous == null){
+				SystemParams.errordlg("Missing first artery or venous senous");
+				return;
+			}
+
+			// on instancie le cerveau brain
+			BrainParenchyma left_brain = new BrainParenchyma("left_brain", Hemisphere.LEFT);
+			BrainParenchyma right_brain = new BrainParenchyma("right_brain", Hemisphere.RIGHT);
+			Brain brain = new Brain(left_brain, right_brain);
+
+			architecture = new Architecture(firstArtery, vsinous, brain);
+			// on initialise le systeme (pression entree - sortie)
+			ModelSpecification.init(architecture);
+			// on verifie la structure
+			if(!checkStructure())
+				return;
+
+			// on stock tout les tubes dans une liste et 
+			// ajout des blocs CSF
+			tubes.add(left_brain);
+			tubes.add(right_brain);
+			addAllTubesToList();
+
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///             Recuperation des variables             ///
+			///													   ///
+			//////////////////////////////////////////////////////////
+
+			for(Tube tube : tubes){
+				variables.addAll(tube.getVariables());
+				fixedvariables.addAll(tube.getFixedVariables());
+			}
+			/*for(int i = 0; i<variables.size();i++)
+				System.out.println(variables.get(i));
+
+			System.out.println("------------- FIXED ----------");
+
+			for(int i = 0; i<fixedvariables.size();i++)
+				System.out.println(fixedvariables.get(i));*/
+
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///             Recuperation des variables             ///
+			///					    Globales					   ///
+			//////////////////////////////////////////////////////////
+
+			for(Tube tube : tubes){
+				globalvariables.addAll(tube.getGlobalVariables());
+			}
+			globalvariables.addAll(ModelSpecification.getGlobalVariables());
+
+
+
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///             Recuperation des equations             ///
+			///													   ///
+			//////////////////////////////////////////////////////////
+
+			System.out.println("============ Equations ===========");
+			try {
+				for(Tube tube : tubes){
+					initEquations.addAll(tube.getSymbolicInitialEquations(variables));
+					equations.addAll(tube.getSymbolicEquations(variables));
+				}
+				for(String bloceq : equations){
+
+					System.out.print(bloceq+"\n");
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				SystemParams.errordlg("Error while retrieving equations ["+e.toString()+"]");
+				return;
+			}
+
+
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///                   Ecriture du modele               ///
+			///													   ///
+			//////////////////////////////////////////////////////////
+
+
+			Path modelDir = Paths.get(SystemParams.MATLAB_MODEL_DIR);
+			//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
+			final MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					ModelRunMonitor m = new ModelRunMonitor(mmodel.getMainScript().toFile(),variables);
+				}
+			});
+
 		}
-
-
-		//////////////////////////////////////////////////////////
-		///                                                    ///
-		///                   Ecriture du modele               ///
-		///													   ///
-		//////////////////////////////////////////////////////////
-
-
-		Path modelDir = Paths.get(SystemParams.MATLAB_MODEL_DIR);
-		//Matrix m = EquationSolver.root(ModelSpecification.architecture, variables);
-		final MatlabModel mmodel = MatlabBuilder.buildModel(modelDir,globalvariables, fixedvariables, variables, initEquations, equations);
-		SwingUtilities.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				ModelRunMonitor m = new ModelRunMonitor(mmodel.getMainScript().toFile(),variables);
-			}
-		});
-
 	}
 
 
+	private boolean containsOnlyArteries() {
+		boolean b = true;
+		for(JScrollInternalFrame fi : jsd.getFirstArteryFrame()){
+			for(ElasticTube et:fi.getTubePanel().getTube().getChildren()){
+				if(et instanceof Artery){
+					b = recursiveIsArteryOnly((Artery)et);
+					if(!b)
+						return false;
+				}else{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	private boolean recursiveIsArteryOnly(Artery ar) {
+		boolean b = true;
+		for(ElasticTube et:ar.getChildren()){
+			if(et instanceof Artery){
+				b = recursiveIsArteryOnly((Artery)et);
+				if(!b)
+					return false;
+			}else{
+				return false;
+			}
+		}
+		return true;
+	}
 	private void addAllTubesToList() {
 		for(ElasticTube tube : architecture.getStartPoints())
 			recursivelyAddTubeToList(tube);
 		// le LCR
-		recursivelyAddTubeToList(jsd.getVentricleleftFrame().getTubePanel().getTube());
-		recursivelyAddTubeToList(jsd.getVentriclerightFrame().getTubePanel().getTube());
+		if(jsd.getVentricleleftFrame()!=null)
+			recursivelyAddTubeToList(jsd.getVentricleleftFrame().getTubePanel().getTube());
+		if(jsd.getVentriclerightFrame()!=null)
+			recursivelyAddTubeToList(jsd.getVentriclerightFrame().getTubePanel().getTube());
 	}
 	private void recursivelyAddTubeToList(ElasticTube tube) {
 		if(!tubes.contains(tube))

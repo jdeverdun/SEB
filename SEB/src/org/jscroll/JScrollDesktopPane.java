@@ -726,4 +726,6 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		getSasFrame().updateButtons();
 		getSpinalFrame().updateButtons();
 	}
+
+
 }
