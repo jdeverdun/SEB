@@ -42,6 +42,8 @@ import models.Veinule;
 import models.VenousSinus;
 import models.Ventricle;
 
+import params.ModelSpecification;
+import params.ModelSpecification.SimulationMode;
 import params.SystemParams;
 import params.WindowManager;
 
@@ -84,8 +86,11 @@ public class SEButils {
 		for(JScrollInternalFrame ljsf : WindowManager.MAINWINDOW.getGraphicalModelPanel().getFirstArteryFrame())
 			ljsf.getTubePanel().saveInfoTo(paramsByTube,links);
 		// on integre le LCR
-		WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentricleleftFrame().getTubePanel().saveInfoTo(paramsByTube,links);
-		WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentriclerightFrame().getTubePanel().saveInfoTo(paramsByTube,links);
+		if(ModelSpecification.SIM_MODE != SimulationMode.DEBUG){
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentricleleftFrame().getTubePanel().saveInfoTo(paramsByTube,links);
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().getVentriclerightFrame().getTubePanel().saveInfoTo(paramsByTube,links);
+		}
+		
 
 		// on ecrit dans le fichier
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

@@ -2,6 +2,9 @@ package models;
 
 import java.util.ArrayList;
 
+import params.ModelSpecification;
+import params.ModelSpecification.SimulationMode;
+
 public class BrainParenchyma extends Tube {
 	public static final String TUBE_NUM = "";
 	public static final float DEFAULT_LENGTH = 7.0f;// par hemisphere
@@ -302,12 +305,14 @@ public class BrainParenchyma extends Tube {
 
 	public ArrayList<SimpleVariable> getVariables(){
 		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
-		variables.add(getFlowin1());
-		variables.add(getFlowin2());
-		variables.add(getFlowout1());
-		variables.add(getFlowout2());
-		variables.add(getPressure());
-		variables.add(getAreaFluid());
+		if(ModelSpecification.SIM_MODE != SimulationMode.DEBUG){
+			variables.add(getFlowin1());
+			variables.add(getFlowin2());
+			variables.add(getFlowout1());
+			variables.add(getFlowout2());
+			variables.add(getPressure());
+			variables.add(getAreaFluid());
+		}
 		return variables;
 	}
 	public ArrayList<SimpleVariable> getFixedVariables(){
@@ -317,6 +322,8 @@ public class BrainParenchyma extends Tube {
 		variables.add(getInitialAreaFluid());
 		variables.add(getInitialAreaSolid());
 		variables.add(getLength());
+		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG)
+			variables.add(getPressure());
 		return variables;
 	}
 	
@@ -335,7 +342,8 @@ public class BrainParenchyma extends Tube {
 	 */
 	public ArrayList<String> getSymbolicInitialEquations(ArrayList<SimpleVariable> variables) throws Exception {
 		ArrayList<String> res = new ArrayList<String>();
-
+		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG)
+			return res;
 		// Connectivity
 		SimpleVariable fi1 = findVariableWithName(getFlowin1().getName(),variables);
 		SimpleVariable fi2 = findVariableWithName(getFlowin2().getName(),variables);
@@ -345,8 +353,7 @@ public class BrainParenchyma extends Tube {
 
 		// Momentum ventricle
 		ArrayList<SimpleVariable> pven = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
-		if(!pven.isEmpty())
-			res.add(getSymbolicInitialMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo1));
+		res.add(getSymbolicInitialMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo1));
 
 		// Momentum cappillary
 		ArrayList<SimpleVariable> pcap = findVariableWithStruct(getHemi(), Capillary.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
@@ -366,10 +373,8 @@ public class BrainParenchyma extends Tube {
 		ArrayList<SimpleVariable> fourthvArea = findVariableWithStruct(Hemisphere.BOTH, FourthVentricle.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		ArrayList<SimpleVariable> sasArea = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		SimpleVariable brainFluidArea = findVariableWithName(getAreaFluid().getName(), variables);
-		if(!thirdvArea.isEmpty())
-			res.add(getSymbolicInitialTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea.get(0), ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
-		else
-			res.add(getSymbolicInitialTotalVolumeEquation(arteryArea,brainFluidArea));
+		res.add(getSymbolicInitialTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea.get(0), ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
+
 		// Additional equations
 		res.add(getSymbolicInitialAdditionalFout2Equation(fo2));
 
@@ -378,8 +383,6 @@ public class BrainParenchyma extends Tube {
 		return res;
 	}
 	
-
-
 	/**
 	 * Renvoi les equations en format symbolic (en string)
 	 * @param variables
@@ -388,7 +391,8 @@ public class BrainParenchyma extends Tube {
 	 */
 	public ArrayList<String> getSymbolicEquations(ArrayList<SimpleVariable> variables) throws Exception {
 		ArrayList<String> res = new ArrayList<String>();
-
+		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG)
+			return res;
 		// Connectivity
 		SimpleVariable fi1 = findVariableWithName(getFlowin1().getName(),variables);
 		SimpleVariable fi2 = findVariableWithName(getFlowin2().getName(),variables);
@@ -398,8 +402,7 @@ public class BrainParenchyma extends Tube {
 
 		// Momentum ventricle
 		ArrayList<SimpleVariable> pven = findVariableWithStruct(getHemi(), Ventricle.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
-		if(!pven.isEmpty())
-			res.add(getSymbolicMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo1));
+		res.add(getSymbolicMomentumVentricleEquation(pven.get(0), getPressure(), getAlpha2(), fo1));
 
 		// Momentum cappillary
 		ArrayList<SimpleVariable> pcap = findVariableWithStruct(getHemi(), Capillary.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
@@ -419,10 +422,8 @@ public class BrainParenchyma extends Tube {
 		ArrayList<SimpleVariable> fourthvArea = findVariableWithStruct(Hemisphere.BOTH, FourthVentricle.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		ArrayList<SimpleVariable> sasArea = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		SimpleVariable brainFluidArea = findVariableWithName(getAreaFluid().getName(), variables);
-		if(!thirdvArea.isEmpty())
-			res.add(getSymbolicTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea.get(0), ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
-		else
-			res.add(getSymbolicTotalVolumeEquation(arteryArea,brainFluidArea));
+		res.add(getSymbolicTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea.get(0), ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
+
 		// Additional equations
 		res.add(getSymbolicAdditionalFout2Equation(fo2));
 
@@ -498,18 +499,6 @@ public class BrainParenchyma extends Tube {
 		return res1+")"+" - "+res2+")";
 	}
 
-	private String getSymbolicTotalVolumeEquation(
-			ArrayList<SimpleVariable> arteryArea, SimpleVariable brainFluidArea) {
-		String res1 = "(";
-		String res2 = "(";
-		for(SimpleVariable arterya: arteryArea){
-			res1 += "("+arterya.getName()+" * "+((Artery)arterya.getSourceObj()).getLength().getName()+") + ";
-			res2 += "("+((Artery)arterya.getSourceObj()).getInitialArea().getName()+" * "+((Artery)arterya.getSourceObj()).getLength().getName()+") + ";  
-		}
-		res1 += "(("+brainFluidArea.getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
-		res2 += "(("+getInitialAreaFluid().getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
-		return res1+")"+" - "+res2+")";
-	}
 	private String getSymbolicInitialAdditionalFout2Equation(SimpleVariable fout2){
 		// equ(68) et equ(70)
 		return ""+fout2.getName()+" - "+0.0f;
@@ -574,19 +563,6 @@ public class BrainParenchyma extends Tube {
 		res1 += "(("+brainFluidArea.getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
 		res2 += "(("+getInitialAreaFluid().getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
 
-		return res1+")"+" - "+res2+")";
-	}
-	private String getSymbolicInitialTotalVolumeEquation(
-			ArrayList<SimpleVariable> arteryArea, SimpleVariable brainFluidArea) {
-		// equ(63) et equ(67)
-		String res1 = "(";
-		String res2 = "(";
-		for(SimpleVariable arterya: arteryArea){
-			res1 += "("+arterya.getName()+" * "+((Artery)arterya.getSourceObj()).getLength().getName()+") + ";
-			res2 += "("+((Artery)arterya.getSourceObj()).getInitialArea().getName()+" * "+((Artery)arterya.getSourceObj()).getLength().getName()+") + ";  
-		}
-		res1 += "(("+brainFluidArea.getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
-		res2 += "(("+getInitialAreaFluid().getName()+" + "+getInitialAreaSolid().getName() +")  * "+ getLength().getName()+")";
 		return res1+")"+" - "+res2+")";
 	}
 }

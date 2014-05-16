@@ -43,7 +43,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+ID+"]");
+		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
 	}
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
@@ -64,7 +64,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+ID+"]");
+		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
 	}	
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure, ArrayList<ElasticTube> par, ArrayList<ElasticTube> child){
@@ -84,7 +84,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+ID+"]");
+		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
 	}
 
 	public SimpleVariable getLength() {
@@ -98,7 +98,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL+"_"+ID,length, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL+"_"+getMyID(),length, (Tube)this);
 		this.length = v;
 	}
 	
@@ -129,9 +129,9 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+getMyID(),elastance, (Tube)this);
 		this.elastance = v;
-		/*SimpleVariable v = new SimpleVariable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+ID,elastance, (Tube)this);
+		/*SimpleVariable v = new SimpleVariable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+getMyID(),elastance, (Tube)this);
 		this.elastance = v;*/
 	}	
 	public SimpleVariable getArea() {
@@ -144,7 +144,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_LABEL+"_"+ID,area, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+AREA_LABEL+"_"+getMyID(),area, (Tube)this);
 		this.area = v;
 	}
 
@@ -159,8 +159,8 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+ID,alpha, (Tube)this);
-		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+ID,alpha, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
+		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 		this.alpha = v;
 	}
 	public SimpleVariable getInitialArea() {
@@ -174,8 +174,8 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+ID,iArea, (Tube)this);
-		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+ID,iArea, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+getMyID(),iArea, (Tube)this);
+		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+INITIAL_AREA_LABEL+"_"+getMyID(),iArea, (Tube)this);
 		this.initialArea = v;
 	}
 
@@ -190,7 +190,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN_LABEL+"_"+ID,flowin, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN_LABEL+"_"+getMyID(),flowin, (Tube)this);
 		this.flowin = v;
 	}
 
@@ -205,7 +205,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT_LABEL+"_"+ID,flowout, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT_LABEL+"_"+getMyID(),flowout, (Tube)this);
 		this.flowout = v;
 	}
 
@@ -220,7 +220,7 @@ public abstract class ElasticTube extends Tube {
 		else
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+ID,pressure, (Tube)this);
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_LABEL+"_"+getMyID(),pressure, (Tube)this);
 		this.pressure = v;
 	}
 

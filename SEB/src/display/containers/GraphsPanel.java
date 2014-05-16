@@ -19,6 +19,7 @@ import org.jfree.chart.StandardChartTheme;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYSplineRenderer;
+import org.jfree.data.statistics.MeanAndStandardDeviation;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
@@ -57,6 +58,7 @@ public class GraphsPanel extends JPanel {
 				try {
 					for(int i = 0;i<varToDisplay.size();i++){
 						plot(i,ModelSpecification.time.getValue(),varToDisplay.get(i).getValueInTime(),varToDisplay.get(i).getName(),ModelSpecification.time.getName(), varToDisplay.get(i).getName());
+						System.out.println("Mean "+varToDisplay.get(i).getName()+" : "+mean(varToDisplay.get(i).getValueInTime()));
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -117,6 +119,12 @@ public class GraphsPanel extends JPanel {
 		this.varToDisplay = varToDisplay;
 		refreshPlot();
 	}
-
+	public static double mean(float[] m) {
+	    double sum = 0;
+	    for (int i = 0; i < m.length; i++) {
+	        sum += m[i];
+	    }
+	    return sum / m.length;
+	}
 	
 }

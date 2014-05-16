@@ -175,8 +175,8 @@ public class TubePanel extends JPanel {
 		btnRemovebloc = new JButton();
 		btnRemovebloc.setIcon(new ImageIcon(img));
 		add(btnRemovebloc, "cell 2 1,grow");
-		if(getTubeType() == TubeClass.VenousSinus)// || getTubeType() == TubeClass.FirstArtery)
-			btnRemovebloc.setEnabled(false);
+		//if(getTubeType() == TubeClass.VenousSinus)// || getTubeType() == TubeClass.FirstArtery)
+		//	btnRemovebloc.setEnabled(false);
 		
 		btnEditinit = new JButton();
 		add(btnEditinit, "cell 3 1,grow");

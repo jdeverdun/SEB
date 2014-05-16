@@ -65,7 +65,11 @@ public class Arteriole extends ElasticTube {
 		// momentum
 		for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
-			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
+			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
+			if(getParents().size()>1)
+				res.add(getSymbolicMomentumEquationDoubleParent(parentFlowout,ar,pr,parentPressure));
+			else
+				res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
 		}
 		
 		// connectivity
@@ -102,7 +106,11 @@ public class Arteriole extends ElasticTube {
 		// momentum
 		for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
-			res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
+			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
+			if(getParents().size()>1)
+				res.add(getSymbolicInitialMomentumEquationDoubleParent(parentFlowout,pr,parentPressure));
+			else
+				res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 		}
 		
 		// connectivity
@@ -135,6 +143,10 @@ public class Arteriole extends ElasticTube {
 	private String getSymbolicMomentumEquation(SimpleVariable fi, SimpleVariable ar, SimpleVariable pr, SimpleVariable parentPressure){
 		// equ(32) et equ(37)
 		return " "+ModelSpecification.damp2.getName()+" * (("+fi.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+fi.getName();
+	}
+	private String getSymbolicMomentumEquationDoubleParent(SimpleVariable parentFlowout, SimpleVariable ar, SimpleVariable pr, SimpleVariable parentPressure){
+		// equ(32) et equ(37)
+		return " "+ModelSpecification.damp2.getName()+" * (("+parentFlowout.getName()+" / "+ar.getName()+" ) - ("+getFlowin().getName()+LAST_ROUND_SUFFIX+" / "+getArea().getName()+LAST_ROUND_SUFFIX+" ))/ dt + ("+parentPressure.getName()+"-"+pr.getName()+" )-"+getAlpha().getName()+" * "+parentFlowout.getName();
 	}
 
 	//====== Connectivity ====
@@ -243,7 +255,10 @@ public class Arteriole extends ElasticTube {
 		// eq (32)  (37)
 		return "("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
 	}
-	
+	private String getSymbolicInitialMomentumEquationDoubleParent(SimpleVariable parentFlowout, SimpleVariable pr, SimpleVariable parentPressure){
+		// eq (32)  (37)
+		return "("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+parentFlowout.getName();
+	}
 
 	private String getSymbolicInitialConnectivityEquation(ArrayList<SimpleVariable> childFin, SimpleVariable fo){
 		// equ(49) (52)

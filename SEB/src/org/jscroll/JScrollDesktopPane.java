@@ -37,8 +37,10 @@ import models.Ventricle;
 
 import org.jscroll.widgets.*;
 
+import params.ModelSpecification;
 import params.SystemParams;
 import params.WindowManager;
+import params.ModelSpecification.SimulationMode;
 
 import com.display.LineLink;
 import com.display.TubePanel;
@@ -546,69 +548,71 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	 */
 	public void initNew(boolean withFirstArtery) {
 		removeAllFrame();
-		Dimension panelSize = getSize();
-		Dimension iframeDim = JScrollInternalFrame.DEFAULT_DIMENSION;
-		Point fart_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), 10);
-		Point vsinous_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), (int) (panelSize.getHeight()-iframeDim.getHeight()-25));
-		
-		if(withFirstArtery){
-			FirstArtery fart = new FirstArtery("");
-			addFirstArteryFrame((JScrollInternalFrame) add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y));
-			FirstArtery fart2 = new FirstArtery("");
-			addFirstArteryFrame((JScrollInternalFrame) add(fart2.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart2, TubeClass.FirstArtery), false,(int) (fart_location.x-JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
-			FirstArtery fart3 = new FirstArtery("");
-			addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
+		if(ModelSpecification.SIM_MODE != SimulationMode.DEBUG){
+			Dimension panelSize = getSize();
+			Dimension iframeDim = JScrollInternalFrame.DEFAULT_DIMENSION;
+			Point fart_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), 10);
+			Point vsinous_location = new Point((int) (panelSize.getWidth()/2 - iframeDim.getWidth()/2), (int) (panelSize.getHeight()-iframeDim.getHeight()-25));
+			
+			if(withFirstArtery){
+				FirstArtery fart = new FirstArtery("");
+				addFirstArteryFrame((JScrollInternalFrame) add(fart.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart, TubeClass.FirstArtery), false,fart_location.x,fart_location.y));
+				FirstArtery fart2 = new FirstArtery("");
+				addFirstArteryFrame((JScrollInternalFrame) add(fart2.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart2, TubeClass.FirstArtery), false,(int) (fart_location.x-JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
+				FirstArtery fart3 = new FirstArtery("");
+				addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
+			}
+			VenousSinus vsinous = new VenousSinus("");
+			setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));
+			WindowManager.MAINWINDOW.getTabbedPane().setSelectedIndex(1);
+			
+			
+			// ------------ Definition des blocs LCR -----------
+			// ventricle
+			Ventricle ventricleleft = new Ventricle("", Hemisphere.LEFT);
+			Ventricle ventricleright = new Ventricle("", Hemisphere.RIGHT);
+			// 3V
+			ThirdVentricle thirdVent = new ThirdVentricle("");
+			// 4V
+			FourthVentricle fourthVent = new FourthVentricle("");
+			// SAS
+			SAS sas = new SAS("");
+			// sp. cord
+			SpinalCord spinal = new SpinalCord("");
+			
+			// ---------------- Liaisons des blocs CSF -------
+			// 3V
+			/*thirdVent.addParent(ventricleleft);
+			thirdVent.addParent(ventricleright);
+			// 4V
+			fourthVent.addParent(thirdVent);
+			// SAS
+			sas.addParent(fourthVent);
+			// sp. cord
+			spinal.addParent(sas);*/
+			
+			//BUGGUE L'INTERFACE DE LIAISON
+			setVentricleleftFrame((JScrollInternalFrame) add(ventricleleft.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,false,fart_location.x,fart_location.y));		
+			setVentriclerightFrame((JScrollInternalFrame) add(ventricleright.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleright, TubeClass.Ventricle), false,false,fart_location.x,fart_location.y));		
+			setThirdVentFrame((JScrollInternalFrame) add(thirdVent.getName(),new ImageIcon(IconLibrary.THIRDVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(thirdVent, TubeClass.ThirdVentricle), false,false,fart_location.x,fart_location.y));
+			setFourthVentFrame((JScrollInternalFrame) add(fourthVent.getName(),new ImageIcon(IconLibrary.FOURTHVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fourthVent, TubeClass.FourthVentricle), false,false,fart_location.x,fart_location.y));		
+			setSasFrame((JScrollInternalFrame) add(sas.getName(),new ImageIcon(IconLibrary.SAS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(sas, TubeClass.SAS), false,false,fart_location.x,fart_location.y));		
+			setSpinalFrame((JScrollInternalFrame) add(spinal.getName(),new ImageIcon(IconLibrary.SPINAL.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(spinal, TubeClass.SpinalCord), false,false,fart_location.x,fart_location.y));	
+			
+			// liens de l'interface
+			getThirdVentFrame().getTubePanel().addLineLinkAsChild(new LineLink(getVentricleleftFrame(),getThirdVentFrame()));
+			getThirdVentFrame().getTubePanel().addLineLinkAsChild(new LineLink(getVentriclerightFrame(),getThirdVentFrame()));
+			getFourthVentFrame().getTubePanel().addLineLinkAsChild(new LineLink(getThirdVentFrame(),getFourthVentFrame()));
+			getSasFrame().getTubePanel().addLineLinkAsChild(new LineLink(getFourthVentFrame(),getSasFrame()));
+			getSpinalFrame().getTubePanel().addLineLinkAsChild(new LineLink(getSasFrame(),getSpinalFrame()));
+			// on ne veut pas que ces frame apparaisse dans cette liste
+			getInternalFrames().remove(getVentricleleftFrame());
+			getInternalFrames().remove(getVentriclerightFrame());
+			getInternalFrames().remove(getThirdVentFrame());
+			getInternalFrames().remove(getFourthVentFrame());
+			getInternalFrames().remove(getSasFrame());
+			getInternalFrames().remove(getSpinalFrame());
 		}
-		VenousSinus vsinous = new VenousSinus("");
-		setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));
-		WindowManager.MAINWINDOW.getTabbedPane().setSelectedIndex(1);
-		
-		
-		// ------------ Definition des blocs LCR -----------
-		// ventricle
-		Ventricle ventricleleft = new Ventricle("", Hemisphere.LEFT);
-		Ventricle ventricleright = new Ventricle("", Hemisphere.RIGHT);
-		// 3V
-		ThirdVentricle thirdVent = new ThirdVentricle("");
-		// 4V
-		FourthVentricle fourthVent = new FourthVentricle("");
-		// SAS
-		SAS sas = new SAS("");
-		// sp. cord
-		SpinalCord spinal = new SpinalCord("");
-		
-		// ---------------- Liaisons des blocs CSF -------
-		// 3V
-		/*thirdVent.addParent(ventricleleft);
-		thirdVent.addParent(ventricleright);
-		// 4V
-		fourthVent.addParent(thirdVent);
-		// SAS
-		sas.addParent(fourthVent);
-		// sp. cord
-		spinal.addParent(sas);*/
-		
-		//BUGGUE L'INTERFACE DE LIAISON
-		setVentricleleftFrame((JScrollInternalFrame) add(ventricleleft.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleleft, TubeClass.Ventricle), false,false,fart_location.x,fart_location.y));		
-		setVentriclerightFrame((JScrollInternalFrame) add(ventricleright.getName(),new ImageIcon(IconLibrary.VENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(ventricleright, TubeClass.Ventricle), false,false,fart_location.x,fart_location.y));		
-		setThirdVentFrame((JScrollInternalFrame) add(thirdVent.getName(),new ImageIcon(IconLibrary.THIRDVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(thirdVent, TubeClass.ThirdVentricle), false,false,fart_location.x,fart_location.y));
-		setFourthVentFrame((JScrollInternalFrame) add(fourthVent.getName(),new ImageIcon(IconLibrary.FOURTHVENTRICLE.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fourthVent, TubeClass.FourthVentricle), false,false,fart_location.x,fart_location.y));		
-		setSasFrame((JScrollInternalFrame) add(sas.getName(),new ImageIcon(IconLibrary.SAS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(sas, TubeClass.SAS), false,false,fart_location.x,fart_location.y));		
-		setSpinalFrame((JScrollInternalFrame) add(spinal.getName(),new ImageIcon(IconLibrary.SPINAL.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(spinal, TubeClass.SpinalCord), false,false,fart_location.x,fart_location.y));	
-		
-		// liens de l'interface
-		getThirdVentFrame().getTubePanel().addLineLinkAsChild(new LineLink(getVentricleleftFrame(),getThirdVentFrame()));
-		getThirdVentFrame().getTubePanel().addLineLinkAsChild(new LineLink(getVentriclerightFrame(),getThirdVentFrame()));
-		getFourthVentFrame().getTubePanel().addLineLinkAsChild(new LineLink(getThirdVentFrame(),getFourthVentFrame()));
-		getSasFrame().getTubePanel().addLineLinkAsChild(new LineLink(getFourthVentFrame(),getSasFrame()));
-		getSpinalFrame().getTubePanel().addLineLinkAsChild(new LineLink(getSasFrame(),getSpinalFrame()));
-		// on ne veut pas que ces frame apparaisse dans cette liste
-		getInternalFrames().remove(getVentricleleftFrame());
-		getInternalFrames().remove(getVentriclerightFrame());
-		getInternalFrames().remove(getThirdVentFrame());
-		getInternalFrames().remove(getFourthVentFrame());
-		getInternalFrames().remove(getSasFrame());
-		getInternalFrames().remove(getSpinalFrame());
 		
 	}
 
@@ -720,11 +724,13 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 		for(JScrollInternalFrame frame : getInternalFrames()){
 			frame.updateButtons();
 		}
-		getThirdVentFrame().updateButtons();
-		getThirdVentFrame().updateButtons();
-		getFourthVentFrame().updateButtons();
-		getSasFrame().updateButtons();
-		getSpinalFrame().updateButtons();
+		if(ModelSpecification.SIM_MODE != SimulationMode.DEBUG){
+			getThirdVentFrame().updateButtons();
+			getThirdVentFrame().updateButtons();
+			getFourthVentFrame().updateButtons();
+			getSasFrame().updateButtons();
+			getSpinalFrame().updateButtons();
+		}
 	}
 
 

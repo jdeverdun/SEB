@@ -24,6 +24,7 @@ import org.jscroll.JScrollDesktopPane;
 import org.jscroll.widgets.JScrollInternalFrame;
 
 import params.ModelSpecification;
+import params.ModelSpecification.SimulationMode;
 import params.SystemParams;
 import params.WindowManager;
 
@@ -52,7 +53,7 @@ public class ModelRun extends Thread {
 
 	}
 	public void run() {
-		if(jsd.getVenousSinousFrame() == null && jsd.getFirstArteryFrame()!=null && containsOnlyArteries() && jsd.getVenousSinousFrame() == null){
+		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG){
 			for( JScrollInternalFrame jsf : jsd.getInternalFrames())
 				if(!(jsf.getTubePanel().getTube() instanceof FirstArtery) && !(jsf.getTubePanel().getTube() instanceof Artery)){
 					SystemParams.errordlg("Does not contains only arteries!!!!!");
@@ -103,9 +104,12 @@ public class ModelRun extends Thread {
 
 			System.out.println("============ Equations ===========");
 			try {
+				ArrayList<SimpleVariable> fullvariablelist = new ArrayList<SimpleVariable>();
+				fullvariablelist.addAll(variables);
+				fullvariablelist.addAll(fixedvariables);
 				for(Tube tube : tubes){
-					initEquations.addAll(tube.getSymbolicInitialEquations(variables));
-					equations.addAll(tube.getSymbolicEquations(variables));
+					initEquations.addAll(tube.getSymbolicInitialEquations(fullvariablelist));
+					equations.addAll(tube.getSymbolicEquations(fullvariablelist));
 				}
 				for(String bloceq : equations){
 
@@ -275,10 +279,12 @@ public class ModelRun extends Thread {
 		for(ElasticTube tube : architecture.getStartPoints())
 			recursivelyAddTubeToList(tube);
 		// le LCR
-		if(jsd.getVentricleleftFrame()!=null)
-			recursivelyAddTubeToList(jsd.getVentricleleftFrame().getTubePanel().getTube());
-		if(jsd.getVentriclerightFrame()!=null)
-			recursivelyAddTubeToList(jsd.getVentriclerightFrame().getTubePanel().getTube());
+		if(ModelSpecification.SIM_MODE != SimulationMode.DEBUG){
+			if(jsd.getVentricleleftFrame()!=null)
+				recursivelyAddTubeToList(jsd.getVentricleleftFrame().getTubePanel().getTube());
+			if(jsd.getVentriclerightFrame()!=null)
+				recursivelyAddTubeToList(jsd.getVentriclerightFrame().getTubePanel().getTube());
+		}
 	}
 	private void recursivelyAddTubeToList(ElasticTube tube) {
 		if(!tubes.contains(tube))

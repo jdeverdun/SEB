@@ -24,10 +24,14 @@ import javax.swing.JButton;
 import org.jscroll.JScrollDesktopPane;
 import org.jscroll.widgets.JScrollInternalFrame;
 
+import params.ModelSpecification;
 import params.WindowManager;
 
 import com.display.TubePanel.TubeClass;
 import com.display.images.IconLibrary;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import params.ModelSpecification.SimulationMode;
 
 
 public class GlobalArchitectureToolbar extends JToolBar{
@@ -42,6 +46,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 	private int yoffset = 40; //espace entre 2 blocs en y
 	private int defDistFromCenter; // espace au centre
 	private int xcenter;
+	private JComboBox comboBoxSimMod;
 	
 	
 	public GlobalArchitectureToolbar() {
@@ -49,7 +54,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 		
 		panel = new JPanel();
 		add(panel);
-		panel.setLayout(new MigLayout("", "[][]", "[]"));
+		panel.setLayout(new MigLayout("", "[grow][]", "[][]"));
 		
 		btnOrganize = new JButton();
 		Image img = IconLibrary.ORGANIZEICON;
@@ -60,8 +65,20 @@ public class GlobalArchitectureToolbar extends JToolBar{
 		btnDefaultStruct = new JButton("D");
 		panel.add(btnDefaultStruct, "cell 1 0");
 		
+		comboBoxSimMod = new JComboBox();
+		comboBoxSimMod.setModel(new DefaultComboBoxModel(SimulationMode.values()));
+		comboBoxSimMod.setSelectedIndex(1);
+		panel.add(comboBoxSimMod, "cell 0 1 2 1,growx");
+		
 		
 		// Events
+		comboBoxSimMod.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				ModelSpecification.SIM_MODE = (SimulationMode) comboBoxSimMod.getSelectedItem();
+			}
+		});
 		btnDefaultStruct.addActionListener(new ActionListener() {
 			
 			@Override
