@@ -75,13 +75,13 @@ public class ModelSpecification {
 	public static void init(Architecture arch){
 		architecture = arch;
 		currentIter.setValue(0);
-		time = new ArrayVariable(TIME_NAME ,new float[(int) time_step.getValue()],null);
-		P_INIT = new ArrayVariable(P_INIT_NAME, new float[(int) time_step.getValue()], null);
-		P_OUT = new ArrayVariable(P_OUT_NAME,new float[(int) time_step.getValue()], null);
-		OUT_D = new ArrayVariable(OUT_D_NAME,new float[(int) time_step.getValue()], null);
-		fourrier_funct = new ArrayVariable(FOURRIER_FUNCT_NAME,new float[(int) time_step.getValue()], null);
-		for(int i = 0; i<(int) time_step.getValue();i++){
-			time.getValue()[i] = (i+1) * dt.getValue();
+		time = new ArrayVariable(TIME_NAME ,new float[(int) time_step.getFloatValue()],null);
+		P_INIT = new ArrayVariable(P_INIT_NAME, new float[(int) time_step.getFloatValue()], null);
+		P_OUT = new ArrayVariable(P_OUT_NAME,new float[(int) time_step.getFloatValue()], null);
+		OUT_D = new ArrayVariable(OUT_D_NAME,new float[(int) time_step.getFloatValue()], null);
+		fourrier_funct = new ArrayVariable(FOURRIER_FUNCT_NAME,new float[(int) time_step.getFloatValue()], null);
+		for(int i = 0; i<(int) time_step.getFloatValue();i++){
+			time.getValue()[i] = (i+1) * dt.getFloatValue();
 			fourrier_funct.getValue()[i] = (float) (  0.6 + 0.6*(0.70588472173953 - 0.05900572216651*Math.cos(2*Math.PI*time.getValue()[i]) 
                      - 0.0872254163115668*Math.cos(4*Math.PI*time.getValue()[i]) - 0.0456805350837203*Math.cos(6*Math.PI*time.getValue()[i]) 
                      - 0.0190254766060677*Math.cos(8*Math.PI*time.getValue()[i]) - 0.00227790528223953*Math.cos(10*Math.PI*time.getValue()[i]) 

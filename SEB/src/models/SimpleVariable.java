@@ -3,14 +3,18 @@ package models;
 import java.util.ArrayList;
 
 public class SimpleVariable extends Variable {
-	public static float DEFAULT_VALUE = 123456789.0f;
-	private float value;
+	public static String DEFAULT_VALUE = ""+123456789.0f;
+	private String value;
 	private float[] valueInTime;
 	
-	public SimpleVariable(String name, float value, Tube obj) {
+	public SimpleVariable(String name, String value, Tube obj) {
 		super(name,obj);
 		setValue(value);
-	}		
+	}
+	public SimpleVariable(String name, float value, Tube obj) {
+		super(name,obj);
+		setValue(""+value);
+	}	
 	
 	public SimpleVariable(String name, Tube obj) {
 		super(name,obj);
@@ -22,14 +26,19 @@ public class SimpleVariable extends Variable {
 		setValue(DEFAULT_VALUE);
 	}
 
-	public float getValue() {
+	public String getValue() {
 		return value;
+	}
+	public float getFloatValue() {
+		return Float.parseFloat(value);
 	}
 
 	public void setValue(float value) {
+		this.value = ""+value;
+	}
+	public void setValue(String value) {
 		this.value = value;
 	}
-	
 	@Override
 	public String toString(){
 		String src = "";

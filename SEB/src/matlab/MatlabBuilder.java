@@ -79,7 +79,7 @@ public class MatlabBuilder {
 		mainFileContent +=  mainGlobalVarsInitialization(globalvariables);
 		mainFileContent +=  createDefaultUnknown(variables);
 		mainFileContent += "%% Fixed variables "+NEWLINE_CHAR+"";
-		mainFileContent +=  createVariablesInitialization(fixedvariables);// on en aura peut etre besoin !
+		//mainFileContent +=  createVariablesInitialization(fixedvariables);// on en aura peut etre besoin !
 		mainFileContent += createInitialFsolve(equationsInitialFunctionName, globalvariables);
 		mainFileContent += createRetrieveGlobal(globalvariables,variables); // a partir du x
 		mainFileContent += createTimeLoop(globalvariables,variables); // a partir du x
@@ -378,14 +378,15 @@ public class MatlabBuilder {
 	private static String createEquations(
 			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables, ArrayList<String> initEquations) {
 		String content = "%% Fixed variables "+NEWLINE_CHAR+"";
-		// on commence par les variables fixes
-		content += createVariablesInitialization(fixedvariables);
 		// on init les variables x()
 		content += ""+NEWLINE_CHAR+""+NEWLINE_CHAR+"%%Variables initialization"+NEWLINE_CHAR+"";
 		int count = 1;
 		for(SimpleVariable var : variables){
 			content += var.getName() + " = " + unknownLabel + "(" + (count++) + ");"+NEWLINE_CHAR+"";  
 		}
+		// on gere les variables fixes
+		content += createVariablesInitialization(fixedvariables);
+		
 		
 		// on init les variables x()
 		content += ""+NEWLINE_CHAR+""+NEWLINE_CHAR+"%%Equations"+NEWLINE_CHAR+"";

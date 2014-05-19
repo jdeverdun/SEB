@@ -33,7 +33,7 @@ public abstract class ElasticTube extends Tube {
 		setFlowout(-1.0f);
 		setPressure(-1.0f);
 		setArea(-1.0f);
-		setAlpha(-1.0f);
+		
 		setInitialArea(-1.0f);
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
@@ -44,6 +44,7 @@ public abstract class ElasticTube extends Tube {
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
 		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
+		setAlpha(-1.0f);
 	}
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
@@ -51,7 +52,7 @@ public abstract class ElasticTube extends Tube {
 		setHemisphere(hemi);
 		setInitialArea(a);
 		setArea(a);
-		setAlpha(alf);
+		
 		setElastance(elast);
 		setFlowin(flowin);
 		setFlowout(flowout);
@@ -65,13 +66,14 @@ public abstract class ElasticTube extends Tube {
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
 		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
+		setAlpha(alf);
 	}	
 	
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure, ArrayList<ElasticTube> par, ArrayList<ElasticTube> child){
 		super(name,len);
 		setHemisphere(hemi);
 		setArea(a);
-		setAlpha(alf);
+		
 		setElastance(elast);
 		setFlowin(flowin);
 		setFlowout(flowout);
@@ -85,6 +87,7 @@ public abstract class ElasticTube extends Tube {
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
 		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
+		setAlpha(alf);
 	}
 
 	public SimpleVariable getLength() {
@@ -93,11 +96,11 @@ public abstract class ElasticTube extends Tube {
 	public void setLength(float length) {
 		//this.length = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL,length, (Tube)this);
 		String prefix = "";
-		if(hemisphere == Hemisphere.LEFT)
+		/*if(hemisphere == Hemisphere.LEFT)
 			prefix = "L_";
 		else
 			if(hemisphere == Hemisphere.RIGHT)
-				prefix = "R_";
+				prefix = "R_";*/
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL+"_"+getMyID(),length, (Tube)this);
 		this.length = v;
 	}
@@ -160,6 +163,8 @@ public abstract class ElasticTube extends Tube {
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
+		// on recalcule le alpha
+		v.setValue("8*pi*(0.004/100)*"+getLength().getName()+"/("+getArea().getName()+"^2)");
 		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 		this.alpha = v;
 	}
@@ -270,8 +275,8 @@ public abstract class ElasticTube extends Tube {
 		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
 		variables.add(getInitialArea());
 		variables.add(getLength());
-		variables.add(getAlpha());
 		variables.add(getElastance());
+		variables.add(getAlpha());
 		return variables;
 	}
 	

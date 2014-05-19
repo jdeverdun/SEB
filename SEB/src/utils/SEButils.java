@@ -310,47 +310,53 @@ public class SEButils {
 	 */
 	private static void fillTubeInfo(ElasticTube tube, String[] params) {
 		for(String param:params){
+			
 			String[] spl = param.split(SAVE_PARAM_VALUE_SEPARATOR);
 			String name = spl[0];
-			float value = Float.parseFloat(spl[1]);
 			String[] parts = name.split("_");
 			String nameparam;
 			if(parts.length==3)
 				nameparam = parts[1];
 			else
 				nameparam = parts[2];
-			if(nameparam.equals(ElasticTube.LENGTH_LABEL)){
-				tube.setLength(value);
-				tube.getLength().setName(name);
-			}
 			if(nameparam.equals(ElasticTube.ALPHA_LABEL)){
-				tube.setAlpha(value);
+				tube.setAlpha(0.0f);
 				tube.getAlpha().setName(name);
+				tube.getAlpha().setValue(spl[1]);
+			}else{
+				float value = Float.parseFloat(spl[1]);
+				
+				if(nameparam.equals(ElasticTube.LENGTH_LABEL)){
+					tube.setLength(value);
+					tube.getLength().setName(name);
+				}
+
+				if(nameparam.equals(ElasticTube.ELASTANCE_LABEL)){
+					tube.setElastance(value);
+					tube.getElastance().setName(name);
+				}
+				if(nameparam.equals(ElasticTube.AREA_LABEL)){
+					tube.setArea(value);
+					tube.getArea().setName(name);
+				}	
+				if(nameparam.equals(ElasticTube.INITIAL_AREA_LABEL)){
+					tube.setInitialArea(value);
+					tube.getInitialArea().setName(name);
+				}
+				if(nameparam.equals(ElasticTube.FLOWIN_LABEL)){
+					tube.setFlowin(value);	
+					tube.getFlowin().setName(name);
+				}
+				if(nameparam.equals(ElasticTube.FLOWOUT_LABEL)){
+					tube.setFlowout(value);
+					tube.getFlowout().setName(name);
+				}
+				if(nameparam.equals(ElasticTube.PRESSURE_LABEL)){
+					tube.setPressure(value);
+					tube.getPressure().setName(name);
+				}
 			}
-			if(nameparam.equals(ElasticTube.ELASTANCE_LABEL)){
-				tube.setElastance(value);
-				tube.getElastance().setName(name);
-			}
-			if(nameparam.equals(ElasticTube.AREA_LABEL)){
-				tube.setArea(value);
-				tube.getArea().setName(name);
-			}	
-			if(nameparam.equals(ElasticTube.INITIAL_AREA_LABEL)){
-				tube.setInitialArea(value);
-				tube.getInitialArea().setName(name);
-			}
-			if(nameparam.equals(ElasticTube.FLOWIN_LABEL)){
-				tube.setFlowin(value);	
-				tube.getFlowin().setName(name);
-			}
-			if(nameparam.equals(ElasticTube.FLOWOUT_LABEL)){
-				tube.setFlowout(value);
-				tube.getFlowout().setName(name);
-			}
-			if(nameparam.equals(ElasticTube.PRESSURE_LABEL)){
-				tube.setPressure(value);
-				tube.getPressure().setName(name);
-			}
+			
 		}
 	}
 }

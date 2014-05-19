@@ -510,7 +510,7 @@ public class TubePanel extends JPanel {
 
 	private void fillTubeInfo(){
 		getTube().setLength(Float.parseFloat(txtVallength.getText()));
-		getTube().setAlpha(Float.parseFloat(textValAlpha.getText()));
+		//getTube().setAlpha(Float.parseFloat(textValAlpha.getText()));
 		getTube().setElastance(Float.parseFloat(txtValelastance.getText()));
 		getTube().setArea(Float.parseFloat(txtValarea.getText()));
 		getTube().setInitialArea(Float.parseFloat(txtValarea.getText()));
