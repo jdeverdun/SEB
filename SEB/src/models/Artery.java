@@ -114,14 +114,17 @@ public class Artery extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 		
 		// momentum
-		for(ElasticTube el : getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube el : getParents()){
 			SimpleVariable parentPressure = findVariableWithName(el.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(el.getFlowout().getName(),variables);
 			if(getParents().size()>1)
 				res.add(getSymbolicMomentumEquationDoubleParent(parentFlowout,ar,pr,parentPressure));
 			else
 				res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
-		}
+		}*/
 		
 		// connectivity if needed
 		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG && getChildren().isEmpty()){
@@ -132,7 +135,7 @@ public class Artery extends ElasticTube {
 				for(ElasticTube child:getChildren()){
 					childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
 				}
-				res.add(getSymbolicConnectivityEquation(childFin, fo));
+				//res.add(getSymbolicConnectivityEquation(childFin, fo));
 			}
 		}
 		return res;

@@ -100,6 +100,9 @@ public class FirstArtery extends ElasticTube {
 
 		// momentum
 		res.add(getSymbolicMomentumEquation(pr,fi));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		//res.add(getSymbolicMomentumEquation(pr,fi));
 
 		// Connectivity
 		if(!isConnectivityAdded()){
@@ -107,7 +110,7 @@ public class FirstArtery extends ElasticTube {
 			for(ElasticTube child:getChildren()){
 				childFin.add(findVariableWithName(((Artery)child).getFlowin().getName(),variables));
 			}
-			res.add(getSymbolicConnectivityEquation(childFin, fo));
+			//res.add(getSymbolicConnectivityEquation(childFin, fo));
 		}
 
 		return res;
