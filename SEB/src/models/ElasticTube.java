@@ -308,6 +308,117 @@ public abstract class ElasticTube extends Tube {
 		return variables;
 	}
 	
+	// equations communes
+	protected String getSymbolicInitialMomentumEquation(ArrayList<ElasticTube> parents, ArrayList<SimpleVariable> variables) throws Exception {
+		// eq (31)  (36)
+		if(parents.size()>1 || (parents.size()==1 && parents.get(0).getChildren().size()>1)){
+			String left = "(";
+			String usedvar = "@@";
+			String prefix = "";
+			SimpleVariable pressure = findVariableWithName(getPressure().getName(),variables);
+			ArrayList<SimpleVariable> alphalist = new ArrayList<SimpleVariable>();
+			ArrayList<ElasticTube> tubeslist = new ArrayList<ElasticTube>();
+			for(ElasticTube el:parents){
+				alphalist.add(el.getAlpha());
+				tubeslist.add(el);
+				for(ElasticTube el2 : el.getChildren())
+					if(!el2.equals(this) && !tubeslist.contains(el2)){
+						alphalist.add(el2.getAlpha());
+						tubeslist.add(el2);
+					}
+			}
+			for(ElasticTube el:tubeslist){
+				String localpha = "";
+				for(SimpleVariable alp:alphalist){
+					if(!alp.getName().equals(el.getAlpha().getName()) && !usedvar.contains(alp.getName())){
+						localpha = alp.getName();
+						usedvar += localpha + "@@";
+						break;
+					}
+				}
+				if(!left.equals("("))
+					prefix = " + ";
+				left += prefix + localpha + "* (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
+			}
+			left += ")";
+			// on gere la partie droite avec les alpha
+			String right = "(";
+			prefix = "";
+			usedvar = "@@";
+			alphalist.add(getAlpha());
+			for(SimpleVariable a1 : alphalist){
+				for(SimpleVariable a2 : alphalist){
+					if(!right.equals("("))
+						prefix = " + ";
+					if(!a1.getName().equals(a2.getName()) && !usedvar.contains(a1.getName()+a2.getName())){
+						right += prefix + a1.getName() + "*" + a2.getName();
+						usedvar+=a1.getName()+a2.getName()+"@@"+a2.getName()+a1.getName()+"@@";
+					}
+				}
+			}
+			right += ") * " + getFlowin().getName();
+			return left + " + " + right;
+		}else{
+			return "(" + getPressure().getName() + " - " + parents.get(0).getPressure().getName() + ") + ("+getAlpha().getName()+ " + " + parents.get(0).getAlpha().getName()+ ") * "+getFlowin().getName();
+		}
+	}
+	
+	protected String getSymbolicInitialMomentumEquationOut(ArrayList<ElasticTube> children, ArrayList<SimpleVariable> variables) throws Exception {
+		// eq (31)  (36)
+		if(children.size()>1 || (children.size()==1 && children.get(0).getParents().size()>1)){
+			String left = "(";
+			String usedvar = "@@";
+			String prefix = "";
+			SimpleVariable pressure = findVariableWithName(getPressure().getName(),variables);
+			ArrayList<SimpleVariable> alphalist = new ArrayList<SimpleVariable>();
+			ArrayList<ElasticTube> tubeslist = new ArrayList<ElasticTube>();
+			for(ElasticTube el:children){
+				alphalist.add(el.getAlpha());
+				tubeslist.add(el);
+				for(ElasticTube el2 : el.getParents())
+					if(!el2.equals(this) && !tubeslist.contains(el2)){
+						alphalist.add(el2.getAlpha());
+						tubeslist.add(el2);
+					}
+			}
+			for(ElasticTube el:tubeslist){
+				String localpha = "";
+				for(SimpleVariable alp:alphalist){
+					if(!alp.getName().equals(el.getAlpha().getName()) && !usedvar.contains(alp.getName())){
+						localpha = alp.getName();
+						usedvar += localpha + "@@";
+						break;
+					}
+				}
+				if(!left.equals("("))
+					prefix = " + ";
+				left += prefix + localpha + "* (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
+			}
+			left += ")";
+			// on gere la partie droite avec les alpha
+			String right = "(";
+			prefix = "";
+			usedvar = "@@";
+			alphalist.add(getAlpha());
+			for(SimpleVariable a1 : alphalist){
+				for(SimpleVariable a2 : alphalist){
+					if(!right.equals("("))
+						prefix = " + ";
+					if(!a1.getName().equals(a2.getName()) && !usedvar.contains(a1.getName()+a2.getName())){
+						right += prefix + a1.getName() + "*" + a2.getName();
+						usedvar+=a1.getName()+a2.getName()+"@@"+a2.getName()+a1.getName()+"@@";
+					}
+				}
+			}
+			right += ") * " + getFlowout().getName();
+			return left + " - " + right;
+		}else{
+			return "(" + getPressure().getName() + " - " + children.get(0).getPressure().getName() + ") - ("+getAlpha().getName()+ " + " + children.get(0).getAlpha().getName()+ ") * "+getFlowout().getName();
+		}
+	}
+	
+	
+	
 	@Override
 	public boolean equals(Object v) {
 		if (v instanceof ElasticTube){

@@ -66,14 +66,17 @@ public class Artery extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 		
 		// momentum
-		for(ElasticTube el : getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube el : getParents()){
 			SimpleVariable parentPressure = findVariableWithName(el.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(el.getFlowout().getName(),variables);
 			if(getParents().size()>1)
 				res.add(getSymbolicInitialMomentumEquationDoubleParent(parentFlowout,pr,parentPressure));
 			else
 				res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
-		}
+		}*/
 		
 		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG && getChildren().isEmpty()){
 			res.add(getSymbolicInitialAddMomentumEquation(pr,fo));
@@ -84,7 +87,7 @@ public class Artery extends ElasticTube {
 				for(ElasticTube child:getChildren()){
 					childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
 				}
-				res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
+				//res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 			}
 		}
 		
@@ -134,6 +137,8 @@ public class Artery extends ElasticTube {
 		}
 		return res;
 	}
+
+
 
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo){
@@ -265,11 +270,12 @@ public class Artery extends ElasticTube {
 	}
 
 	// momentum
-	private String getSymbolicInitialMomentumEquation(SimpleVariable fi, SimpleVariable pr, SimpleVariable parentPressure){
+	/*private String getSymbolicInitialMomentumEquation(SimpleVariable fi, SimpleVariable pr, SimpleVariable parentPressure){
 		// eq (31)  (36)
 		//return "("+ModelSpecification.P_INIT_INITIAL.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
 		return "("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
-	}
+	}*/
+	
 	private String getSymbolicInitialMomentumEquationDoubleParent(SimpleVariable parentFlowout, SimpleVariable pr, SimpleVariable parentPressure){
 		// eq (31)  (36)
 		//return "("+ModelSpecification.P_INIT_INITIAL.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+fi.getName();
