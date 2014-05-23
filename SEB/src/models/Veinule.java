@@ -62,7 +62,10 @@ public class Veinule extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
 			if(getParents().size()>1)
@@ -70,14 +73,14 @@ public class Veinule extends ElasticTube {
 			else
 				res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 		}
-		
+		*/
 		// connectivity
 		if(!isInitialConnectivityAdded()){
 			ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
 			for(ElasticTube child:getChildren()){
 				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
 			}
-			res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
+			//res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 		}
 		return res;
 	}
@@ -102,14 +105,17 @@ public class Veinule extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
 			if(getParents().size()>1)
 				res.add(getSymbolicMomentumEquationDoubleParent(parentFlowout,ar,pr,parentPressure));
 			else
 				res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
-		}
+		}*/
 		
 		// connectivity
 		if(!isConnectivityAdded()){
@@ -117,7 +123,7 @@ public class Veinule extends ElasticTube {
 			for(ElasticTube child:getChildren()){
 				childFin.add(findVariableWithName(child.getFlowin().getName(),variables));
 			}
-			res.add(getSymbolicConnectivityEquation(childFin, fo));
+			//res.add(getSymbolicConnectivityEquation(childFin, fo));
 		}
 		return res;
 	}

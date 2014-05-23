@@ -65,17 +65,20 @@ public class SAS extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((FourthVentricle)parent).getPressure().getName(),variables);
 			res.add(getSymbolicInitialMomentumEquation(fi, parentPressure, pr));
-		}
+		}*/
 		
 		// connectivity
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(((FourthVentricle)parent).getFlowout().getName(),variables));
 		}
-		res.add(getSymbolicInitialConnectivityEquation(parentFlowout,fi));
+		//res.add(getSymbolicInitialConnectivityEquation(parentFlowout,fi));
 		return res;
 	}
 	
@@ -101,17 +104,20 @@ public class SAS extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((FourthVentricle)parent).getPressure().getName(),variables);
 			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
-		}
+		}*/
 		
 		// connectivity
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(((FourthVentricle)parent).getFlowout().getName(),variables));
 		}
-		res.add(getSymbolicConnectivityEquation(parentFlowout,fi));
+		//res.add(getSymbolicConnectivityEquation(parentFlowout,fi));
 		return res;
 	}
 

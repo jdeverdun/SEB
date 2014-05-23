@@ -61,14 +61,17 @@ public class Vein extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
 			if(getParents().size()>1)
 				res.add(getSymbolicInitialMomentumEquationDoubleParent(parentFlowout,pr,parentPressure));
 			else
 				res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
-		}
+		}*/
 		// connectivite si besoin
 		if(!isInitialConnectivityAdded()){
 			boolean addconnectivity = true;
@@ -82,8 +85,8 @@ public class Vein extends ElasticTube {
 			}
 			if(!childFin.isEmpty() && !addconnectivity)
 				System.err.println("Why is there a vein connected to both a sinus and another vein?!");
-			if(addconnectivity)
-				res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
+			//if(addconnectivity)
+				//res.add(getSymbolicInitialConnectivityEquation(childFin, fo));
 		}
 		
 		
@@ -110,6 +113,10 @@ public class Vein extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*
 		for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
@@ -117,7 +124,7 @@ public class Vein extends ElasticTube {
 				res.add(getSymbolicMomentumEquationDoubleParent(parentFlowout,ar,pr,parentPressure));
 			else
 				res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
-		}
+		}*/
 		
 		// connectivite si besoin
 		if(!isConnectivityAdded()){
@@ -132,8 +139,8 @@ public class Vein extends ElasticTube {
 			}
 			if(!childFin.isEmpty() && !addconnectivity)
 				System.err.println("Why is there a vein connected to both a sinus and another vein?!");
-			if(addconnectivity)
-				res.add(getSymbolicConnectivityEquation(childFin, fo));
+			/*if(addconnectivity)
+				res.add(getSymbolicConnectivityEquation(childFin, fo));*/
 		}
 		
 		return res;

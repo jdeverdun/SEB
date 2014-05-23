@@ -65,11 +65,14 @@ public class ThirdVentricle extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((Ventricle)parent).getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables);
 			res.add(getSymbolicInitialMomentumEquation(parentFlowout, parentPressure, pr));
-		}
+		}*/
 		
 		// Connectivity
 		SimpleVariable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1();
@@ -80,7 +83,7 @@ public class ThirdVentricle extends ElasticTube {
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables));
 		}
-		res.add(getSymbolicInitialConnectivityEquation(parentFlowout, leftbrain_flowout1, rightbrain_flowout1, leftbrain_flowout2, rightbrain_flowout2, fi));
+		//res.add(getSymbolicInitialConnectivityEquation(parentFlowout, leftbrain_flowout1, rightbrain_flowout1, leftbrain_flowout2, rightbrain_flowout2, fi));
 		return res;
 	}
 	
@@ -105,14 +108,17 @@ public class ThirdVentricle extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((Ventricle)parent).getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables);
 			SimpleVariable parentArea = findVariableWithName(((Ventricle)parent).getArea().getName(),variables);
 			SimpleVariable parentFlowout_current = ((Ventricle)parent).getFlowout();
 			SimpleVariable parentArea_current = ((Ventricle)parent).getArea();
 			res.add(getSymbolicMomentumEquation(parentFlowout, parentArea, parentFlowout_current, parentArea_current, parentPressure, pr));
-		}
+		}*/
 		
 		// Connectivity
 		SimpleVariable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1();
@@ -123,7 +129,7 @@ public class ThirdVentricle extends ElasticTube {
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables));
 		}
-		res.add(getSymbolicConnectivityEquation(parentFlowout, leftbrain_flowout1, rightbrain_flowout1, leftbrain_flowout2, rightbrain_flowout2, fi));
+		//res.add(getSymbolicConnectivityEquation(parentFlowout, leftbrain_flowout1, rightbrain_flowout1, leftbrain_flowout2, rightbrain_flowout2, fi));
 		return res;
 	}
 

@@ -62,16 +62,19 @@ public class SpinalCord extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((SAS)parent).getPressure().getName(),variables);
 			res.add(getSymbolicInitialMomentumEquation(fi, parentPressure, pr));
-		}
+		}*/
 
 		// Connectivity
 		SimpleVariable sasFlowout = ((SAS)getParents().get(0)).getFlowout();
 		SimpleVariable sasPressure = ((SAS)getParents().get(0)).getPressure();
 		ArrayList<SimpleVariable> psin = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, PRESSURE_LABEL, variables);
-		res.add(getSymbolicInitialConnectivityEquation(sasFlowout, fi, sasPressure, psin.get(0)));
+		//res.add(getSymbolicInitialConnectivityEquation(sasFlowout, fi, sasPressure, psin.get(0)));
 
 		//bilan connectivity
 		res.add(getSymbolicInitialBilanConnectivityEquation(fo));
@@ -98,16 +101,19 @@ public class SpinalCord extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((SAS)parent).getPressure().getName(),variables);
 			res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
-		}
+		}*/
 
 		// Connectivity
 		SimpleVariable sasFlowout = ((SAS)getParents().get(0)).getFlowout();
 		SimpleVariable sasPressure = ((SAS)getParents().get(0)).getPressure();
 		ArrayList<SimpleVariable> psin = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, PRESSURE_LABEL, variables);
-		res.add(getSymbolicConnectivityEquation(sasFlowout, fi, sasPressure, psin.get(0)));
+		//res.add(getSymbolicConnectivityEquation(sasFlowout, fi, sasPressure, psin.get(0)));
 
 		//bilan connectivity
 		res.add(getSymbolicBilanConnectivityEquation(fo));

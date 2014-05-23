@@ -73,7 +73,10 @@ public class Capillary extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
 			if(getParents().size()>1)
@@ -81,7 +84,7 @@ public class Capillary extends ElasticTube {
 			else
 				res.add(getSymbolicInitialMomentumEquation(fi, pr, parentPressure));
 			
-		}
+		}*/
 		
 		// bilan connectivity
 		if(!isInitialBilanConnectivityAdded()){
@@ -124,14 +127,17 @@ public class Capillary extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(parent.getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(parent.getFlowout().getName(),variables);
 			if(getParents().size()>1)
 				res.add(getSymbolicMomentumEquationDoubleParent(parentFlowout,ar,pr,parentPressure));
 			else
 				res.add(getSymbolicMomentumEquation(fi, ar, pr, parentPressure));
-		}
+		}*/
 		
 		// bilan connectivity
 		if(!isBilanConnectivityAdded()){

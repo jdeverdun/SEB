@@ -56,27 +56,32 @@ public class VenousSinus extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
-		res.add(getSymbolicInitialContinuityEquation(fi, fo));
-		// Distensibility
+		ArrayList<SimpleVariable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
+		res.add(getSymbolicInitialContinuityEquation(fi, fo,psas.get(0),pr));
+		// Distensibility
+		
 		SimpleVariable pbrain_left = findVariableWithName(ModelSpecification.architecture.getBrain().getLeftHemi().getPressure().getName(),variables);
 		SimpleVariable pbrain_right = findVariableWithName(ModelSpecification.architecture.getBrain().getRightHemi().getPressure().getName(),variables);
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((Vein)parent).getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
 			res.add(getSymbolicInitialMomentumEquation(parentFlowout, parentPressure, pr));
-		}
+		}*/
 
 		// connectivity
-		ArrayList<SimpleVariable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
+		
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(parent.getFlowout().getName(),variables));
 		}
-		res.add(getSymbolicInitialConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
+		//res.add(getSymbolicInitialConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
 
 		// additonal momentum
 		res.add(getSymbolicInitialAddMomentumEquation(pr,fo));
@@ -97,30 +102,35 @@ public class VenousSinus extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
-		res.add(getSymbolicContinuityEquation(ar, fi, fo));
-		// Distensibility
+		ArrayList<SimpleVariable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
+		res.add(getSymbolicContinuityEquation(ar, fi, fo, psas.get(0),pr));
+		// Distensibility
+		
 		SimpleVariable pbrain_left = findVariableWithName(ModelSpecification.architecture.getBrain().getLeftHemi().getPressure().getName(),variables);
 		SimpleVariable pbrain_right = findVariableWithName(ModelSpecification.architecture.getBrain().getRightHemi().getPressure().getName(),variables);
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
 
 		// momentum
-		for(ElasticTube parent:getParents()){
+		res.add(getSymbolicInitialMomentumEquation(getParents(),variables));
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		/*for(ElasticTube parent:getParents()){
 			SimpleVariable parentPressure = findVariableWithName(((Vein)parent).getPressure().getName(),variables);
 			SimpleVariable parentFlowout = findVariableWithName(((Vein)parent).getFlowout().getName(),variables);
 			SimpleVariable parentArea = findVariableWithName(((Vein)parent).getArea().getName(),variables);
 			SimpleVariable parentFlowout_current = ((Vein)parent).getFlowout();
 			SimpleVariable parentArea_current = ((Vein)parent).getArea();
 			res.add(getSymbolicMomentumEquation(parentFlowout, parentArea, parentFlowout_current, parentArea_current, parentPressure, pr));
-		}
+		}*/
 
 		// connectivity
-		ArrayList<SimpleVariable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
+		
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(parent.getFlowout().getName(),variables));
 		}
-		res.add(getSymbolicConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
+		//res.add(getSymbolicConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
 
 		// additonal momentum
 		res.add(getSymbolicAddMomentumEquation(pr,fo));
@@ -130,9 +140,9 @@ public class VenousSinus extends ElasticTube {
 
 
 	// symbolic equation (en chaine de caractere)
-	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo){
+	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo,SimpleVariable sasPressure,SimpleVariable pr){
 		// equ(14)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
@@ -166,9 +176,9 @@ public class VenousSinus extends ElasticTube {
 
 	// ================= init ========================
 
-	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo){
+	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo,SimpleVariable sasPressure, SimpleVariable pr){
 		// eq(14)
-		return fi.getName()+" - "+fo.getName();
+		return fi.getName()+" + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+pr.getName()+") - "+fo.getName();
 	}
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
 		// equ(29)
