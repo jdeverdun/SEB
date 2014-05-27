@@ -122,7 +122,7 @@ public class ModelRun extends Thread {
 				SystemParams.errordlg("Error while retrieving equations ["+e.toString()+"]");
 				return;
 			}
-
+ 
 
 			//////////////////////////////////////////////////////////
 			///                                                    ///
