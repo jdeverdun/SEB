@@ -39,6 +39,7 @@ public class ModelRun extends Thread {
 	private ArrayList<SimpleVariable> variables;
 	private ArrayList<SimpleVariable> fixedvariables;
 	private ArrayList<Variable> globalvariables;
+	private ArrayList<Variable> iterationvariables;
 	private ArrayList<String> equations;
 	private ArrayList<String> initEquations;
 
@@ -48,6 +49,7 @@ public class ModelRun extends Thread {
 		variables = new ArrayList<SimpleVariable>();
 		fixedvariables = new ArrayList<SimpleVariable>();
 		globalvariables = new ArrayList<Variable>();
+		iterationvariables = new ArrayList<Variable>();
 		equations = new ArrayList<String>();
 		initEquations = new ArrayList<String>();
 

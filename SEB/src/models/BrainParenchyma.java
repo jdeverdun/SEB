@@ -357,10 +357,10 @@ public class BrainParenchyma extends Tube {
 
 		// Momentum cappillary
 		ArrayList<SimpleVariable> pcap = findVariableWithStruct(getHemi(), Capillary.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
-		for(SimpleVariable pc : pcap){
-			res.add(getSymbolicInitialMomentumCappilaryEquation(getPressure(), pc, getAlpha1(), fi1));
-		}
-
+		/*for(SimpleVariable pc : pcap){
+			res.add(getSymbolicInitialMomentumCappilaryEquation(getPressure(), pcap, getAlpha1(), fi1));
+		}*/
+		res.add(getSymbolicInitialMomentumCappilaryEquation(getPressure(), pcap, getAlpha1(), fi1));
 		// Total volume
 		ArrayList<SimpleVariable> arteryArea = findVariableWithStruct(getHemi(), Artery.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		ArrayList<SimpleVariable> arteriolArea = findVariableWithStruct(getHemi(), Arteriole.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
@@ -406,10 +406,11 @@ public class BrainParenchyma extends Tube {
 
 		// Momentum cappillary
 		ArrayList<SimpleVariable> pcap = findVariableWithStruct(getHemi(), Capillary.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
-		for(SimpleVariable pc : pcap){
+		/*for(SimpleVariable pc : pcap){
 			res.add(getSymbolicMomentumCappilaryEquation(getPressure(), pc, getAlpha1(), fi1));
-		}
-
+		}*/
+		res.add(getSymbolicMomentumCappilaryEquation(getPressure(), pcap, getAlpha1(), fi1));
+		
 		// Total volume
 		ArrayList<SimpleVariable> arteryArea = findVariableWithStruct(getHemi(), Artery.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		ArrayList<SimpleVariable> arteriolArea = findVariableWithStruct(getHemi(), Arteriole.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
@@ -447,9 +448,19 @@ public class BrainParenchyma extends Tube {
 		return ""+ventriclePr.getName()+" - "+pr.getName()+" + "+alfa2.getName()+" * "+fout1.getName();
 	}
 
-	private String getSymbolicMomentumCappilaryEquation(SimpleVariable pr, SimpleVariable cappilaryPr, SimpleVariable alfa1, SimpleVariable fin1){
+	private String getSymbolicMomentumCappilaryEquation(SimpleVariable pr, ArrayList<SimpleVariable> pcap, SimpleVariable alfa1, SimpleVariable fin1){
 		// equ(61) et equ(65)
-		return ""+pr.getName()+" - "+cappilaryPr.getName()+" + "+getAlpha1().getName()+" * "+fin1.getName();
+		String val = "";
+		String prefix = "(";
+		int count = 0;
+		for(SimpleVariable pc : pcap){
+			if(count>0)
+				prefix = " + ";
+			val += prefix + pc.getName();
+			count++;
+		}
+		val += ")";
+		return ""+pr.getName()+" - (1/"+count+") * "+val+" + "+getAlpha1().getName()+" * "+fin1.getName();
 	}
 
 	private String getSymbolicConnectivityEquation(SimpleVariable fo1, SimpleVariable fo2, SimpleVariable fi1, SimpleVariable fi2){
@@ -514,9 +525,19 @@ public class BrainParenchyma extends Tube {
 		return ""+ventriclePr.getName()+" - "+pr.getName()+" + "+alfa2.getName()+" * "+fout1.getName();
 	}
 
-	private String getSymbolicInitialMomentumCappilaryEquation(SimpleVariable pr, SimpleVariable cappilaryPr, SimpleVariable alfa1, SimpleVariable fin1){
+	private String getSymbolicInitialMomentumCappilaryEquation(SimpleVariable pr, ArrayList<SimpleVariable> pcap, SimpleVariable alfa1, SimpleVariable fin1){
 		// equ(61) et equ(65)
-		return ""+pr.getName()+" - "+cappilaryPr.getName()+" + "+getAlpha1().getName()+" * "+fin1.getName();
+		String val = "";
+		String prefix = "(";
+		int count = 0;
+		for(SimpleVariable pc : pcap){
+			if(count>0)
+				prefix = " + ";
+			val += prefix + pc.getName();
+			count++;
+		}
+		val += ")";
+		return ""+pr.getName()+" - (1/"+count+") * "+val+" + "+getAlpha1().getName()+" * "+fin1.getName();
 	}
 
 	private String getSymbolicInitialConnectivityEquation(SimpleVariable fo1, SimpleVariable fo2, SimpleVariable fi1, SimpleVariable fi2){
