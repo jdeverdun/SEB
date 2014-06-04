@@ -13,23 +13,30 @@ public class Arteriole extends ElasticTube {
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
 	public static final float DEFAULT_PRESSURE = 80.0f*1333.2240f;
-
+	public static final float DEFAULT_SAl_Lv = 0.35f;
+	public static final String SAl_V_LABEL = "SAl_V";
+	protected SimpleVariable Sal_Lv;
+	
 	public Arteriole(String name, Hemisphere hemi) {
 		super(name, hemi, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
+		setSAl_Lv(DEFAULT_SAl_Lv);
 	}
 
 	public Arteriole(String name, Hemisphere hemi, float len, float a) {
 		super(name, hemi, len, a, DEFAULT_ALPHA, DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
+		setSAl_Lv(DEFAULT_SAl_Lv);
 	}
 
 	public Arteriole(String name, Hemisphere hemi, float len, float a, float alpha, float elast, float fin, float fout, float press) {
 		super(name, hemi, len, a, alpha, elast, fin, fout, press);
+		setSAl_Lv(DEFAULT_SAl_Lv);
 	}
 
 
 	public Arteriole(String name, Hemisphere hemi, float len, float a, float alpha, float elast, float fin, float fout, float press, ArrayList<ElasticTube> par,
 			ArrayList<ElasticTube> child) {
 		super(name, hemi, len, a, alpha, elast, fin, fout, press, par, child);
+		setSAl_Lv(DEFAULT_SAl_Lv);
 	}
 
 	public String toString(){
@@ -41,6 +48,27 @@ public class Arteriole extends ElasticTube {
 		return TUBE_NUM;
 	}
 
+	public SimpleVariable getSAl_Lv(){
+		return Sal_Lv;
+	}
+	public void setSAl_Lv(float salv) {
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+SAl_V_LABEL+"_"+getMyID(),salv, (Tube)this);
+		this.Sal_Lv = v;
+		/*SimpleVariable v = new SimpleVariable("T"+getTubeNum()+"_"+ELASTANCE_LABEL+"_"+getMyID(),elastance, (Tube)this);
+		this.elastance = v;*/
+	}	
+	@Override
+	public ArrayList<SimpleVariable> getFixedVariables(){
+		ArrayList<SimpleVariable> variables = super.getFixedVariables();
+		variables.add(getSAl_Lv());
+		return variables;
+	}
 	// ------------------- EQUATIONS -------------
 
 	/**
@@ -138,7 +166,7 @@ public class Arteriole extends ElasticTube {
 	
 	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo){
 		// equ(2) et equ(7)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+" + "+getSAl_Lv().getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){
@@ -248,7 +276,7 @@ public class Arteriole extends ElasticTube {
 
 	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo){
 		// eq (2)  (7)
-		return fi.getName()+" - "+fo.getName();
+		return fi.getName()+" - "+fo.getName()+" - "+getSAl_Lv().getName();
 	}
 
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){

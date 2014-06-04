@@ -66,7 +66,9 @@ public class Capillary extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
-		res.add(getSymbolicInitialContinuityEquation(fi, fo));
+		SimpleVariable Scp_br = findVariableWithName(getAssociatedBrainParenchyma().getScp_br().getName(),variables);
+		SimpleVariable Sconst_cp_br = getAssociatedBrainParenchyma().getSconst_cp_br();
+		res.add(getSymbolicInitialContinuityEquation(fi, fo,Sconst_cp_br, Scp_br));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain = findVariableWithName(getAssociatedBrainParenchyma().getPressure().getName(),variables);
@@ -96,8 +98,8 @@ public class Capillary extends ElasticTube {
 			filist.addAll(ft4list);
 			//filist.addAll(ft3blist);
 			filist.addAll(ft3list);
-			SimpleVariable bfin1 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin1().getName(), variables);
-			SimpleVariable bfin2 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin2().getName(), variables);
+			SimpleVariable bfin1 = findVariableWithName(getAssociatedBrainParenchyma().getScp_br().getName(), variables);
+			SimpleVariable bfin2 = getAssociatedBrainParenchyma().getSconst_cp_br();
 			filist.add(bfin1);
 			filist.add(bfin2);
 			
@@ -120,7 +122,9 @@ public class Capillary extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
-		res.add(getSymbolicContinuityEquation(ar, fi, fo));
+		SimpleVariable Scp_br = findVariableWithName(getAssociatedBrainParenchyma().getScp_br().getName(),variables);
+		SimpleVariable Sconst_cp_br = getAssociatedBrainParenchyma().getSconst_cp_br();
+		res.add(getSymbolicContinuityEquation(ar, fi, fo,Sconst_cp_br, Scp_br));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain = findVariableWithName(getAssociatedBrainParenchyma().getPressure().getName(),variables);
@@ -149,8 +153,8 @@ public class Capillary extends ElasticTube {
 			filist.addAll(ft4list);
 			//filist.addAll(ft3blist);
 			filist.addAll(ft3list);
-			SimpleVariable bfin1 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin1().getName(), variables);
-			SimpleVariable bfin2 = findVariableWithName(getAssociatedBrainParenchyma().getFlowin2().getName(), variables);
+			SimpleVariable bfin1 = getAssociatedBrainParenchyma().getScp_br();
+			SimpleVariable bfin2 = getAssociatedBrainParenchyma().getSconst_cp_br();
 			filist.add(bfin1);
 			filist.add(bfin2);
 			res.add(getSymbolicBilanConnectivityEquation(folist, filist));
@@ -161,9 +165,9 @@ public class Capillary extends ElasticTube {
 
 
 	// symbolic equation (en chaine de caractere)
-	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo){
+	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo, SimpleVariable Sconst_cp_br, SimpleVariable Scp_br){
 		// equ(3) et equ(8)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+" + "+Sconst_cp_br.getName()+" + "+Scp_br.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){
@@ -206,9 +210,9 @@ public class Capillary extends ElasticTube {
 	
 	// ================= init ========================
 
-	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo){
+	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo, SimpleVariable SconstCp_Br, SimpleVariable SCp_Br){
 		// eq (3)  (8)
-		return fi.getName()+" - "+fo.getName();
+		return fi.getName()+" - "+fo.getName()+" - "+SconstCp_Br.getName()+" - "+SCp_Br.getName();
 	}
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){
 		// eq (18)  (23)

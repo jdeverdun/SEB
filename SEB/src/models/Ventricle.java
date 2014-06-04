@@ -55,6 +55,9 @@ public class Ventricle extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
+		SimpleVariable Sbr_lv = findVariableWithName(getAssociatedBrainParenchyma().getSbr_lv().getName(),variables);
+		SimpleVariable Sconst_br_lv = getAssociatedBrainParenchyma().getSconst_br_lv();
+		ArrayList<SimpleVariable> Sal_lv = findVariableWithStruct(getHemisphere(), Arteriole.TUBE_NUM, Arteriole.SAl_V_LABEL, variables);
 		res.add(getSymbolicInitialContinuityEquation(fi, fo));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
@@ -62,7 +65,7 @@ public class Ventricle extends ElasticTube {
 		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		res.add(getSymbolicInitialMomentumEquation(fi));
+		res.add(getSymbolicInitialMomentumEquation(fi,Sbr_lv,Sconst_br_lv,Sal_lv));
 		return res;
 	}
 	
@@ -80,6 +83,9 @@ public class Ventricle extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
+		SimpleVariable Sbr_lv = findVariableWithName(getAssociatedBrainParenchyma().getSbr_lv().getName(),variables);
+		SimpleVariable Sconst_br_lv = getAssociatedBrainParenchyma().getSconst_br_lv();
+		ArrayList<SimpleVariable> Sal_lv = findVariableWithStruct(getHemisphere(), Arteriole.TUBE_NUM, Arteriole.SAl_V_LABEL, variables);
 		res.add(getSymbolicContinuityEquation(ar, fi, fo));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
@@ -87,7 +93,7 @@ public class Ventricle extends ElasticTube {
 		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain));
 
 		// momentum
-		res.add(getSymbolicMomentumEquation(fi));
+		res.add(getSymbolicMomentumEquation(fi,Sbr_lv,Sconst_br_lv,Sal_lv));
 		return res;
 	}
 
@@ -103,9 +109,9 @@ public class Ventricle extends ElasticTube {
 		return " -"+ModelSpecification.damp.getName()+" * ("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+" )/"+ModelSpecification.dt.getName()+" + ("+pr.getName()+"-"+pbrain.getName()+" )-"+getElastance().getName()+" * ("+ar.getName()+" / "+getInitialArea().getName()+" -1)";
 	}
 
-	private String getSymbolicMomentumEquation(SimpleVariable fi){
+	private String getSymbolicMomentumEquation(SimpleVariable fi, SimpleVariable sbr_lv, SimpleVariable sconst_br_lv, ArrayList<SimpleVariable> sal_lv){
 		// equ(35) et equ(40)
-		return "("+fi.getName()+" - ("+0.003f+" + "+ModelSpecification.OUT_D.getName()+"("+ModelSpecification.currentIter.getName()+")))";
+		return getSymbolicInitialMomentumEquation(fi,sbr_lv,sconst_br_lv,sal_lv);
 	}
 
 	
@@ -114,14 +120,18 @@ public class Ventricle extends ElasticTube {
 
 	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo){
 		// eq (5)  (10)
-		return fi.getName()+" - "+fo.getName();
+		return fi.getName()+" - "+fo.getName();//+" - "+Sal_lv.getName()+" - "+Sbr_lv.getName+" - "+;
 	}
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){
 		// eq (20)  (25)
 		return "("+pr.getName()+" - "+pbrain.getName()+") - "+getElastance().getName()+" * ("+ar.getName()+"/"+getInitialArea().getName()+" - 1)";
 	}
-	private String getSymbolicInitialMomentumEquation(SimpleVariable fi){
+	private String getSymbolicInitialMomentumEquation(SimpleVariable fi, SimpleVariable sbr_lv, SimpleVariable sconst_br_lv, ArrayList<SimpleVariable> sal_lv){
 		// equ(35) et equ(40)
-		return "("+fi.getName()+" - ("+0.003f+"))";
+		String arteriols = "";
+		for(SimpleVariable si:sal_lv)
+			arteriols += " - "+si.getName();
+		return fi.getName()+" - "+sbr_lv.getName()+" - "+sconst_br_lv.getName()+arteriols;
+		//return "("+fi.getName()+" - ("+0.003f+"))";
 	}
 }

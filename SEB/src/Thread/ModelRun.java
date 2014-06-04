@@ -84,6 +84,7 @@ public class ModelRun extends Thread {
 				variables.addAll(tube.getVariables());
 				fixedvariables.addAll(tube.getFixedVariables());
 			}
+			
 
 			//////////////////////////////////////////////////////////
 			///                                                    ///
@@ -212,9 +213,12 @@ public class ModelRun extends Thread {
 
 			System.out.println("============ Equations ===========");
 			try {
+				ArrayList<SimpleVariable> fullvariablelist = new ArrayList<SimpleVariable>();
+				fullvariablelist.addAll(variables);
+				fullvariablelist.addAll(fixedvariables);
 				for(Tube tube : tubes){
-					initEquations.addAll(tube.getSymbolicInitialEquations(variables));
-					equations.addAll(tube.getSymbolicEquations(variables));
+					initEquations.addAll(tube.getSymbolicInitialEquations(fullvariablelist));
+					equations.addAll(tube.getSymbolicEquations(fullvariablelist));
 				}
 				for(String bloceq : equations){
 

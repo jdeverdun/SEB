@@ -12,21 +12,21 @@ public class BrainParenchyma extends Tube {
 	public static final float DEFAULT_AREA_SOLID = 70.0f;
 	public static final float DEFAULT_ALPHA1 = 8152.42f * 1333.2240f;
 	public static final float DEFAULT_ALPHA2 = 500.0f * 1333.2240f;
-	public static final float DEFAULT_FLOWIN1 = 0.002f;
-	public static final float DEFAULT_FLOWOUT1 = 0.002f;
+	public static final float DEFAULT_Scp_br = 0.002f;
+	public static final float DEFAULT_Sbr_lv = 0.002f;
 	public static final float DEFAULT_PRESSURE = 13332.24f;
-	public static final float DEFAULT_FLOWIN2 = 0.0005f;
-	public static final float DEFAULT_FLOWOUT2 = 0.0005f;
+	public static final float DEFAULT_Sconst_cp_br = 0.0005f;
+	public static final float DEFAULT_Sconst_br_lv = 0.0005f;
 	protected static String BRAIN_LABEL = "brain";
 	protected static String LENGTH_LABEL = "l";
 	protected static String AREA_FLUID_LABEL = "Af";
 	protected static String AREA_SOLID_LABEL = "As";
 	protected static String ALPHA1_LABEL = "alpha1";
 	protected static String ALPHA2_LABEL = "alpha2";
-	protected static String FLOWIN1_LABEL = "fin1";
-	protected static String FLOWIN2_LABEL = "fin2";
-	protected static String FLOWOUT1_LABEL = "fout1";
-	protected static String FLOWOUT2_LABEL = "fout2";
+	protected static String Scp_br_LABEL = "Scp_br";
+	protected static String Sconst_cp_br_LABEL = "Sconst_cp_br";
+	protected static String Sbr_lv_LABEL = "Sbr_lv";
+	protected static String Sconst_br_lv_LABEL = "Sconst_br_lv";
 	protected static String PRESSURE_LABEL = "P";
 	protected static String INITIAL_AREAFLUID_LABEL = "Af0"; 
 	protected static String INITIAL_AREASOLID_LABEL = "As0"; 
@@ -37,10 +37,10 @@ public class BrainParenchyma extends Tube {
 	private SimpleVariable initialAreaSolid;
 	private SimpleVariable alpha1; // connection to capillaries
 	private SimpleVariable alpha2; // connection to ventricles
-	private SimpleVariable flowin1;
-	private SimpleVariable flowin2;
-	private SimpleVariable flowout1;
-	private SimpleVariable flowout2;
+	private SimpleVariable Scp_br;
+	private SimpleVariable Sconst_cp_br;
+	private SimpleVariable Sbr_lv;
+	private SimpleVariable Sconst_br_lv;
 	private SimpleVariable pressure;
 
 
@@ -53,10 +53,10 @@ public class BrainParenchyma extends Tube {
 		setAreaSolid(DEFAULT_AREA_SOLID);
 		setAlpha1(DEFAULT_ALPHA1);
 		setAlpha2(DEFAULT_ALPHA2);
-		setFlowin1(DEFAULT_FLOWIN1);
-		setFlowin2(DEFAULT_FLOWIN2);
-		setFlowout1(DEFAULT_FLOWOUT1);
-		setFlowout2(DEFAULT_FLOWOUT2);
+		setScp_br(DEFAULT_Scp_br);
+		setSconst_cp_br(DEFAULT_Sconst_cp_br);
+		setSbr_lv(DEFAULT_Sbr_lv);
+		setSconst_br_lv(DEFAULT_Sconst_br_lv);
 		setPressure(DEFAULT_PRESSURE);
 	}
 
@@ -69,10 +69,10 @@ public class BrainParenchyma extends Tube {
 		setAreaSolid(DEFAULT_AREA_SOLID);
 		setAlpha1(DEFAULT_ALPHA1);
 		setAlpha2(DEFAULT_ALPHA2);
-		setFlowin1(DEFAULT_FLOWIN1);
-		setFlowin2(DEFAULT_FLOWIN2);
-		setFlowout1(DEFAULT_FLOWOUT1);
-		setFlowout2(DEFAULT_FLOWOUT2);
+		setScp_br(DEFAULT_Scp_br);
+		setSconst_cp_br(DEFAULT_Sconst_cp_br);
+		setSbr_lv(DEFAULT_Sbr_lv);
+		setSconst_br_lv(DEFAULT_Sconst_br_lv);
 		setPressure(DEFAULT_PRESSURE);
 	}
 
@@ -85,10 +85,10 @@ public class BrainParenchyma extends Tube {
 		setAreaSolid(aSolid);
 		setAlpha1(alf1);
 		setAlpha2(alf2);
-		setFlowin1(fin1);
-		setFlowin2(fin2);
-		setFlowout1(fout1);
-		setFlowout2(fout2);
+		setScp_br(fin1);
+		setSconst_cp_br(fin2);
+		setSbr_lv(fout1);
+		setSconst_br_lv(fout2);
 		setPressure(press);
 	}
 
@@ -172,64 +172,64 @@ public class BrainParenchyma extends Tube {
 		this.alpha2 = v;
 	}
 
-	public SimpleVariable getFlowin1() {
-		return flowin1;
+	public SimpleVariable getScp_br() {
+		return Scp_br;
 	}
 
-	public void setFlowin1(float flowin1) {
+	public void setScp_br(float flowin1) {
 		String prefix = "";
 		if(getHemi() == Hemisphere.LEFT)
 			prefix = "L_";
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN1_LABEL+"_"+BRAIN_LABEL,flowin1, (Tube)this);
-		this.flowin1 = v;
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+Scp_br_LABEL+"_"+BRAIN_LABEL,flowin1, (Tube)this);
+		this.Scp_br = v;
 	}
 
-	public SimpleVariable getFlowin2() {
-		return flowin2;
+	public SimpleVariable getSconst_cp_br() {
+		return Sconst_cp_br;
 	}
 
-	public void setFlowin2(float flowin2) {
+	public void setSconst_cp_br(float flowin2) {
 		String prefix = "";
 		if(getHemi() == Hemisphere.LEFT)
 			prefix = "L_";
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWIN2_LABEL+"_"+BRAIN_LABEL,flowin2, (Tube)this);
-		this.flowin2 = v;
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+Sconst_cp_br_LABEL+"_"+BRAIN_LABEL,flowin2, (Tube)this);
+		this.Sconst_cp_br = v;
 	}
 
-	public SimpleVariable getFlowout1() {
-		return flowout1;
+	public SimpleVariable getSbr_lv() {
+		return Sbr_lv;
 	}
 
-	public void setFlowout1(float flowout1) {
+	public void setSbr_lv(float flowout1) {
 		String prefix = "";
 		if(getHemi() == Hemisphere.LEFT)
 			prefix = "L_";
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT1_LABEL+"_"+BRAIN_LABEL,flowout1, (Tube)this);
-		this.flowout1 = v;
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+Sbr_lv_LABEL+"_"+BRAIN_LABEL,flowout1, (Tube)this);
+		this.Sbr_lv = v;
 	}
 
-	public SimpleVariable getFlowout2() {
-		return flowout2;
+	public SimpleVariable getSconst_br_lv() {
+		return Sconst_br_lv;
 	}
 
-	public void setFlowout2(float flowout2) {
+	public void setSconst_br_lv(float flowout2) {
 		String prefix = "";
 		if(getHemi() == Hemisphere.LEFT)
 			prefix = "L_";
 		else
 			if(getHemi() == Hemisphere.RIGHT)
 				prefix = "R_";
-		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+FLOWOUT2_LABEL+"_"+BRAIN_LABEL,flowout2, (Tube)this);
-		this.flowout2 = v;
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+Sconst_br_lv_LABEL+"_"+BRAIN_LABEL,flowout2, (Tube)this);
+		this.Sconst_br_lv = v;
 	}
 
 	public SimpleVariable getPressure() {
@@ -306,10 +306,10 @@ public class BrainParenchyma extends Tube {
 	public ArrayList<SimpleVariable> getVariables(){
 		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
 		if(ModelSpecification.SIM_MODE != SimulationMode.DEBUG){
-			variables.add(getFlowin1());
-			variables.add(getFlowin2());
-			variables.add(getFlowout1());
-			variables.add(getFlowout2());
+			variables.add(getScp_br());
+			//variables.add(getFlowin2());
+			variables.add(getSbr_lv());
+			//variables.add(getFlowout2());
 			variables.add(getPressure());
 			variables.add(getAreaFluid());
 		}
@@ -322,6 +322,8 @@ public class BrainParenchyma extends Tube {
 		variables.add(getInitialAreaFluid());
 		variables.add(getInitialAreaSolid());
 		variables.add(getLength());
+		variables.add(getSconst_cp_br());
+		variables.add(getSconst_br_lv());
 		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG)
 			variables.add(getPressure());
 		return variables;
@@ -345,10 +347,10 @@ public class BrainParenchyma extends Tube {
 		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG)
 			return res;
 		// Connectivity
-		SimpleVariable fi1 = findVariableWithName(getFlowin1().getName(),variables);
-		SimpleVariable fi2 = findVariableWithName(getFlowin2().getName(),variables);
-		SimpleVariable fo1 = findVariableWithName(getFlowout1().getName(),variables);
-		SimpleVariable fo2 = findVariableWithName(getFlowout2().getName(),variables);
+		SimpleVariable fi1 = findVariableWithName(getScp_br().getName(),variables);
+		SimpleVariable fi2 = getSconst_cp_br();
+		SimpleVariable fo1 = findVariableWithName(getSbr_lv().getName(),variables);
+		SimpleVariable fo2 = getSconst_br_lv();
 		res.add(getSymbolicInitialConnectivityEquation(fo1, fo2, fi1, fi2));
 
 		// Momentum ventricle
@@ -376,9 +378,9 @@ public class BrainParenchyma extends Tube {
 		res.add(getSymbolicInitialTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea.get(0), ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
 
 		// Additional equations
-		res.add(getSymbolicInitialAdditionalFout2Equation(fo2));
+		//res.add(getSymbolicInitialAdditionalFout2Equation(fo2));
 
-		res.add(getSymbolicInitialAdditionalFin2Equation(fi2));
+		//res.add(getSymbolicInitialAdditionalFin2Equation(fi2));
 
 		return res;
 	}
@@ -394,10 +396,10 @@ public class BrainParenchyma extends Tube {
 		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG)
 			return res;
 		// Connectivity
-		SimpleVariable fi1 = findVariableWithName(getFlowin1().getName(),variables);
-		SimpleVariable fi2 = findVariableWithName(getFlowin2().getName(),variables);
-		SimpleVariable fo1 = findVariableWithName(getFlowout1().getName(),variables);
-		SimpleVariable fo2 = findVariableWithName(getFlowout2().getName(),variables);
+		SimpleVariable fi1 = findVariableWithName(getScp_br().getName(),variables);
+		SimpleVariable fi2 = getSconst_cp_br();
+		SimpleVariable fo1 = findVariableWithName(getSbr_lv().getName(),variables);
+		SimpleVariable fo2 = getSconst_br_lv();
 		res.add(getSymbolicConnectivityEquation(fo1, fo2, fi1, fi2));
 
 		// Momentum ventricle
@@ -426,9 +428,9 @@ public class BrainParenchyma extends Tube {
 		res.add(getSymbolicTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea.get(0), ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
 
 		// Additional equations
-		res.add(getSymbolicAdditionalFout2Equation(fo2));
+		//res.add(getSymbolicAdditionalFout2Equation(fo2));
 
-		res.add(getSymbolicAdditionalFin2Equation(fi2));
+		//res.add(getSymbolicAdditionalFin2Equation(fi2));
 
 		return res;
 	}

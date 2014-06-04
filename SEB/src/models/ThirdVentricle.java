@@ -75,10 +75,10 @@ public class ThirdVentricle extends ElasticTube {
 		}*/
 		
 		// Connectivity
-		SimpleVariable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1();
-		SimpleVariable rightbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout2();
-		SimpleVariable leftbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout1();
-		SimpleVariable rightbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout2();
+		SimpleVariable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getSbr_lv();
+		SimpleVariable rightbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getSconst_br_lv();
+		SimpleVariable leftbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getSbr_lv();
+		SimpleVariable rightbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getSconst_br_lv();
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables));
@@ -121,10 +121,10 @@ public class ThirdVentricle extends ElasticTube {
 		}*/
 		
 		// Connectivity
-		SimpleVariable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout1();
-		SimpleVariable rightbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getFlowout2();
-		SimpleVariable leftbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout1();
-		SimpleVariable rightbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getFlowout2();
+		SimpleVariable leftbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getSbr_lv();
+		SimpleVariable rightbrain_flowout1 = ModelSpecification.architecture.getBrain().getLeftHemi().getSconst_br_lv();
+		SimpleVariable leftbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getSbr_lv();
+		SimpleVariable rightbrain_flowout2 = ModelSpecification.architecture.getBrain().getRightHemi().getSconst_br_lv();
 		ArrayList<SimpleVariable> parentFlowout = new ArrayList<SimpleVariable>();
 		for(ElasticTube parent:getParents()){
 			parentFlowout.add(findVariableWithName(((Ventricle)parent).getFlowout().getName(),variables));
