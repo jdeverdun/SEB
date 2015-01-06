@@ -291,6 +291,7 @@ public class SEButils {
 			tubepan = ljsf.getTubePanel();
 			break;
 		default:
+			System.out.println(cont[1]);
 			System.err.println("Unknown tube ...");
 			break;
 		}
