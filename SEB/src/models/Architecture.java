@@ -83,8 +83,10 @@ public class Architecture {
 	public boolean checkArchitectureValidity(ElasticTube startPoint) {
 		if(startPoint instanceof VenousSinus)
 			return true;
-		if(!(startPoint instanceof FirstArtery) && !checkValidity(startPoint))
+		if(!(startPoint instanceof FirstArtery) && !checkValidity(startPoint)){
+			//System.out.println(startPoint);
 			return false;
+		}
 		for(ElasticTube tube : startPoint.getChildren()){
 		//	if(!(startPoint instanceof FirstArtery) && !(tube instanceof VenousSinus) && tube.getHemisphere() != startPoint.getHemisphere())
 		//		return false;
@@ -109,12 +111,16 @@ public class Architecture {
 		if((t1.getParents().isEmpty() && t1.getChildren().isEmpty()))
 			return false;
 		for(ElasticTube parent : t1.getParents()){
-			if(iterativeCheckIndirectParentLink(t1, parent,0))
+			if(iterativeCheckIndirectParentLink(t1, parent,0)){
+				//System.out.println("+++\n"+t1+"\n"+parent+"\n------");
 				return false;
+			}
 		}
 		for(ElasticTube child : t1.getChildren()){// A VOIR si il y a un soucis
-			if(iterativeCheckIndirectChildLink(t1, child,0))
+			if(iterativeCheckIndirectChildLink(t1, child,0)){
+				System.out.println("+++\n"+t1+"\n"+child+"\n------");
 				return false;
+			}
 		}
 		return true;
 	}
@@ -122,7 +128,6 @@ public class Architecture {
 	private boolean iterativeCheckIndirectParentLink(ElasticTube t1, ElasticTube parent,int level) {
 		if(parent.equals(t1))
 			return true;
-		
 		for(ElasticTube locparent : t1.getParents()){
 			if(locparent.equals(parent) && level == 0)
 				continue;

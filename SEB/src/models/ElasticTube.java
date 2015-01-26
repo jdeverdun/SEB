@@ -365,6 +365,7 @@ public abstract class ElasticTube extends Tube {
 	
 	protected String getSymbolicInitialMomentumEquationOut(ArrayList<ElasticTube> children, ArrayList<SimpleVariable> variables) throws Exception {
 		// eq (31)  (36)
+		// PROBLEME QUAND NOMBRE IMPAIR
 		if(children.size()>1 || (children.size()==1 && children.get(0).getParents().size()>1)){
 			String left = "(";
 			String usedvar = "@@";
@@ -386,10 +387,17 @@ public abstract class ElasticTube extends Tube {
 				for(SimpleVariable alp:alphalist){
 					if(!alp.getName().equals(el.getAlpha().getName()) && !usedvar.contains(alp.getName())){
 						localpha = alp.getName();
+								
 						usedvar += localpha + "@@";
 						break;
 					}
 				}
+				// DEBUG
+				/*if(localpha.equals("")){
+					System.out.println(el);
+					System.exit(0);
+				}*/
+				// fin DEBUG
 				if(!left.equals("("))
 					prefix = " + ";
 				left += prefix + localpha + "* (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
@@ -421,8 +429,10 @@ public abstract class ElasticTube extends Tube {
 	
 	@Override
 	public boolean equals(Object v) {
+		
 		if (v instanceof ElasticTube){
-			return getMyID() == ((ElasticTube)v).getMyID();
+			return ((ElasticTube)v).getName().equals(getName());//getMyID() == ((ElasticTube)v).getMyID() & 
+			
 		}
 		return false;
 	}
