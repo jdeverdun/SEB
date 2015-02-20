@@ -108,14 +108,15 @@ public class GlobalArchitectureToolbar extends JToolBar{
 						capleft.getTubePanel().addLineLinkAsChild(new LineLink(arteriolleft,capleft));
 						vlleft.getTubePanel().addLineLinkAsChild(new LineLink(capleft,vlleft));
 						vleft.getTubePanel().addLineLinkAsChild(new LineLink(vlleft,vleft));
-						jsd.getVenousSinousFrame().getTubePanel().addLineLinkAsChild(new LineLink(vleft,jsd.getVenousSinousFrame()));
+						jsd.addVenousSinus();
+						jsd.getVenousSinousFrame().get(0).getTubePanel().addLineLinkAsChild(new LineLink(vleft,jsd.getVenousSinousFrame().get(0)));
 						// links right
 						artright.getTubePanel().addLineLinkAsChild(new LineLink(jsd.getFirstArteryFrame().get(0),artright));
 						arteriolright.getTubePanel().addLineLinkAsChild(new LineLink(artright,arteriolright));
 						capright.getTubePanel().addLineLinkAsChild(new LineLink(arteriolright,capright));
 						vlright.getTubePanel().addLineLinkAsChild(new LineLink(capright,vlright));
 						vright.getTubePanel().addLineLinkAsChild(new LineLink(vlright,vright));
-						jsd.getVenousSinousFrame().getTubePanel().addLineLinkAsChild(new LineLink(vright,jsd.getVenousSinousFrame()));
+						jsd.getVenousSinousFrame().get(0).getTubePanel().addLineLinkAsChild(new LineLink(vright,jsd.getVenousSinousFrame().get(0)));
 					}
 				});
 				
@@ -137,8 +138,10 @@ public class GlobalArchitectureToolbar extends JToolBar{
 				for(JScrollInternalFrame jsf : jsd.getFirstArteryFrame())
 					if(jsf.getLineLinks().isEmpty())
 						farterror = true;
-
-				if(farterror || jsd.getVenousSinousFrame().getLineLinks().isEmpty()){
+				for(JScrollInternalFrame jsf : jsd.getVenousSinousFrame())
+					if(jsf.getLineLinks().isEmpty())
+						farterror = true;
+				if(farterror){
 					errordlg("First artery and/or vSinous are linked to nothing !");
 					return;
 				}
@@ -152,7 +155,10 @@ public class GlobalArchitectureToolbar extends JToolBar{
 					for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
 						if(jsf == ljsf)
 							jsfequals = true;
-					if(!jsfequals && jsf != jsd.getVenousSinousFrame()){
+					for(JScrollInternalFrame ljsf : jsd.getVenousSinousFrame())
+						if(jsf == ljsf)
+							jsfequals = true;
+					if(!jsfequals){
 						isChild = false;
 						isParent = false;
 						if(jsf.getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT)
@@ -230,7 +236,7 @@ public class GlobalArchitectureToolbar extends JToolBar{
 					if(jsf.getLocation().getY()>maxy)
 						maxy = jsf.getLocation().getY();
 				
-				jsd.getVenousSinousFrame().setLocation((int) (xcenter - iframeDim.getWidth()/2), (int) (2*(iframeDim.getHeight()+yoffset)+maxy-iframeDim.getHeight()-25));
+				//jsd.getVenousSinousFrame().setLocation((int) (xcenter - iframeDim.getWidth()/2), (int) (2*(iframeDim.getHeight()+yoffset)+maxy-iframeDim.getHeight()-25));
 			}
 
 

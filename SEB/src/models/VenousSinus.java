@@ -84,7 +84,8 @@ public class VenousSinus extends ElasticTube {
 		//res.add(getSymbolicInitialConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
 
 		// additonal momentum
-		res.add(getSymbolicInitialAddMomentumEquation(pr,fo));
+		if(getChildren().isEmpty())
+			res.add(getSymbolicInitialAddMomentumEquation(pr,fo));
 				
 		return res;
 	}
@@ -132,8 +133,9 @@ public class VenousSinus extends ElasticTube {
 		}
 		//res.add(getSymbolicConnectivityEquation(parentFlowout, psas.get(0), pr, fi));
 
-		// additonal momentum
-		res.add(getSymbolicAddMomentumEquation(pr,fo));
+		// additonal momentum que si fils est vide hein ? 
+		if(getChildren().isEmpty())
+			res.add(getSymbolicAddMomentumEquation(pr,fo));
 				
 		return res;
 	}

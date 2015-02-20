@@ -149,7 +149,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	private LineLink lineClicked = null;
 	private ArrayList<JScrollInternalFrame> internalFrames;
 	private ArrayList<JScrollInternalFrame> firstArteryFrame;
-	private JScrollInternalFrame venousSinousFrame;
+	private ArrayList<JScrollInternalFrame> venousSinousFrame;
 	private JScrollInternalFrame ventricleleftFrame;
 	private JScrollInternalFrame ventriclerightFrame;
 	private JScrollInternalFrame thirdVentFrame;
@@ -191,6 +191,7 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
     public JScrollDesktopPane() {
         internalFrames = new ArrayList<JScrollInternalFrame>();
         firstArteryFrame = new ArrayList<JScrollInternalFrame>();
+        venousSinousFrame = new ArrayList<JScrollInternalFrame>();
         setLayout(new BorderLayout());
         desktopMediator = new DesktopMediator(this);
         addMouseListener(this);
@@ -288,6 +289,10 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
     		return null;
     	Vein v = new Vein("", hemi);
     	return add(v.getName(),new ImageIcon(IconLibrary.VEIN.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(v, TubeClass.Vein), false);
+    }
+    public JInternalFrame addVenousSinus() {
+    	VenousSinus v = new VenousSinus("");
+    	return add(v.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(v, TubeClass.VenousSinus), false);
     }
  
 
@@ -562,8 +567,8 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 				FirstArtery fart3 = new FirstArtery("");
 				addFirstArteryFrame((JScrollInternalFrame) add(fart3.getName(),new ImageIcon(IconLibrary.FIRSTARTERY.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(fart3, TubeClass.FirstArtery), false,(int) (fart_location.x+JScrollInternalFrame.DEFAULT_DIMENSION.width*1.5),fart_location.y));
 			}
-			VenousSinus vsinous = new VenousSinus("");
-			setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));
+			//VenousSinus vsinous = new VenousSinus("");
+			//setVenousSinousFrame((JScrollInternalFrame) add(vsinous.getName(),new ImageIcon(IconLibrary.VENOUSSENOUS.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)), new TubePanel(vsinous, TubeClass.VenousSinus), false,vsinous_location.x,vsinous_location.y));
 			WindowManager.MAINWINDOW.getTabbedPane().setSelectedIndex(1);
 			
 			
@@ -629,15 +634,15 @@ public class JScrollDesktopPane extends JPanel implements DesktopConstants, Mous
 	/**
 	 * @return the venousSinousFrame
 	 */
-	public JScrollInternalFrame getVenousSinousFrame() {
+	public ArrayList<JScrollInternalFrame> getVenousSinousFrame() {
 		return venousSinousFrame;
 	}
 
 	/**
 	 * @param venousSinousFrame the venousSinousFrame to set
 	 */
-	public void setVenousSinousFrame(JScrollInternalFrame venousSinousFrame) {
-		this.venousSinousFrame = venousSinousFrame;
+	public void addVenousSinousFrame(JScrollInternalFrame venousSinousFrame) {
+		this.venousSinousFrame.add(venousSinousFrame);
 	}
 
 	/**

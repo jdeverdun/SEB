@@ -425,7 +425,7 @@ public class BrainParenchyma extends Tube {
 		ArrayList<SimpleVariable> fourthvArea = findVariableWithStruct(Hemisphere.BOTH, FourthVentricle.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		ArrayList<SimpleVariable> sasArea = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, ElasticTube.AREA_LABEL, variables);
 		SimpleVariable brainFluidArea = findVariableWithName(getAreaFluid().getName(), variables);
-		res.add(getSymbolicTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea.get(0), ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
+		res.add(getSymbolicTotalVolumeEquation(arteryArea, arteriolArea, cappilaryArea, veinuleArea, veinArea, vsinousArea, ventricleArea.get(0), thirdvArea.get(0), fourthvArea.get(0), sasArea.get(0), brainFluidArea));
 
 		// Additional equations
 		//res.add(getSymbolicAdditionalFout2Equation(fo2));
@@ -471,7 +471,7 @@ public class BrainParenchyma extends Tube {
 	}
 
 	private String getSymbolicTotalVolumeEquation(ArrayList<SimpleVariable> arteryArea, ArrayList<SimpleVariable> arteriolArea, ArrayList<SimpleVariable> cappilaryArea, ArrayList<SimpleVariable> veinuleArea,
-			ArrayList<SimpleVariable> veinArea,SimpleVariable vsinousArea, SimpleVariable ventricleArea,  SimpleVariable thirdvArea, SimpleVariable fourthvArea,
+			ArrayList<SimpleVariable> veinArea,ArrayList<SimpleVariable> vsinousArea, SimpleVariable ventricleArea,  SimpleVariable thirdvArea, SimpleVariable fourthvArea,
 			SimpleVariable sasArea, SimpleVariable brainFluidArea){
 		// equ(63) et equ(67)
 		String res1 = "(";
@@ -496,8 +496,11 @@ public class BrainParenchyma extends Tube {
 			res1 += "("+va.getName() +" * "+ ((Vein)va.getSourceObj()).getLength().getName()+") + ";
 			res2 += "("+((Vein)va.getSourceObj()).getInitialArea().getName() +" * "+ ((Vein)va.getSourceObj()).getLength().getName()+") + ";  
 		}
-		res1 += "("+0.5f +" * "+ vsinousArea.getName() +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getLength().getName()+") + ";  
-		res2 += "("+0.5f +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getInitialArea().getName() +" * "+ ((VenousSinus)vsinousArea.getSourceObj()).getLength().getName()+") + ";  
+		for(SimpleVariable va: vsinousArea){
+			res1 += "("+0.5f +" * "+ va.getName() +" * "+ ((VenousSinus)va.getSourceObj()).getLength().getName()+") + ";  
+			res2 += "("+0.5f +" * "+ ((VenousSinus)va.getSourceObj()).getInitialArea().getName() +" * "+ ((VenousSinus)va.getSourceObj()).getLength().getName()+") + ";  
+		}
+		
 		res1 += "("+ventricleArea.getName() +" * "+ ((Ventricle)ventricleArea.getSourceObj()).getLength().getName()+") + "; 
 		res2 += "("+((Ventricle)ventricleArea.getSourceObj()).getInitialArea().getName() +" * "+ ((Ventricle)ventricleArea.getSourceObj()).getLength().getName()+") + ";  
 		res1 += "("+0.5f +" * "+ (thirdvArea.getName() +" * "+ ((ThirdVentricle)thirdvArea.getSourceObj()).getLength().getName())+") + "; 

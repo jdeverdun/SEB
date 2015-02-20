@@ -239,8 +239,12 @@ public class SEButils {
 			tubepan = ljsf.getTubePanel();
 			break;
 		case VenousSinus.TUBE_NUM:
-			WindowManager.MAINWINDOW.getGraphicalModelPanel().getVenousSinousFrame().setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
-			tubepan = WindowManager.MAINWINDOW.getGraphicalModelPanel().getVenousSinousFrame().getTubePanel();
+			ljsf = ((JScrollInternalFrame)WindowManager.MAINWINDOW.getGraphicalModelPanel().addVenousSinus());
+			ljsf.setLocation(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
+			WindowManager.MAINWINDOW.getGraphicalModelPanel().addVenousSinousFrame(ljsf);
+			tubepan = ljsf.getTubePanel();
+			
+			
 			break;
 		case Ventricle.TUBE_NUM:
 			if(hemi == Hemisphere.LEFT)

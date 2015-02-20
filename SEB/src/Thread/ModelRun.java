@@ -143,15 +143,14 @@ public class ModelRun extends Thread {
 				}
 			});
 		}else{
-			if(jsd.getFirstArteryFrame()==null || jsd.getVenousSinousFrame() == null){
+			if(jsd.getFirstArteryFrame()==null || jsd.getVenousSinousFrame().isEmpty()){
 				SystemParams.errordlg("Missing first artery or venous sinous or both !");
 				return;
 			}
 			ArrayList<FirstArtery> firstArtery = new ArrayList<FirstArtery>();
 			for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
 				firstArtery.add((FirstArtery) ljsf.getTubePanel().getTube());
-			VenousSinus vsinous = (VenousSinus) jsd.getVenousSinousFrame().getTubePanel().getTube();
-			if(firstArtery.isEmpty() || vsinous == null){
+			if(firstArtery.isEmpty()){
 				SystemParams.errordlg("Missing first artery or venous senous");
 				return;
 			}
@@ -161,7 +160,20 @@ public class ModelRun extends Thread {
 			BrainParenchyma right_brain = new BrainParenchyma("right_brain", Hemisphere.RIGHT);
 			Brain brain = new Brain(left_brain, right_brain);
 
-			architecture = new Architecture(firstArtery, vsinous, brain);
+			// on recherche la fin (le dernier sinus)
+			ArrayList<JScrollInternalFrame> sinfr = WindowManager.MAINWINDOW.getGraphicalModelPanel().getVenousSinousFrame();
+			VenousSinus endpoint = null;
+			for(JScrollInternalFrame ljsf : sinfr){
+				if(ljsf.getTubePanel().getTube().getChildren().isEmpty()){
+					endpoint = (VenousSinus) ljsf.getTubePanel().getTube();
+					break;
+				}
+			}
+			if(endpoint == null){
+				SystemParams.errordlg("Couldn't find the terminal vsinous");
+				return;
+			}
+			architecture = new Architecture(firstArtery, endpoint, brain);
 			// on initialise le systeme (pression entree - sortie)
 			ModelSpecification.init(architecture);
 			// on verifie la structure
@@ -306,7 +318,10 @@ public class ModelRun extends Thread {
 		for(JScrollInternalFrame jsf : jsd.getFirstArteryFrame())
 			if(jsf.getLineLinks().isEmpty())
 				farterror = true;
-		if( farterror || jsd.getVenousSinousFrame().getLineLinks().isEmpty()){
+		for(JScrollInternalFrame jsf:jsd.getVenousSinousFrame())
+			if(jsf.getLineLinks().isEmpty())
+				farterror = true;
+		if( farterror){
 			SystemParams.errordlg("First arteries and/or vSinous are linked to nothing !");
 			return false;
 		}
@@ -320,7 +335,10 @@ public class ModelRun extends Thread {
 			for(JScrollInternalFrame ljsf : jsd.getFirstArteryFrame())
 				if(jsf == ljsf)
 					jsfequals = true;
-			if(!jsfequals && jsf != jsd.getVenousSinousFrame()){
+			for(JScrollInternalFrame ljsf : jsd.getVenousSinousFrame())
+				if(jsf == ljsf)
+					jsfequals = true;
+			if(!jsfequals){
 				isChild = false;
 				isParent = false;
 				if(jsf.getTubePanel().getTube().getHemisphere() == Hemisphere.LEFT)
