@@ -82,6 +82,7 @@ public class MatlabBuilder {
 		//mainFileContent +=  createVariablesInitialization(fixedvariables);// on en aura peut etre besoin !
 		mainFileContent += createInitialFsolve(equationsInitialFunctionName, globalvariables);
 		mainFileContent += createRetrieveGlobal(globalvariables,variables); // a partir du x
+		mainFileContent += createMonitoringVars(variables,"1"); // on recup les valeurs initiales
 		mainFileContent += createTimeLoop(globalvariables,variables); // a partir du x
 		mainFileContent += createFooter(variables);		
 		
@@ -180,7 +181,7 @@ public class MatlabBuilder {
 		
 		content += addPrefixToContent(createTimeFsolve(equationsTimeFunctionName, globalvariables),"\t");
 		content += addPrefixToContent(createRetrieveGlobal(globalvariables, variables),"\t");
-		content += addPrefixToContent(createMonitoringVars(variables,currentIter.getName()),"\t");
+		content += addPrefixToContent(createMonitoringVars(variables,currentIter.getName()+"+1"),"\t");
 		content += "end" + NEWLINE_CHAR;
 		return content;
 	}

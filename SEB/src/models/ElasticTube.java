@@ -163,8 +163,9 @@ public abstract class ElasticTube extends Tube {
 			if(hemisphere == Hemisphere.RIGHT)
 				prefix = "R_";
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
-		// on recalcule le alpha
-		v.setValue("8*pi*(0.004/100)*"+getLength().getName()+"/("+getArea().getName()+"^2)");
+		// on recalcule le alpha ON NE RECALCULE PAS LE ALPHA ON SAIT LA VALEUR
+		// il faut mettre en m !
+		v.setValue("8*pi*0.004*("+getLength().getName()+"/10)/(("+getInitialArea().getName()+"/100)^2)");
 		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 		this.alpha = v;
 	}
@@ -359,6 +360,7 @@ public abstract class ElasticTube extends Tube {
 			right += ") * " + getFlowin().getName();
 			return left + " + " + right;
 		}else{
+			//return "(" + parents.get(0).getPressure().getName() + " - " + getPressure().getName() + ") + ("+getAlpha().getName()+ ") * "+getFlowin().getName();
 			return "(" + getPressure().getName() + " - " + parents.get(0).getPressure().getName() + ") + ("+getAlpha().getName()+ " + " + parents.get(0).getAlpha().getName()+ ") * "+getFlowin().getName();
 		}
 	}
@@ -421,6 +423,7 @@ public abstract class ElasticTube extends Tube {
 			right += ") * " + getFlowout().getName();
 			return left + " - " + right;
 		}else{
+			//return "" + getFlowout().getName() + " - " + children.get(0).getFlowin().getName();
 			return "(" + getPressure().getName() + " - " + children.get(0).getPressure().getName() + ") - ("+getAlpha().getName()+ " + " + children.get(0).getAlpha().getName()+ ") * "+getFlowout().getName();
 		}
 	}

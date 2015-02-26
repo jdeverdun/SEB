@@ -28,10 +28,10 @@ public class ModelSpecification {
 	public static SimpleVariable Pstar = new SimpleVariable("Pstar",(0.0f + 0.0f) * 1333.2240f,null);
 	public static SimpleVariable k1 = new SimpleVariable("k1",(float) 8.0e-7,null);
 	public static SimpleVariable TPout_alfa = new SimpleVariable("TPout_alfa",0.0809088f * 1333.2240f,null);
-	public static SimpleVariable dt = new SimpleVariable("dt",0.025f,null);
-	public static SimpleVariable damp = new SimpleVariable("damp",1.0f,null);
+	public static SimpleVariable dt = new SimpleVariable("dt",0.025f,null);//defaut 0.025
+	public static SimpleVariable damp = new SimpleVariable("damp",1.0f,null);// valeur initiale 1.0f
 	public static SimpleVariable damp2 = new SimpleVariable("damp2",0.0f,null);
-	public static SimpleVariable time_step = new SimpleVariable("time_step",120,null);
+	public static SimpleVariable time_step = new SimpleVariable("time_step",120,null);// valeur initiale 120
 	public static SimpleVariable currentIter = new SimpleVariable("currentIter");
 	public static SimpleVariable P_INIT_INITIAL = new SimpleVariable("P_INIT_INITIAL",(0.0f + 102.0f) * 1333.2240f,null);
 	public static SimpleVariable P_OUT_INITIAL = new SimpleVariable("P_OUT_INITIAL",(0.0f + 2.5f) * 1333.2240f,null);
@@ -75,13 +75,14 @@ public class ModelSpecification {
 	public static void init(Architecture arch){
 		architecture = arch;
 		currentIter.setValue(0);
-		time = new ArrayVariable(TIME_NAME ,new float[(int) time_step.getFloatValue()],null);
+		time = new ArrayVariable(TIME_NAME ,new float[(int) time_step.getFloatValue()+1],null);
 		P_INIT = new ArrayVariable(P_INIT_NAME, new float[(int) time_step.getFloatValue()], null);
 		P_OUT = new ArrayVariable(P_OUT_NAME,new float[(int) time_step.getFloatValue()], null);
 		OUT_D = new ArrayVariable(OUT_D_NAME,new float[(int) time_step.getFloatValue()], null);
 		fourrier_funct = new ArrayVariable(FOURRIER_FUNCT_NAME,new float[(int) time_step.getFloatValue()], null);
+		time.getValue()[0] = 0;
 		for(int i = 0; i<(int) time_step.getFloatValue();i++){
-			time.getValue()[i] = (i+1) * dt.getFloatValue();
+			time.getValue()[i+1] = (i+1) * dt.getFloatValue();
 			fourrier_funct.getValue()[i] = (float) (  0.6 + 0.6*(0.70588472173953 - 0.05900572216651*Math.cos(2*Math.PI*time.getValue()[i]) 
                      - 0.0872254163115668*Math.cos(4*Math.PI*time.getValue()[i]) - 0.0456805350837203*Math.cos(6*Math.PI*time.getValue()[i]) 
                      - 0.0190254766060677*Math.cos(8*Math.PI*time.getValue()[i]) - 0.00227790528223953*Math.cos(10*Math.PI*time.getValue()[i]) 
