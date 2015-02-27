@@ -59,7 +59,8 @@ public class SAS extends ElasticTube {
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
 		SimpleVariable sasPressure = findVariableWithName(getPressure().getName(),variables);
 		ArrayList<SimpleVariable> vSinousPress = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
-		res.add(getSymbolicInitialContinuityEquation(fi, fo, sasPressure, vSinousPress.get(0)));
+		
+		res.add(getSymbolicInitialContinuityEquation(fi, fo, sasPressure, vSinousPress));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain_left = findVariableWithName(ModelSpecification.architecture.getBrain().getLeftHemi().getPressure().getName(),variables);
@@ -100,7 +101,7 @@ public class SAS extends ElasticTube {
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
 		SimpleVariable sasPressure = findVariableWithName(getPressure().getName(),variables);
 		ArrayList<SimpleVariable> vSinousPress = findVariableWithStruct(Hemisphere.BOTH, VenousSinus.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
-		res.add(getSymbolicContinuityEquation(ar, fi, fo, sasPressure, vSinousPress.get(0)));
+		res.add(getSymbolicContinuityEquation(ar, fi, fo, sasPressure, vSinousPress));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain_left = findVariableWithName(ModelSpecification.architecture.getBrain().getLeftHemi().getPressure().getName(),variables);
@@ -127,9 +128,14 @@ public class SAS extends ElasticTube {
 
 
 	// symbolic equation (en chaine de caractere)
-	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo, SimpleVariable sasPressure, SimpleVariable vsinousPress){
+	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo, SimpleVariable sasPressure, ArrayList<SimpleVariable> vsinousPress){
 		// equ(13)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+" - "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+vsinousPress.getName()+")"+")/"+getLength().getName();
+		String out = "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName();
+		for(SimpleVariable prs:vsinousPress)
+			out += " - ("+ModelSpecification.k1.getName()+"/"+vsinousPress.size()+") * ("+sasPressure.getName()+" - "+prs.getName()+")";
+		
+		out += ")/"+getLength().getName();
+		return out;
 	}
 
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
@@ -158,9 +164,12 @@ public class SAS extends ElasticTube {
 	
 	// ================= init ========================
 
-	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo, SimpleVariable sasPressure, SimpleVariable vsinousPress){
+	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo, SimpleVariable sasPressure, ArrayList<SimpleVariable> vsinousPress){
 		// eq(13)
-		return fi.getName()+" - "+fo.getName()+" - "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+vsinousPress.getName()+")";
+		String out = fi.getName()+" - "+fo.getName();
+		for(SimpleVariable prs:vsinousPress)
+			out += " - ("+ModelSpecification.k1.getName()+")/"+vsinousPress.size()+" * ("+sasPressure.getName()+" - "+prs.getName()+")";
+		return out;
 	}
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
 		// equ(28)

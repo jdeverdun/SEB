@@ -84,7 +84,8 @@ public class Arteriole extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
-		res.add(getSymbolicContinuityEquation(ar, fi, fo));
+		ArrayList<SimpleVariable> pal = findVariableWithStruct(getHemisphere(), Arteriole.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
+		res.add(getSymbolicContinuityEquation(ar, fi, fo, pal.size()));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain = findVariableWithName(getAssociatedBrainParenchyma().getPressure().getName(),variables);
@@ -128,7 +129,8 @@ public class Arteriole extends ElasticTube {
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
 		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
-		res.add(getSymbolicInitialContinuityEquation(fi, fo));
+		ArrayList<SimpleVariable> pal = findVariableWithStruct(getHemisphere(), Arteriole.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
+		res.add(getSymbolicInitialContinuityEquation(fi, fo, pal.size()));
 		// Distensibility
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain = findVariableWithName(getAssociatedBrainParenchyma().getPressure().getName(),variables);
@@ -164,9 +166,9 @@ public class Arteriole extends ElasticTube {
 
 	
 	
-	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo){
+	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo,int narteriole){
 		// equ(2) et equ(7)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+" + "+getSAl_Lv().getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName()+" + ("+getSAl_Lv().getName()+"/"+narteriole+"))/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){
@@ -274,9 +276,9 @@ public class Arteriole extends ElasticTube {
 	}
 	// ================= init ========================
 
-	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo){
+	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo, int narteriole){
 		// eq (2)  (7)
-		return fi.getName()+" - "+fo.getName()+" - "+getSAl_Lv().getName();
+		return fi.getName()+" - "+fo.getName()+" - ("+getSAl_Lv().getName()+"/"+narteriole+")";
 	}
 
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain){

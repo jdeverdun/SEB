@@ -129,8 +129,10 @@ public class Ventricle extends ElasticTube {
 	private String getSymbolicInitialMomentumEquation(SimpleVariable fi, SimpleVariable sbr_lv, SimpleVariable sconst_br_lv, ArrayList<SimpleVariable> sal_lv){
 		// equ(35) et equ(40)
 		String arteriols = "";
-		for(SimpleVariable si:sal_lv)
+		for(SimpleVariable si:sal_lv){
 			arteriols += " - "+si.getName();
+			break;//a voir
+		}
 		return fi.getName()+" - "+sbr_lv.getName()+" - "+sconst_br_lv.getName()+arteriols;
 		//return "("+fi.getName()+" - ("+0.003f+"))";
 	}
