@@ -101,10 +101,8 @@ public class Capillary extends ElasticTube {
 			filist.addAll(ft3list);
 			SimpleVariable bfin1 = findVariableWithName(getAssociatedBrainParenchyma().getScp_br().getName(), variables);
 			SimpleVariable bfin2 = getAssociatedBrainParenchyma().getSconst_cp_br();
-			filist.add(bfin1);
-			filist.add(bfin2);
-			
-			res.add(getSymbolicInitialBilanConnectivityEquation(folist, filist));
+			int ncap = folist.size();
+			res.add(getSymbolicInitialBilanConnectivityEquation(folist, filist,bfin1,bfin2,ncap));
 		}
 
 		return res;
@@ -151,15 +149,14 @@ public class Capillary extends ElasticTube {
 			ArrayList<SimpleVariable> ft4list = findVariableWithStruct(getHemisphere(),Ventricle.TUBE_NUM,FLOWIN_LABEL ,variables);
 			ArrayList<SimpleVariable> ft3list = findVariableWithStruct(getHemisphere(),Veinule.TUBE_NUM,FLOWIN_LABEL ,variables);
 			//ArrayList<SimpleVariable> ft3blist = findVariableWithStruct(getHemisphere(),Vein.TUBE_NUM,FLOWIN_LABEL ,variables);
+			int ncap = folist.size();
 			ArrayList<SimpleVariable> filist = new ArrayList<SimpleVariable>();
 			filist.addAll(ft4list);
 			//filist.addAll(ft3blist);
 			filist.addAll(ft3list);
 			SimpleVariable bfin1 = getAssociatedBrainParenchyma().getScp_br();
 			SimpleVariable bfin2 = getAssociatedBrainParenchyma().getSconst_cp_br();
-			filist.add(bfin1);
-			filist.add(bfin2);
-			res.add(getSymbolicBilanConnectivityEquation(folist, filist));
+			res.add(getSymbolicBilanConnectivityEquation(folist, filist,bfin1,bfin2,ncap));
 		}
 
 		return res;
@@ -187,7 +184,7 @@ public class Capillary extends ElasticTube {
 	}
 
 
-	private String getSymbolicBilanConnectivityEquation(ArrayList<SimpleVariable> flowout, ArrayList<SimpleVariable> flowin){
+	private String getSymbolicBilanConnectivityEquation(ArrayList<SimpleVariable> flowout, ArrayList<SimpleVariable> flowin, SimpleVariable bfin1, SimpleVariable bfin2, int ncapillaries){
 		// equ(50) et equ(53)
 		String res1 = "(";
 		String res2 = "(";
@@ -204,6 +201,7 @@ public class Capillary extends ElasticTube {
 				res2 += "+";
 			res2 += pfi.getName();
 		}
+		res2 += " + ("+bfin1.getName()+"/"+ncapillaries+") + ("+bfin2.getName()+"/"+ncapillaries+")";
 		res2 += ")";
 		return res1+" - "+res2;
 	}
@@ -228,7 +226,7 @@ public class Capillary extends ElasticTube {
 		// eq (33)  (38)
 		return "("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+parentFlowout.getName();
 	}
-	private String getSymbolicInitialBilanConnectivityEquation(ArrayList<SimpleVariable> flowout, ArrayList<SimpleVariable> flowin){
+	private String getSymbolicInitialBilanConnectivityEquation(ArrayList<SimpleVariable> flowout, ArrayList<SimpleVariable> flowin, SimpleVariable bfin1, SimpleVariable bfin2, int ncapillaries){
 		// equ(50) et equ(53)
 		String res1 = "(";
 		String res2 = "(";
@@ -244,6 +242,7 @@ public class Capillary extends ElasticTube {
 				res2 += "+";
 			res2 += pfi.getName();
 		}
+		res2 += " + ("+bfin1.getName()+"/"+ncapillaries+") + ("+bfin2.getName()+"/"+ncapillaries+")";
 		res2 += ")";
 		setInitialBilanConnectivityAdded(true);
 		return res1+" - "+res2;
