@@ -13,7 +13,7 @@ public class Arteriole extends ElasticTube {
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
 	public static final float DEFAULT_PRESSURE = 80.0f*1333.2240f;
-	public static final float DEFAULT_SAl_Lv = 0.35f;
+	public static final float DEFAULT_SAl_Lv = ((0.35f/2.0f)/60.0f);// 0.35 production total (2 hemi en ml/min donc on repasse en ml/sec)
 	public static final String SAl_V_LABEL = "SAl_V";
 	protected SimpleVariable Sal_Lv;
 	
