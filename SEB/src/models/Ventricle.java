@@ -66,6 +66,11 @@ public class Ventricle extends ElasticTube {
 
 		// momentum
 		res.add(getSymbolicInitialMomentumEquation(fi,Sbr_lv,Sconst_br_lv,Sal_lv));
+		
+		
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		
 		return res;
 	}
 	
@@ -94,6 +99,11 @@ public class Ventricle extends ElasticTube {
 
 		// momentum
 		res.add(getSymbolicMomentumEquation(fi,Sbr_lv,Sconst_br_lv,Sal_lv));
+		
+		
+		if(!getChildren().isEmpty())
+			res.add(getSymbolicInitialMomentumEquationOut(getChildren(),variables));
+		
 		return res;
 	}
 

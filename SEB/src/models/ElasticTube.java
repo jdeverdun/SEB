@@ -165,8 +165,10 @@ public abstract class ElasticTube extends Tube {
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 		// on recalcule le alpha ON NE RECALCULE PAS LE ALPHA ON SAIT LA VALEUR
 		// il faut mettre en m !
-		v.setValue("8*pi*0.004*("+getLength().getName()+"/10)/(("+getInitialArea().getName()+"/100)^2)");
+		//v.setValue("8*pi*0.004*("+getLength().getName()+"/100)/(("+getInitialArea().getName()+"/10000)^2)");
 		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
+		
+		// nouvelle
 		this.alpha = v;
 	}
 	public SimpleVariable getInitialArea() {
@@ -339,7 +341,7 @@ public abstract class ElasticTube extends Tube {
 				}
 				if(!left.equals("("))
 					prefix = " + ";
-				left += prefix + localpha + "* (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
+				left += prefix + "(" + localpha + "/2) * (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
 			}
 			left += ")";
 			// on gere la partie droite avec les alpha
@@ -352,7 +354,7 @@ public abstract class ElasticTube extends Tube {
 					if(!right.equals("("))
 						prefix = " + ";
 					if(!a1.getName().equals(a2.getName()) && !usedvar.contains(a1.getName()+a2.getName())){
-						right += prefix + a1.getName() + "*" + a2.getName();
+						right += prefix + "(" +a1.getName() + "/2) *" + "("+a2.getName()+"/2)";
 						usedvar+=a1.getName()+a2.getName()+"@@"+a2.getName()+a1.getName()+"@@";
 					}
 				}
@@ -361,7 +363,7 @@ public abstract class ElasticTube extends Tube {
 			return left + " + " + right;
 		}else{
 			//return "(" + parents.get(0).getPressure().getName() + " - " + getPressure().getName() + ") + ("+getAlpha().getName()+ ") * "+getFlowin().getName();
-			return "(" + getPressure().getName() + " - " + parents.get(0).getPressure().getName() + ") + ("+getAlpha().getName()+ " + " + parents.get(0).getAlpha().getName()+ ") * "+getFlowin().getName();
+			return "(" + getPressure().getName() + " - " + parents.get(0).getPressure().getName() + ") + (("+getAlpha().getName()+ "/2) + (" + parents.get(0).getAlpha().getName()+ "/2)) * "+getFlowin().getName();
 		}
 	}
 	
@@ -402,7 +404,7 @@ public abstract class ElasticTube extends Tube {
 				// fin DEBUG
 				if(!left.equals("("))
 					prefix = " + ";
-				left += prefix + localpha + "* (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
+				left += prefix + "(" + localpha + "/2) * (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
 			}
 			left += ")";
 			// on gere la partie droite avec les alpha
@@ -415,7 +417,7 @@ public abstract class ElasticTube extends Tube {
 					if(!right.equals("("))
 						prefix = " + ";
 					if(!a1.getName().equals(a2.getName()) && !usedvar.contains(a1.getName()+a2.getName())){
-						right += prefix + a1.getName() + "*" + a2.getName();
+						right += prefix + "("+ a1.getName() + "/2) * (" + a2.getName()+"/2)";
 						usedvar+=a1.getName()+a2.getName()+"@@"+a2.getName()+a1.getName()+"@@";
 					}
 				}
@@ -424,7 +426,7 @@ public abstract class ElasticTube extends Tube {
 			return left + " - " + right;
 		}else{
 			//return "" + getFlowout().getName() + " - " + children.get(0).getFlowin().getName();
-			return "(" + getPressure().getName() + " - " + children.get(0).getPressure().getName() + ") - ("+getAlpha().getName()+ " + " + children.get(0).getAlpha().getName()+ ") * "+getFlowout().getName();
+			return "(" + getPressure().getName() + " - " + children.get(0).getPressure().getName() + ") - (("+getAlpha().getName()+ "/2) + (" + children.get(0).getAlpha().getName()+ "/2)) * "+getFlowout().getName();
 		}
 	}
 	

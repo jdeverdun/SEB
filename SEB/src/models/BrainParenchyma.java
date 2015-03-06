@@ -455,10 +455,11 @@ public class BrainParenchyma extends Tube {
 		String val = "";
 		String prefix = "(";
 		int count = 0;
-		for(SimpleVariable pc : pcap){
+		for(SimpleVariable pca : pcap){
+			Capillary pc = (Capillary) pca.getSourceObj();
 			if(count>0)
 				prefix = " + ";
-			val += prefix + pc.getName();
+			val += prefix + "(("+pc.getPressure().getName()+"*"+pc.getChildren().get(0).getAlpha().getName()+"+"+pc.getChildren().get(0).getPressure().getName()+"*"+pc.getAlpha().getName()+")/("+pc.getAlpha().getName()+"+"+pc.getChildren().get(0).getAlpha().getName()+"))";
 			count++;
 		}
 		val += ")";
@@ -535,10 +536,12 @@ public class BrainParenchyma extends Tube {
 		String val = "";
 		String prefix = "(";
 		int count = 0;
-		for(SimpleVariable pc : pcap){
+		for(SimpleVariable pca : pcap){
+			Capillary pc = (Capillary) pca.getSourceObj();
 			if(count>0)
 				prefix = " + ";
-			val += prefix + pc.getName();
+			val += prefix + "(("+pc.getPressure().getName()+"*"+pc.getChildren().get(0).getAlpha().getName()+"+"+pc.getChildren().get(0).getPressure().getName()+"*"+pc.getAlpha().getName()+")/("+pc.getAlpha().getName()+"+"+pc.getChildren().get(0).getAlpha().getName()+"))";	
+			//val += prefix + pc.getName();
 			count++;
 		}
 		val += ")";

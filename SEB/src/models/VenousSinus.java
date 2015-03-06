@@ -147,7 +147,7 @@ public class VenousSinus extends ElasticTube {
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo,SimpleVariable sasPressure,SimpleVariable pr, int nsinous){
 		// equ(14)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")/"+nsinous+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ fo.getName()+")/"+getLength().getName();
+		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")/"+nsinous+" * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) + "+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
@@ -168,7 +168,7 @@ public class VenousSinus extends ElasticTube {
 				res += "+";
 			res += pf.getName();
 		}
-		res += " + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+pr.getName()+"))";
+		res += " + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")))";
 		return res+" - ("+fi.getName()+")";
 	}
 
@@ -183,7 +183,7 @@ public class VenousSinus extends ElasticTube {
 
 	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo,SimpleVariable sasPressure, SimpleVariable pr, int nsinous){
 		// eq(14)
-		return fi.getName()+" + ("+ModelSpecification.k1.getName()+"/"+nsinous+") * ("+sasPressure.getName()+" - "+pr.getName()+") - "+fo.getName();
+		return fi.getName()+" + ("+ModelSpecification.k1.getName()+"/"+nsinous+") * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT_INITIAL.getName()+"*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) - "+fo.getName();
 	}
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
 		// equ(29)
@@ -202,7 +202,8 @@ public class VenousSinus extends ElasticTube {
 				res += "+";
 			res += pf.getName();
 		}
-		res += " + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+pr.getName()+"))";
+		res += " + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT_INITIAL.getName()+"*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")))";
+		//res += " + "+ModelSpecification.k1.getName()+" * ("+sasPressure.getName()+" - "+pr.getName()+"))";
 		return res+" - ("+fi.getName()+")";
 	}
 

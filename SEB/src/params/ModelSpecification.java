@@ -31,7 +31,7 @@ public class ModelSpecification {
 	public static SimpleVariable dt = new SimpleVariable("dt",0.025f,null);//defaut 0.025
 	public static SimpleVariable damp = new SimpleVariable("damp",1.0f,null);// valeur initiale 1.0f
 	public static SimpleVariable damp2 = new SimpleVariable("damp2",0.0f,null);
-	public static SimpleVariable time_step = new SimpleVariable("time_step",120,null);// valeur initiale 120
+	public static SimpleVariable time_step = new SimpleVariable("time_step",20,null);// valeur initiale 120
 	public static SimpleVariable currentIter = new SimpleVariable("currentIter");
 	public static SimpleVariable P_INIT_INITIAL = new SimpleVariable("P_INIT_INITIAL",(0.0f + 102.0f) * 1333.2240f,null);
 	public static SimpleVariable P_OUT_INITIAL = new SimpleVariable("P_OUT_INITIAL",(0.0f + 2.5f) * 1333.2240f,null);

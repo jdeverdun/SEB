@@ -132,7 +132,7 @@ public class SAS extends ElasticTube {
 		// equ(13)
 		String out = "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName();
 		for(SimpleVariable prs:vsinousPress)
-			out += " - ("+ModelSpecification.k1.getName()+"/"+vsinousPress.size()+") * ("+sasPressure.getName()+" - "+prs.getName()+")";
+			out += " - ("+ModelSpecification.k1.getName()+"/"+vsinousPress.size()+") * ("+sasPressure.getName()+" - (("+prs.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")*"+((VenousSinus)prs.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)prs.getSourceObj()).getAlpha().getName()+")))";
 		
 		out += ")/"+getLength().getName();
 		return out;
@@ -168,7 +168,7 @@ public class SAS extends ElasticTube {
 		// eq(13)
 		String out = fi.getName()+" - "+fo.getName();
 		for(SimpleVariable prs:vsinousPress)
-			out += " - ("+ModelSpecification.k1.getName()+")/"+vsinousPress.size()+" * ("+sasPressure.getName()+" - "+prs.getName()+")";
+			out += " - ("+ModelSpecification.k1.getName()+")/"+vsinousPress.size()+" * ("+sasPressure.getName()+" - (("+prs.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT_INITIAL.getName()+"*"+((VenousSinus)prs.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)prs.getSourceObj()).getAlpha().getName()+")))";
 		return out;
 	}
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){

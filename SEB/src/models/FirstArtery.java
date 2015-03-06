@@ -60,7 +60,7 @@ public class FirstArtery extends ElasticTube {
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain_left = findVariableWithName(ModelSpecification.architecture.getBrain().getLeftHemi().getPressure().getName(),variables);
 		SimpleVariable pbrain_right = findVariableWithName(ModelSpecification.architecture.getBrain().getRightHemi().getPressure().getName(),variables);
-		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
+		res.add(getSymbolicInitialDistensibilityEquation(ar, pr, pbrain_left, pbrain_right,getChildren()));
 
 		// momentum
 		res.add(getSymbolicInitialMomentumEquation(pr,fi));
@@ -96,7 +96,7 @@ public class FirstArtery extends ElasticTube {
 		SimpleVariable pr = findVariableWithName(getPressure().getName(),variables);
 		SimpleVariable pbrain_left = findVariableWithName(ModelSpecification.architecture.getBrain().getLeftHemi().getPressure().getName(),variables);
 		SimpleVariable pbrain_right = findVariableWithName(ModelSpecification.architecture.getBrain().getRightHemi().getPressure().getName(),variables);
-		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain_left, pbrain_right));
+		res.add(getSymbolicDistensibilityEquation(ar, pr, pbrain_left, pbrain_right,getChildren()));
 
 		// momentum
 		res.add(getSymbolicMomentumEquation(pr,fi));
@@ -123,9 +123,32 @@ public class FirstArtery extends ElasticTube {
 		return "" +fi.getName()+" - "+fo.getName();
 	}
 
-	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
+	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right, ArrayList<ElasticTube> child){
 		// equ(74)
-		return "("+pr.getName()+" - "+0.5f+" * ("+pbrain_right.getName()+" + "+pbrain_left.getName()+")) - "+getElastance().getName()+" * ("+ar.getName()+"/"+getInitialArea().getName()+"-"+1.0f+")";
+		Hemisphere hemi = Hemisphere.NONE;
+		for(ElasticTube el:child){
+			if(hemi == Hemisphere.NONE)
+				hemi = el.getHemisphere();
+			else{
+				if(!hemi.equals(el.getHemisphere())){
+					hemi = Hemisphere.BOTH;
+					break;
+				}
+			}
+		}
+		String brainterm = "";
+		switch(hemi){
+		case BOTH:
+			brainterm = ""+0.5f+" * ("+pbrain_right.getName()+" + "+pbrain_left.getName()+")";
+			break;
+		case LEFT:
+			brainterm = " ("+pbrain_left.getName()+")";
+			break;
+		case RIGHT:
+			brainterm = " ("+pbrain_right.getName()+")";
+			break;
+		}
+		return "("+pr.getName()+" - "+brainterm+") - "+getElastance().getName()+" * ("+ar.getName()+"/"+getInitialArea().getName()+"-"+1.0f+")";
 	}
 
 	private String getSymbolicMomentumEquation(SimpleVariable pr, SimpleVariable fi){
@@ -233,9 +256,32 @@ public class FirstArtery extends ElasticTube {
 		return "" +fi.getName()+" - "+fo.getName();
 	}
 
-	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
+	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right, ArrayList<ElasticTube> child){
 		// equ(74)
-		return "("+pr.getName()+" - "+0.5f+" * ("+pbrain_right.getName()+" + "+pbrain_left.getName()+")) - "+getElastance().getName()+" * ("+ar.getName()+"/"+getInitialArea().getName()+"-"+1.0f+")";
+		Hemisphere hemi = Hemisphere.NONE;
+		for(ElasticTube el:child){
+			if(hemi == Hemisphere.NONE)
+				hemi = el.getHemisphere();
+			else{
+				if(!hemi.equals(el.getHemisphere())){
+					hemi = Hemisphere.BOTH;
+					break;
+				}
+			}
+		}
+		String brainterm = "";
+		switch(hemi){
+		case BOTH:
+			brainterm = ""+0.5f+" * ("+pbrain_right.getName()+" + "+pbrain_left.getName()+")";
+			break;
+		case LEFT:
+			brainterm = " ("+pbrain_left.getName()+")";
+			break;
+		case RIGHT:
+			brainterm = " ("+pbrain_right.getName()+")";
+			break;
+		}
+		return "("+pr.getName()+" - "+brainterm+") - "+getElastance().getName()+" * ("+ar.getName()+"/"+getInitialArea().getName()+"-"+1.0f+")";
 	}
 
 	private String getSymbolicInitialMomentumEquation(SimpleVariable pr, SimpleVariable fi){
