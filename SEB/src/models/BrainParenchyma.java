@@ -334,6 +334,12 @@ public class BrainParenchyma extends Tube {
 		return variables;
 	}
 	
+	// --------------- UPDATE ALPHA ------------
+	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
+	public void updateAlpha(ArrayList<SimpleVariable> variables){
+		// pas pour brain
+	}
+		
 	// ------------------- EQUATIONS -------------
 
 	/**

@@ -74,7 +74,12 @@ public class Ventricle extends ElasticTube {
 		return res;
 	}
 	
-	
+	// --------------- UPDATE ALPHA ------------
+	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
+	public void updateAlpha(ArrayList<SimpleVariable> variables){
+		// pas pour LCS
+	}
+		
 	/**
 	 * Renvoi les equations en format symbolic (en string)
 	 * @param variables

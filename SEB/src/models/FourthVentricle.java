@@ -41,6 +41,13 @@ public class FourthVentricle extends ElasticTube {
 		return TUBE_NUM;
 	}
 
+	// --------------- UPDATE ALPHA ------------
+	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
+	public void updateAlpha(ArrayList<SimpleVariable> variables){
+		// pas pour LCS
+	}
+		
+		
 	// ------------------- EQUATIONS -------------
 	
 	/**

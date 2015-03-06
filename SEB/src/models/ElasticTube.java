@@ -167,10 +167,12 @@ public abstract class ElasticTube extends Tube {
 		// il faut mettre en m !
 		//v.setValue("8*pi*0.004*("+getLength().getName()+"/100)/(("+getInitialArea().getName()+"/10000)^2)");
 		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
+
 		
-		// nouvelle
 		this.alpha = v;
 	}
+
+
 	public SimpleVariable getInitialArea() {
 		return initialArea;
 	}
@@ -263,6 +265,17 @@ public abstract class ElasticTube extends Tube {
 	}
 	public boolean addChild(ElasticTube child){
 		return children.add(child);
+	}
+	
+
+	protected float calculateAlphaForParallelOnlyTube(String tubeNum,
+			ArrayList<SimpleVariable> variables) {
+		ArrayList<SimpleVariable> ptubes = findVariableWithStruct(getHemisphere(), tubeNum, ElasticTube.PRESSURE_LABEL, variables);
+		float somme = 0.0f;
+		for(SimpleVariable ploc : ptubes){
+			somme = somme + (1.0f/((ElasticTube)ploc.getSourceObj()).getLength().getFloatValue());
+		}
+		return getAlpha().getFloatValue()/somme;
 	}
 	
 	
@@ -472,4 +485,6 @@ public abstract class ElasticTube extends Tube {
 		this.initialConnectivityAdded = initialConnectivityAdded;
 	}
 	
+	
+
 }

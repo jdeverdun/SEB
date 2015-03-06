@@ -74,6 +74,8 @@ public class ModelRun extends Thread {
 			tubes.add(right_brain);
 			addAllTubesToList();
 			
+
+			
 			//////////////////////////////////////////////////////////
 			///                                                    ///
 			///             Recuperation des variables             ///
@@ -85,7 +87,16 @@ public class ModelRun extends Thread {
 				fixedvariables.addAll(tube.getFixedVariables());
 			}
 			
-
+			//////////////////////////////////////////////////////////
+			///                                                    ///
+			///                 Update des alphas                  ///
+			///													   ///
+			//////////////////////////////////////////////////////////
+			
+			for(Tube tube : tubes){
+				tube.updateAlpha(variables);
+			}
+			
 			//////////////////////////////////////////////////////////
 			///                                                    ///
 			///             Recuperation des variables             ///

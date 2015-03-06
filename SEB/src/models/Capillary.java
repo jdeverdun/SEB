@@ -14,6 +14,8 @@ public class Capillary extends ElasticTube {
 	public static final float DEFAULT_FLOWOUT = 13.0f;
 	public static final float DEFAULT_PRESSURE = 20.0f * 1333.2240f;
 	
+	public static float ALPHA_RECALCULED = -1.0f;
+	
 	private boolean bilanConnectivityAdded = false;
 	private boolean initialBilanConnectivityAdded = false;
 
@@ -52,6 +54,19 @@ public class Capillary extends ElasticTube {
 		return TUBE_NUM;
 	}
 
+	// --------------- UPDATE ALPHA ------------
+	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
+	public void updateAlpha(ArrayList<SimpleVariable> variables){
+		if(Capillary.ALPHA_RECALCULED == -1.0f){
+			Capillary.ALPHA_RECALCULED = calculateAlphaForParallelOnlyTube(TUBE_NUM,variables);
+		}
+		for(int i = 0 ; i < variables.size(); i++){
+			if(variables.get(i).getName().equals(getAlpha().getName())){
+				variables.get(i).setValue(getLength().getFloatValue()*ALPHA_RECALCULED);
+			}				
+		}
+	}
+
 	// ------------------- EQUATIONS -------------
 	/**
 	 * Renvoi les equations en format symbolic (en string)
@@ -61,7 +76,7 @@ public class Capillary extends ElasticTube {
 	 */
 	public ArrayList<String> getSymbolicInitialEquations(ArrayList<SimpleVariable> variables) throws Exception {
 		ArrayList<String> res = new ArrayList<String>();
-
+		
 		// Continuity
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
@@ -108,7 +123,8 @@ public class Capillary extends ElasticTube {
 
 		return res;
 	}
-	
+
+
 	/**
 	 * Renvoi les equations en format symbolic (en string)
 	 * @param variables
