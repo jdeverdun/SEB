@@ -161,7 +161,7 @@ public abstract class ElasticTube extends Tube {
 			prefix = "L_";
 		else
 			if(hemisphere == Hemisphere.RIGHT)
-				prefix = "R_";
+				prefix = "R_"; 
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 		// on recalcule le alpha ON NE RECALCULE PAS LE ALPHA ON SAIT LA VALEUR
 		// il faut mettre en m !
