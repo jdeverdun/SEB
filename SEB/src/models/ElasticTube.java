@@ -3,6 +3,7 @@ package models;
 import java.util.ArrayList;
 
 import params.ModelSpecification;
+import params.WindowManager;
 
 public abstract class ElasticTube extends Tube {
 	public static String AREA_LABEL = "A";
@@ -26,9 +27,12 @@ public abstract class ElasticTube extends Tube {
 	protected boolean connectivityAdded = false;
 	protected boolean initialConnectivityAdded = false;
 	
+	protected boolean checkedForAlphaRecalculation = false;
+	
 	public ElasticTube(){
 		super();
 		hemisphere = Hemisphere.UNKNOWN;
+		checkedForAlphaRecalculation = false;
 		setFlowin(-1.0f);
 		setFlowout(-1.0f);
 		setPressure(-1.0f);
@@ -165,7 +169,8 @@ public abstract class ElasticTube extends Tube {
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 		// on recalcule le alpha ON NE RECALCULE PAS LE ALPHA ON SAIT LA VALEUR
 		// il faut mettre en m !
-		//v.setValue("8*pi*0.004*("+getLength().getName()+"/100)/(("+getInitialArea().getName()+"/10000)^2)");
+		if(getTubeNum() != SpinalCord.TUBE_NUM && getTubeNum() != Arteriole.TUBE_NUM && getTubeNum() != Capillary.TUBE_NUM && getTubeNum() != Veinule.TUBE_NUM)
+			v.setValue("8*pi*0.004*((1e-6)/133.32)*("+getLength().getName()+"/100)/(("+getArea().getName()+"_PREV/10000)^2)");
 		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 
 		
@@ -268,17 +273,7 @@ public abstract class ElasticTube extends Tube {
 	}
 	
 
-	protected float calculateAlphaForParallelOnlyTube(String tubeNum,
-			ArrayList<SimpleVariable> variables) {
-		ArrayList<SimpleVariable> ptubes = findVariableWithStruct(getHemisphere(), tubeNum, ElasticTube.PRESSURE_LABEL, variables);
-		float somme = 0.0f;
-		for(SimpleVariable ploc : ptubes){
-			somme = somme + (1.0f/((ElasticTube)ploc.getSourceObj()).getLength().getFloatValue());
-		}
-		return getAlpha().getFloatValue()/somme;
-	}
-	
-	
+
 	public ArrayList<SimpleVariable> getVariables(){
 		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
 		variables.add(getFlowin());
@@ -483,6 +478,14 @@ public abstract class ElasticTube extends Tube {
 
 	public void setInitialConnectivityAdded(boolean initialConnectivityAdded) {
 		this.initialConnectivityAdded = initialConnectivityAdded;
+	}
+
+	public boolean isCheckedForAlphaRecalculation() {
+		return checkedForAlphaRecalculation;
+	}
+
+	public void setCheckedForAlphaRecalculation(boolean checkedForAlphaRecalculation) {
+		this.checkedForAlphaRecalculation = checkedForAlphaRecalculation;
 	}
 	
 	

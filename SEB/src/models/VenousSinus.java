@@ -9,11 +9,11 @@ public class VenousSinus extends ElasticTube {
 	public static final Hemisphere DEFAULT_HEMI = Hemisphere.BOTH;
 	public static final float DEFAULT_LENGTH = 15.0f;
 	public static final float DEFAULT_AREA = 2.0f * 0.43f;
-	public static final float DEFAULT_ELASTANCE = 120000.0f;// en Pa
-	public static final float DEFAULT_ALPHA = 0.161896f * 1333.2240f;
+	public static final float DEFAULT_ELASTANCE = 120000.0f/1333.2240f;// en Pa
+	public static final float DEFAULT_ALPHA = 0.161896f;
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
-	public static final float DEFAULT_PRESSURE = 3999.67f;
+	public static final float DEFAULT_PRESSURE = 3999.67f/1333.2240f;
 
 	public VenousSinus(String name) {
 		super(name, DEFAULT_HEMI, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
@@ -40,6 +40,11 @@ public class VenousSinus extends ElasticTube {
 	@Override
 	public String getTubeNum() {
 		return TUBE_NUM;
+	}
+	
+	// --------------- UPDATE ALPHA ------------
+	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
+	public void updateAlpha(ArrayList<SimpleVariable> variables){
 	}
 
 	// ------------------- EQUATIONS -------------

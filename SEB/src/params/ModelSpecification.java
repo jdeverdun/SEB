@@ -25,16 +25,16 @@ public class ModelSpecification {
 
 	public enum SimulationMode{DEBUG,STANDARD};
 	
-	public static SimpleVariable Pstar = new SimpleVariable("Pstar",(0.0f + 0.0f) * 1333.2240f,null);
-	public static SimpleVariable k1 = new SimpleVariable("k1",(float) 8.0e-7,null);
-	public static SimpleVariable TPout_alfa = new SimpleVariable("TPout_alfa",0.0809088f * 1333.2240f,null);
+	public static SimpleVariable Pstar = new SimpleVariable("Pstar",(0.0f + 0.0f),null);
+	public static SimpleVariable k1 = new SimpleVariable("k1",(float) 8.5325e-4,null);//recalcule à partir de la publi 0.0011 ??
+	public static SimpleVariable TPout_alfa = new SimpleVariable("TPout_alfa",0.0809088f,null);
 	public static SimpleVariable dt = new SimpleVariable("dt",0.025f,null);//defaut 0.025
 	public static SimpleVariable damp = new SimpleVariable("damp",1.0f,null);// valeur initiale 1.0f
 	public static SimpleVariable damp2 = new SimpleVariable("damp2",0.0f,null);
-	public static SimpleVariable time_step = new SimpleVariable("time_step",20,null);// valeur initiale 120
+	public static SimpleVariable time_step = new SimpleVariable("time_step",120,null);// valeur initiale 120
 	public static SimpleVariable currentIter = new SimpleVariable("currentIter");
-	public static SimpleVariable P_INIT_INITIAL = new SimpleVariable("P_INIT_INITIAL",(0.0f + 102.0f) * 1333.2240f,null);
-	public static SimpleVariable P_OUT_INITIAL = new SimpleVariable("P_OUT_INITIAL",(0.0f + 2.5f) * 1333.2240f,null);
+	public static SimpleVariable P_INIT_INITIAL = new SimpleVariable("P_INIT_INITIAL",(0.0f + 102.0f),null);
+	public static SimpleVariable P_OUT_INITIAL = new SimpleVariable("P_OUT_INITIAL",(0.0f + 2.5f),null);
 	public static Architecture architecture;
 	public static String P_INIT_NAME = "P_INIT";
 	public static String P_OUT_NAME = "P_OUT";
@@ -92,8 +92,8 @@ public class ModelSpecification {
                      - 0.0120187782765389*Math.sin(8*Math.PI*time.getValue()[i]) - 0.0298121524913813*Math.sin(10*Math.PI*time.getValue()[i])
                      - 0.00705400623825701*Math.sin(12*Math.PI*time.getValue()[i])- 0.00711904276150898*Math.sin(14*Math.PI*time.getValue()[i])
                      + 0.000860786521170459*Math.sin(16*Math.PI*time.getValue()[i]) ) );
-			P_INIT.getValue()[i] = 102.0f * 1333.2240f * fourrier_funct.getValue()[i];
-			P_OUT.getValue()[i] =  2.5f * 1333.2240f;
+			P_INIT.getValue()[i] = 102.0f * fourrier_funct.getValue()[i];
+			P_OUT.getValue()[i] =  2.5f;
 			OUT_D.getValue()[i] = 0.0f;
 		}
 		// on update l'affichage

@@ -109,7 +109,6 @@ public class ModelRun extends Thread {
 			globalvariables.addAll(ModelSpecification.getGlobalVariables());
 
 
-
 			//////////////////////////////////////////////////////////
 			///                                                    ///
 			///             Recuperation des equations             ///
@@ -215,6 +214,7 @@ public class ModelRun extends Thread {
 			for(int i = 0; i<fixedvariables.size();i++)
 				System.out.println(fixedvariables.get(i));*/
 
+			
 			//////////////////////////////////////////////////////////
 			///                                                    ///
 			///             Recuperation des variables             ///

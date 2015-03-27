@@ -48,7 +48,6 @@ public abstract class Tube {
 	public abstract String getTubeNum();
 	
 	// ---------    EQUATIONS ---------------
-	public abstract void updateAlpha(ArrayList<SimpleVariable> variables);
 	public abstract ArrayList<String> getSymbolicEquations(ArrayList<SimpleVariable> variables) throws Exception;
 	public abstract ArrayList<String> getSymbolicInitialEquations(ArrayList<SimpleVariable> variables) throws Exception;
 	// ----- Methodes ----
@@ -104,4 +103,6 @@ public abstract class Tube {
 		String code = prefix+TUBE_LABEL+tube_num+"_"+param_label;
 		return code;
 	}
+
+	public abstract void updateAlpha(ArrayList<SimpleVariable> variables);
 }

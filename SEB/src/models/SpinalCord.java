@@ -9,11 +9,11 @@ public class SpinalCord extends ElasticTube {
 	public static final Hemisphere DEFAULT_HEMI = Hemisphere.NONE;
 	public static final float DEFAULT_LENGTH = 43.0f;
 	public static final float DEFAULT_AREA = 2.0f;
-	public static final float DEFAULT_ALPHA = 0.1f * 1333.2240f;
-	public static final float DEFAULT_ELASTANCE = 400.0f * 1333.2240f;
+	public static final float DEFAULT_ALPHA = 0.1f;
+	public static final float DEFAULT_ELASTANCE = 400.0f;
 	public static final float DEFAULT_FLOWIN = 0.0f;
 	public static final float DEFAULT_FLOWOUT = 0.0f;
-	public static final float DEFAULT_PRESSURE = 13332.24f;
+	public static final float DEFAULT_PRESSURE = 13332.24f/1333.2240f;
 
 	public SpinalCord(String name) {
 		super(name, DEFAULT_HEMI, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
@@ -42,10 +42,10 @@ public class SpinalCord extends ElasticTube {
 		return TUBE_NUM;
 	}
 
+		
 	// --------------- UPDATE ALPHA ------------
 	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
 	public void updateAlpha(ArrayList<SimpleVariable> variables){
-		// pas pour LCS
 	}
 		
 	// ------------------- EQUATIONS -------------

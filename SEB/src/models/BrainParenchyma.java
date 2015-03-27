@@ -10,11 +10,11 @@ public class BrainParenchyma extends Tube {
 	public static final float DEFAULT_LENGTH = 7.0f;// par hemisphere
 	public static final float DEFAULT_AREA_FLUID = 30.0f;
 	public static final float DEFAULT_AREA_SOLID = 70.0f;
-	public static final float DEFAULT_ALPHA1 = 8152.42f * 1333.2240f;
-	public static final float DEFAULT_ALPHA2 = 500.0f * 1333.2240f;
+	public static final float DEFAULT_ALPHA1 = 8152.42f;
+	public static final float DEFAULT_ALPHA2 = 500.0f;
 	public static final float DEFAULT_Scp_br = 0.002f;
 	public static final float DEFAULT_Sbr_lv = 0.002f;
-	public static final float DEFAULT_PRESSURE = 13332.24f;
+	public static final float DEFAULT_PRESSURE = 13332.24f/1333.2240f;
 	public static final float DEFAULT_Sconst_cp_br = 0.0005f;
 	public static final float DEFAULT_Sconst_br_lv = 0.0005f;
 	protected static String BRAIN_LABEL = "brain";
@@ -337,9 +337,8 @@ public class BrainParenchyma extends Tube {
 	// --------------- UPDATE ALPHA ------------
 	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
 	public void updateAlpha(ArrayList<SimpleVariable> variables){
-		// pas pour brain
 	}
-		
+	
 	// ------------------- EQUATIONS -------------
 
 	/**

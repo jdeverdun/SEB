@@ -9,11 +9,11 @@ public class ThirdVentricle extends ElasticTube {
 	public static final Hemisphere DEFAULT_HEMI = Hemisphere.BOTH;
 	public static final float DEFAULT_LENGTH = 1.0f;
 	public static final float DEFAULT_AREA = 2.5f;
-	public static final float DEFAULT_ALPHA = 1.0f * 1333.2240f;
-	public static final float DEFAULT_ELASTANCE = 10.0f * 1333.2240f;
+	public static final float DEFAULT_ALPHA = 1.0f;
+	public static final float DEFAULT_ELASTANCE = 10.0f;
 	public static final float DEFAULT_FLOWIN = 0.06f;
 	public static final float DEFAULT_FLOWOUT = 0.06f;
-	public static final float DEFAULT_PRESSURE = 13332.24f;
+	public static final float DEFAULT_PRESSURE = 13332.24f/1333.2240f;
 
 	public ThirdVentricle(String name) {
 		super(name, DEFAULT_HEMI, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
@@ -42,12 +42,11 @@ public class ThirdVentricle extends ElasticTube {
 		return TUBE_NUM;
 	}
 	
+	
 	// --------------- UPDATE ALPHA ------------
 	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
 	public void updateAlpha(ArrayList<SimpleVariable> variables){
-		// pas pour LCS
 	}
-
 	// ------------------- EQUATIONS -------------
 	
 	/**

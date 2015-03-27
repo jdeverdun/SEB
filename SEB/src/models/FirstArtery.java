@@ -9,12 +9,14 @@ public class FirstArtery extends ElasticTube {
 	public static final Hemisphere DEFAULT_HEMI = Hemisphere.NONE;
 	public static final float DEFAULT_LENGTH = 0.5f;
 	public static final float DEFAULT_AREA = 3.42f;
-	public static final float DEFAULT_ELASTANCE = 1066579.2f;// en Pa
-	public static final float DEFAULT_ALPHA = 0.1618175f * 1333.2240f;
+	public static final float DEFAULT_ELASTANCE = 1066579.2f/1333.2240f;// en Pa
+	public static final float DEFAULT_ALPHA = 0.1618175f;
 	public static final float DEFAULT_FLOWIN = 12.4f;
 	public static final float DEFAULT_FLOWOUT = 12.4f;
-	public static final float DEFAULT_PRESSURE = 133322.4f;
+	public static final float DEFAULT_PRESSURE = 133322.4f/1333.2240f;
 
+
+	
 	public FirstArtery(String name) {
 		super(name, DEFAULT_HEMI, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
 	}
@@ -41,6 +43,11 @@ public class FirstArtery extends ElasticTube {
 		return TUBE_NUM;
 	}
 
+	// --------------- UPDATE ALPHA ------------
+	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
+	public void updateAlpha(ArrayList<SimpleVariable> variables){
+	}
+		
 	// ------------------- EQUATIONS -------------
 	/**
 	 * Renvoi les equations en format symbolic (en string)

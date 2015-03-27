@@ -8,11 +8,11 @@ public class Veinule extends ElasticTube {
 	public static final String TUBE_NUM = "3";
 	public static final float DEFAULT_LENGTH = 3.0906f;
 	public static final float DEFAULT_AREA = 5.3388f;
-	public static final float DEFAULT_ELASTANCE = 1008666.7f;// en Pa
-	public static final float DEFAULT_ALPHA = 2.309223857f * 1333.2240f;
+	public static final float DEFAULT_ELASTANCE = 1008666.7f/1333.2240f;// en Pa
+	public static final float DEFAULT_ALPHA = 2.309223857f;
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
-	public static final float DEFAULT_PRESSURE = 5.0f * 1333.2240f;
+	public static final float DEFAULT_PRESSURE = 5.0f;
 
 	public Veinule(String name, Hemisphere hemi) {
 		super(name, hemi, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
@@ -41,6 +41,17 @@ public class Veinule extends ElasticTube {
 		return TUBE_NUM;
 	}
 
+		
+	// --------------- UPDATE ALPHA ------------
+	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
+	public void updateAlpha(ArrayList<SimpleVariable> variables){
+		ArrayList<SimpleVariable> pal = findVariableWithStruct(getHemisphere(), Veinule.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
+		for(int i = 0 ; i < variables.size(); i++){
+			if(variables.get(i).getName().equals(getAlpha().getName())){
+				variables.get(i).setValue(pal.size()*getAlpha().getFloatValue());
+			}				
+		}
+	}
 	// ------------------- EQUATIONS -------------
 	/**
 	 * Renvoi les equations en format symbolic (en string)

@@ -8,13 +8,12 @@ public class Capillary extends ElasticTube {
 	public static final String TUBE_NUM = "2";
 	public static final float DEFAULT_LENGTH = 0.2618f;
 	public static final float DEFAULT_AREA = 38.0f;
-	public static final float DEFAULT_ELASTANCE = 8500f * 1333.2240f;// en Pa
-	public static final float DEFAULT_ALPHA = 9.23508188f * 1333.2240f;
+	public static final float DEFAULT_ELASTANCE = 8500f;// en Pa
+	public static final float DEFAULT_ALPHA = 9.23508188f;
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
-	public static final float DEFAULT_PRESSURE = 20.0f * 1333.2240f;
+	public static final float DEFAULT_PRESSURE = 20.0f;
 	
-	public static float ALPHA_RECALCULED = -1.0f;
 	
 	private boolean bilanConnectivityAdded = false;
 	private boolean initialBilanConnectivityAdded = false;
@@ -57,16 +56,13 @@ public class Capillary extends ElasticTube {
 	// --------------- UPDATE ALPHA ------------
 	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
 	public void updateAlpha(ArrayList<SimpleVariable> variables){
-		if(Capillary.ALPHA_RECALCULED == -1.0f){
-			Capillary.ALPHA_RECALCULED = calculateAlphaForParallelOnlyTube(TUBE_NUM,variables);
-		}
+		ArrayList<SimpleVariable> pal = findVariableWithStruct(getHemisphere(), Capillary.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		for(int i = 0 ; i < variables.size(); i++){
 			if(variables.get(i).getName().equals(getAlpha().getName())){
-				variables.get(i).setValue(getLength().getFloatValue()*ALPHA_RECALCULED);
+				variables.get(i).setValue(pal.size()*getAlpha().getFloatValue());
 			}				
 		}
 	}
-
 	// ------------------- EQUATIONS -------------
 	/**
 	 * Renvoi les equations en format symbolic (en string)

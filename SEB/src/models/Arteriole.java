@@ -8,15 +8,15 @@ public class Arteriole extends ElasticTube {
 	public static final String TUBE_NUM = "1";
 	public static final float DEFAULT_LENGTH = 1.75f;
 	public static final float DEFAULT_AREA = 4.74f;
-	public static final float DEFAULT_ELASTANCE = 2735000.0f;// en Pa 
-	public static final float DEFAULT_ALPHA = 3.076819468f * 1333.2240f;
+	public static final float DEFAULT_ELASTANCE = 2735000.0f/1333.2240f;// en Pa 
+	public static final float DEFAULT_ALPHA = 3.076819468f;
 	public static final float DEFAULT_FLOWIN = 13.0f;
 	public static final float DEFAULT_FLOWOUT = 13.0f;
-	public static final float DEFAULT_PRESSURE = 80.0f*1333.2240f;
+	public static final float DEFAULT_PRESSURE = 80.0f;
 	public static final float DEFAULT_SAl_Lv = ((0.35f/2.0f)/60.0f);// 0.35 production total (2 hemi en ml/min donc on repasse en ml/sec)
 	public static final String SAl_V_LABEL = "SAl_V";
 	protected SimpleVariable Sal_Lv;
-	public static float ALPHA_RECALCULED = -1.0f;
+
 	
 	public Arteriole(String name, Hemisphere hemi) {
 		super(name, hemi, DEFAULT_LENGTH,DEFAULT_AREA,DEFAULT_ALPHA,DEFAULT_ELASTANCE, DEFAULT_FLOWIN, DEFAULT_FLOWOUT, DEFAULT_PRESSURE);
@@ -74,16 +74,15 @@ public class Arteriole extends ElasticTube {
 	// --------------- UPDATE ALPHA ------------
 	// UPDATE ALPHA en fonction du nombre de tube pour les modeles complexes
 	public void updateAlpha(ArrayList<SimpleVariable> variables){
-		if(ALPHA_RECALCULED  == -1.0f){
-			ALPHA_RECALCULED = calculateAlphaForParallelOnlyTube(TUBE_NUM,variables);
-		}
+		ArrayList<SimpleVariable> pal = findVariableWithStruct(getHemisphere(), Arteriole.TUBE_NUM, ElasticTube.PRESSURE_LABEL, variables);
 		for(int i = 0 ; i < variables.size(); i++){
 			if(variables.get(i).getName().equals(getAlpha().getName())){
-				variables.get(i).setValue(getLength().getFloatValue()*ALPHA_RECALCULED);
+				variables.get(i).setValue(pal.size()*getAlpha().getFloatValue());
 			}				
 		}
 	}
 		
+
 	// ------------------- EQUATIONS -------------
 
 	/**
