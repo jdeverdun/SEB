@@ -152,7 +152,17 @@ public class VenousSinus extends ElasticTube {
 	// symbolic equation (en chaine de caractere)
 	private String getSymbolicContinuityEquation(SimpleVariable ar, SimpleVariable fi, SimpleVariable fo,SimpleVariable sasPressure,SimpleVariable pr, int nsinous){
 		// equ(14)
-		return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")/"+nsinous+" * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) + "+ fo.getName()+")/"+getLength().getName();
+		String pressureName = "";
+		String alfaName = "";
+		if(getChildren().size()>0){
+			return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" + "+ fo.getName()+")/"+getLength().getName();
+		}else{
+			pressureName = ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")";
+			alfaName = ModelSpecification.TPout_alfa.getName();
+			return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ fo.getName()+")/"+getLength().getName();
+		}
+
+		//return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")/"+nsinous+" * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+alfaName+"+"+pressureName+"*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+alfaName+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) + "+ fo.getName()+")/"+getLength().getName();
 	}
 
 	private String getSymbolicDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
@@ -164,7 +174,7 @@ public class VenousSinus extends ElasticTube {
 		// equ(46) et equ(47)
 		return ""+ModelSpecification.damp2.getName()+" * (("+parentFlowout.getName()+"/"+parentArea.getName()+") - ("+parentFlowout_current.getName()+LAST_ROUND_SUFFIX+"/"+parentArea_current.getName()+LAST_ROUND_SUFFIX+"))/"+ModelSpecification.dt.getName()+" + ("+parentPressure.getName()+" - "+pr.getName()+")-"+getAlpha().getName()+"*"+parentFlowout.getName();
 	}
-
+ 
 	private String getSymbolicConnectivityEquation(ArrayList<SimpleVariable> parentFlowout, SimpleVariable sasPressure, SimpleVariable pr, SimpleVariable fi){
 		// equ(54)
 		String res = "(";
@@ -188,7 +198,19 @@ public class VenousSinus extends ElasticTube {
 
 	private String getSymbolicInitialContinuityEquation(SimpleVariable fi, SimpleVariable fo,SimpleVariable sasPressure, SimpleVariable pr, int nsinous){
 		// eq(14)
-		return fi.getName()+" + ("+ModelSpecification.k1.getName()+"/"+nsinous+") * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+ModelSpecification.P_OUT_INITIAL.getName()+"*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) - "+fo.getName();
+		String pressureName = "";
+		String alfaName = "";
+
+			
+		if(getChildren().size()>0){
+			return ""+"  (- "+fi.getName()+" + "+ fo.getName()+")/"+getLength().getName();
+		}else{
+			pressureName = ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")";
+			alfaName = ModelSpecification.TPout_alfa.getName();
+			return "  (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ fo.getName()+")";
+		}
+		
+		//return fi.getName()+" + ("+ModelSpecification.k1.getName()+"/"+nsinous+") * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+alfaName+"+"+pressureName+"*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+alfaName+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) - "+fo.getName();
 	}
 	private String getSymbolicInitialDistensibilityEquation(SimpleVariable ar, SimpleVariable pr, SimpleVariable pbrain_left, SimpleVariable pbrain_right){
 		// equ(29)
