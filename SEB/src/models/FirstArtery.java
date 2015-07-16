@@ -293,7 +293,7 @@ public class FirstArtery extends ElasticTube {
 
 	private String getSymbolicInitialMomentumEquation(SimpleVariable pr, SimpleVariable fi){
 		// equ(75)
-		return "("+ModelSpecification.P_INIT_INITIAL.getName()+" - "+pr.getName()+") - "+getAlpha().getName()+" * "+fi.getName();
+		return "("+ModelSpecification.P_INIT_INITIAL.getName()+" - "+pr.getName()+") - "+getAlpha().getName()+" * "+ModelSpecification.FI_INITIAL.getName();//fi.getName();
 	}
 
 	//====== Connectivity ====
