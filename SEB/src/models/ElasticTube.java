@@ -14,6 +14,8 @@ public abstract class ElasticTube extends Tube {
 	public static String LENGTH_LABEL = "l0";
 	public static String ALPHA_LABEL = "alfa";
 	public static String ELASTANCE_LABEL = "E";
+	public static String PRESSURE_INIT_LABEL = "INITP";
+	public static String PRESSURE_OUT_LABEL = "OUTP";
 	protected SimpleVariable flowin;
 	protected SimpleVariable flowout;
 	protected SimpleVariable pressure;
@@ -21,14 +23,16 @@ public abstract class ElasticTube extends Tube {
 	protected SimpleVariable alpha;
 	protected SimpleVariable elastance;
 	protected SimpleVariable initialArea;
+	protected SimpleVariable P_INIT;
+	protected SimpleVariable P_OUT;
 	protected Hemisphere hemisphere;
 	protected ArrayList<ElasticTube> parents;
 	protected ArrayList<ElasticTube> children;
 	protected boolean connectivityAdded = false;
 	protected boolean initialConnectivityAdded = false;
-	
+
 	protected boolean checkedForAlphaRecalculation = false;
-	
+
 	public ElasticTube(){
 		super();
 		hemisphere = Hemisphere.UNKNOWN;
@@ -37,8 +41,10 @@ public abstract class ElasticTube extends Tube {
 		setFlowout(-1.0f);
 		setPressure(-1.0f);
 		setArea(-1.0f);
-		
+		setP_INIT(-1.0f);
 		setInitialArea(-1.0f);
+		setP_OUT(2.0f);
+		setP_INIT(50.0f);
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
 		String prefix = "";
@@ -50,13 +56,14 @@ public abstract class ElasticTube extends Tube {
 		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
 		setAlpha(-1.0f);
 	}
-	
+
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure){
 		super(name, len);
 		setHemisphere(hemi);
 		setInitialArea(a);
 		setArea(a);
-		
+		setP_OUT(2.0f);
+		setP_INIT(-1.0f);
 		setElastance(elast);
 		setFlowin(flowin);
 		setFlowout(flowout);
@@ -72,12 +79,13 @@ public abstract class ElasticTube extends Tube {
 		setName(name + " [" + prefix+TUBE_LABEL+getTubeNum()+"_"+getMyID()+"]");
 		setAlpha(alf);
 	}	
-	
+
 	public ElasticTube(String name, Hemisphere hemi, float len, float a, float alf, float elast, float flowin, float flowout, float pressure, ArrayList<ElasticTube> par, ArrayList<ElasticTube> child){
 		super(name,len);
 		setHemisphere(hemi);
 		setArea(a);
-		
+		setP_OUT(2.0f);
+		setP_INIT(-1.0f);
 		setElastance(elast);
 		setFlowin(flowin);
 		setFlowout(flowout);
@@ -108,7 +116,7 @@ public abstract class ElasticTube extends Tube {
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+LENGTH_LABEL+"_"+getMyID(),length, (Tube)this);
 		this.length = v;
 	}
-	
+
 	public ArrayList<ElasticTube> getParents() {
 		return parents;
 	}
@@ -173,7 +181,7 @@ public abstract class ElasticTube extends Tube {
 			v.setValue("8*pi*0.004*((1e-6)/133.32)*("+getLength().getName()+"/100)/(("+getArea().getName()+"_PREV/10000)^2)");
 		//SimpleVariable v = new SimpleVariable(TUBE_LABEL+getTubeNum()+"_"+ALPHA_LABEL+"_"+getMyID(),alpha, (Tube)this);
 
-		
+
 		this.alpha = v;
 	}
 
@@ -224,6 +232,40 @@ public abstract class ElasticTube extends Tube {
 		this.flowout = v;
 	}
 
+
+	public SimpleVariable getP_INIT() {
+		return P_INIT;
+	}
+
+	public void setP_INIT(float p_INIT) {
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		if(getTubeNum().equals(FirstArtery.TUBE_NUM)){
+			p_INIT = 120.0f;
+		}
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_INIT_LABEL+"_"+getMyID(),p_INIT, (Tube)this);
+		this.P_INIT = v;
+	}
+
+	public SimpleVariable getP_OUT() {
+		return P_OUT;
+	}
+
+	public void setP_OUT(float p_OUT) {
+		String prefix = "";
+		if(hemisphere == Hemisphere.LEFT)
+			prefix = "L_";
+		else
+			if(hemisphere == Hemisphere.RIGHT)
+				prefix = "R_";
+		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_OUT_LABEL+"_"+getMyID(),p_OUT, (Tube)this);
+		this.P_OUT = v;
+	}
+
 	public SimpleVariable getPressure() {
 		return pressure;
 	}
@@ -246,7 +288,7 @@ public abstract class ElasticTube extends Tube {
 	public void setHemisphere(Hemisphere hemisphere) {
 		this.hemisphere = hemisphere;
 	}
-	
+
 	/**
 	 * Renvoi le parenchyme associe a l'hemisphere de l'objet, nul si non applicable
 	 * @return
@@ -262,7 +304,7 @@ public abstract class ElasticTube extends Tube {
 	public String toString(){
 		return super.toString()+" - Elastance = "+getElastance()+" - Area = "+getArea()+" - Alpha = "+getAlpha()+" - Hemisphere = "+getHemisphere();
 	}
-	
+
 	public boolean addParent(ElasticTube parent){
 		if(!parent.getChildren().contains(this))
 			parent.addChild(this);
@@ -271,15 +313,24 @@ public abstract class ElasticTube extends Tube {
 	public boolean addChild(ElasticTube child){
 		return children.add(child);
 	}
-	
+
 
 
 	public ArrayList<SimpleVariable> getVariables(){
 		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
-		variables.add(getFlowin());
-		variables.add(getFlowout());
+
 		variables.add(getPressure());
 		variables.add(getArea());
+
+		if(getP_INIT().getFloatValue()==120.0f){
+			variables.add(getP_INIT());
+		}else{
+			variables.add(getFlowin());
+		}
+		if(this instanceof VenousSinus && this.getChildren().size()<=0)
+			variables.add(getP_OUT());
+		else
+			variables.add(getFlowout());
 		return variables;
 	}
 	public ArrayList<SimpleVariable> getFixedVariables(){
@@ -290,18 +341,33 @@ public abstract class ElasticTube extends Tube {
 		variables.add(getAlpha());
 		return variables;
 	}
-	
+
 	public ArrayList<SimpleVariable> getGlobalVariables(){
 		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
 		SimpleVariable temp = new SimpleVariable(getArea().getName()+LAST_ROUND_SUFFIX,getArea().getValue(),getArea().getSourceObj());
 		variables.add(temp);
-		temp = new SimpleVariable(getFlowin().getName()+LAST_ROUND_SUFFIX,getFlowin().getValue(),getFlowin().getSourceObj());
-		variables.add(temp);
-		temp = new SimpleVariable(getFlowout().getName()+LAST_ROUND_SUFFIX,getFlowout().getValue(),getFlowout().getSourceObj());
-		variables.add(temp);
+
+
+
+		if(getP_INIT().getFloatValue()==120.0f){
+			temp = new SimpleVariable(getP_INIT().getName()+LAST_ROUND_SUFFIX,getP_INIT().getValue(),getP_INIT().getSourceObj());
+			variables.add(temp);
+		}else{
+			temp = new SimpleVariable(getFlowin().getName()+LAST_ROUND_SUFFIX,getFlowin().getValue(),getFlowin().getSourceObj());
+			variables.add(temp);
+		}
+		if(this instanceof VenousSinus && this.getChildren().size()<=0){
+			temp = new SimpleVariable(getP_OUT().getName()+LAST_ROUND_SUFFIX,getP_OUT().getValue(),getP_OUT().getSourceObj());
+			variables.add(temp);
+		}else{
+			temp = new SimpleVariable(getFlowout().getName()+LAST_ROUND_SUFFIX,getFlowout().getValue(),getFlowout().getSourceObj());
+			variables.add(temp);
+		}
+
+
 		return variables;
 	}
-	
+
 	public ArrayList<SimpleVariable> getRecursiveVariables(){
 		ArrayList<SimpleVariable> variables = new ArrayList<SimpleVariable>();
 		for(SimpleVariable var:getVariables()){
@@ -318,7 +384,7 @@ public abstract class ElasticTube extends Tube {
 		}
 		return variables;
 	}
-	
+
 	// equations communes
 	protected String getSymbolicInitialMomentumEquation(ArrayList<ElasticTube> parents, ArrayList<SimpleVariable> variables) throws Exception {
 		// eq (31)  (36)
@@ -374,7 +440,7 @@ public abstract class ElasticTube extends Tube {
 			return "(" + getPressure().getName() + " - " + parents.get(0).getPressure().getName() + ") + (("+getAlpha().getName()+ "/2) + (" + parents.get(0).getAlpha().getName()+ "/2)) * "+getFlowin().getName();
 		}
 	}
-	
+
 	protected String getSymbolicInitialMomentumEquationOut(ArrayList<ElasticTube> children, ArrayList<SimpleVariable> variables) throws Exception {
 		// eq (31)  (36)
 		// PROBLEME QUAND NOMBRE IMPAIR
@@ -399,7 +465,7 @@ public abstract class ElasticTube extends Tube {
 				for(SimpleVariable alp:alphalist){
 					if(!alp.getName().equals(el.getAlpha().getName()) && !usedvar.contains(alp.getName())){
 						localpha = alp.getName();
-								
+
 						usedvar += localpha + "@@";
 						break;
 					}
@@ -437,15 +503,15 @@ public abstract class ElasticTube extends Tube {
 			return "(" + getPressure().getName() + " - " + children.get(0).getPressure().getName() + ") - (("+getAlpha().getName()+ "/2) + (" + children.get(0).getAlpha().getName()+ "/2)) * "+getFlowout().getName();
 		}
 	}
-	
-	
-	
+
+
+
 	@Override
 	public boolean equals(Object v) {
-		
+
 		if (v instanceof ElasticTube){
 			return ((ElasticTube)v).getName().equals(getName());//getMyID() == ((ElasticTube)v).getMyID() & 
-			
+
 		}
 		return false;
 	}
@@ -453,11 +519,11 @@ public abstract class ElasticTube extends Tube {
 	public boolean removeParent(ElasticTube tube) {
 		return getParents().remove(tube);
 	}
-	
+
 	public boolean removeChild(ElasticTube tube) {
 		return getChildren().remove(tube);
 	}
-	
+
 	/**
 	 * @return the connectivityAdded
 	 */
@@ -487,7 +553,8 @@ public abstract class ElasticTube extends Tube {
 	public void setCheckedForAlphaRecalculation(boolean checkedForAlphaRecalculation) {
 		this.checkedForAlphaRecalculation = checkedForAlphaRecalculation;
 	}
-	
-	
+
+
+
 
 }

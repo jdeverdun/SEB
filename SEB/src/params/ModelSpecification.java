@@ -33,16 +33,16 @@ public class ModelSpecification {
 	public static SimpleVariable damp2 = new SimpleVariable("damp2",0.0f,null);
 	public static SimpleVariable time_step = new SimpleVariable("time_step",120,null);// valeur initiale 120
 	public static SimpleVariable currentIter = new SimpleVariable("currentIter");
-	public static SimpleVariable P_INIT_INITIAL = new SimpleVariable("P_INIT_INITIAL",(0.0f + 102.0f),null);
-	public static SimpleVariable P_OUT_INITIAL = new SimpleVariable("P_OUT_INITIAL",(0.0f + 2.5f),null);
+	public static SimpleVariable F_INIT_INITIAL = new SimpleVariable("F_INIT_INITIAL",(4.0f),null);
+	public static SimpleVariable F_OUT_INITIAL = new SimpleVariable("F_OUT_INITIAL",(12.0f),null);
 	public static Architecture architecture;
-	public static String P_INIT_NAME = "P_INIT";
-	public static String P_OUT_NAME = "P_OUT";
+	public static String F_INIT_NAME = "F_INIT";
+	public static String F_OUT_NAME = "F_OUT";
 	public static String OUT_D_NAME = "OUT_D";
 	private static String TIME_NAME = "time";
 	private static String FOURRIER_FUNCT_NAME = "fourrier_funct";
-	public static ArrayVariable P_INIT = null;
-	public static ArrayVariable P_OUT = null;
+	public static ArrayVariable F_INIT = null;
+	public static ArrayVariable F_OUT = null;
 	public static ArrayVariable OUT_D = null;
 	public static ArrayVariable fourrier_funct = null;
 	public static ArrayVariable time = null;
@@ -61,10 +61,10 @@ public class ModelSpecification {
 		vars.add(damp2);
 		vars.add(time_step);
 		vars.add(currentIter);
-		vars.add(P_INIT_INITIAL);
-		vars.add(P_OUT_INITIAL);
-		vars.add(P_INIT);
-		vars.add(P_OUT);
+		vars.add(F_INIT_INITIAL);
+		vars.add(F_OUT_INITIAL);
+		vars.add(F_INIT);
+		vars.add(F_OUT);
 		vars.add(OUT_D);
 		return vars;
 	}
@@ -76,8 +76,8 @@ public class ModelSpecification {
 		architecture = arch;
 		currentIter.setValue(0);
 		time = new ArrayVariable(TIME_NAME ,new float[(int) time_step.getFloatValue()+1],null);
-		P_INIT = new ArrayVariable(P_INIT_NAME, new float[(int) time_step.getFloatValue()], null);
-		P_OUT = new ArrayVariable(P_OUT_NAME,new float[(int) time_step.getFloatValue()], null);
+		F_INIT = new ArrayVariable(F_INIT_NAME, new float[(int) time_step.getFloatValue()], null);
+		F_OUT = new ArrayVariable(F_OUT_NAME,new float[(int) time_step.getFloatValue()], null);
 		OUT_D = new ArrayVariable(OUT_D_NAME,new float[(int) time_step.getFloatValue()], null);
 		fourrier_funct = new ArrayVariable(FOURRIER_FUNCT_NAME,new float[(int) time_step.getFloatValue()], null);
 		time.getValue()[0] = 0;
@@ -92,8 +92,8 @@ public class ModelSpecification {
                      - 0.0120187782765389*Math.sin(8*Math.PI*time.getValue()[i]) - 0.0298121524913813*Math.sin(10*Math.PI*time.getValue()[i])
                      - 0.00705400623825701*Math.sin(12*Math.PI*time.getValue()[i])- 0.00711904276150898*Math.sin(14*Math.PI*time.getValue()[i])
                      + 0.000860786521170459*Math.sin(16*Math.PI*time.getValue()[i]) ) );
-			P_INIT.getValue()[i] = 102.0f * fourrier_funct.getValue()[i];
-			P_OUT.getValue()[i] =  2.5f;
+			F_INIT.getValue()[i] = 102.0f * fourrier_funct.getValue()[i];
+			F_OUT.getValue()[i] =  2.5f;
 			OUT_D.getValue()[i] = 0.0f;
 		}
 		// on update l'affichage

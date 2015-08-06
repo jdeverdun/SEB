@@ -84,7 +84,7 @@ public class Artery extends ElasticTube {
 		}*/
 		
 		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG && getChildren().isEmpty()){
-			res.add(getSymbolicInitialAddMomentumEquation(pr,fo));
+			//res.add(getSymbolicInitialAddMomentumEquation(pr,fo));
 		}else{
 			// connectivity if needed
 			if(!isInitialConnectivityAdded()){
@@ -133,7 +133,7 @@ public class Artery extends ElasticTube {
 		
 		// connectivity if needed
 		if(ModelSpecification.SIM_MODE == SimulationMode.DEBUG && getChildren().isEmpty()){
-			res.add(getSymbolicAddMomentumEquation(pr,fo));
+			//res.add(getSymbolicAddMomentumEquation(pr,fo));
 		}else{
 			if(!isConnectivityAdded()){
 				ArrayList<SimpleVariable> childFin = new ArrayList<SimpleVariable>();
@@ -354,7 +354,7 @@ public class Artery extends ElasticTube {
 	}
 	
 	// si bloc terminal
-	private String getSymbolicAddMomentumEquation(SimpleVariable pr, SimpleVariable fo){
+	/*private String getSymbolicAddMomentumEquation(SimpleVariable pr, SimpleVariable fo){
 		// equ(72)
 		return "("+pr.getName()+" - "+ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")) - "+ModelSpecification.TPout_alfa.getName()+" * "+fo.getName();
 	}
@@ -362,6 +362,6 @@ public class Artery extends ElasticTube {
 	private String getSymbolicInitialAddMomentumEquation(SimpleVariable pr, SimpleVariable fo){
 		// equ(72)
 		return "("+pr.getName()+" - "+ModelSpecification.P_OUT_INITIAL.getName()+") - "+ModelSpecification.TPout_alfa.getName()+" * "+fo.getName();
-	}
+	}*/
 
 }

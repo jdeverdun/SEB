@@ -139,10 +139,9 @@ public class SAS extends ElasticTube {
 		String out = "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+"+"+ fo.getName();
 		for(SimpleVariable prs:vsinousPress){
 			String pressureName = "";
-			if(((VenousSinus)prs.getSourceObj()).getChildren().size()>0)
-				pressureName = ((VenousSinus)prs.getSourceObj()).getPressure().getName();
-			else{
-				pressureName = ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")";
+			if(((VenousSinus)prs.getSourceObj()).getChildren().size()>0){
+				
+			}else{
 				out += " - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+((VenousSinus)prs.getSourceObj()).getPressure().getName()+")";
 			}
 			//out += " - ("+ModelSpecification.k1.getName()+"/"+vsinousPress.size()+") * ("+sasPressure.getName()+" - (("+prs.getName()+"*"+ModelSpecification.TPout_alfa.getName()+"+"+pressureName+"*"+((VenousSinus)prs.getSourceObj()).getAlpha().getName()+")/("+ModelSpecification.TPout_alfa.getName()+"+"+((VenousSinus)prs.getSourceObj()).getAlpha().getName()+")))";
@@ -186,7 +185,7 @@ public class SAS extends ElasticTube {
 			if(((VenousSinus)prs.getSourceObj()).getChildren().size()>0)
 				pressureName = ((VenousSinus)prs.getSourceObj()).getPressure().getName();
 			else{
-				pressureName = ModelSpecification.P_OUT_INITIAL.getName();
+				pressureName = ((VenousSinus)prs.getSourceObj()).getP_OUT().getName();
 				out += " - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+((VenousSinus)prs.getSourceObj()).getPressure().getName()+")";
 		
 			}

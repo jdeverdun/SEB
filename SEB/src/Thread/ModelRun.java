@@ -3,6 +3,8 @@ package Thread;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
@@ -87,6 +89,11 @@ public class ModelRun extends Thread {
 				fixedvariables.addAll(tube.getFixedVariables());
 			}
 			
+			Set<SimpleVariable> hs = new HashSet<>();
+			hs.addAll(variables);
+			variables.clear();
+			variables.addAll(hs);
+			
 			//////////////////////////////////////////////////////////
 			///                                                    ///
 			///                 Update des alphas                  ///
@@ -108,7 +115,10 @@ public class ModelRun extends Thread {
 			}
 			globalvariables.addAll(ModelSpecification.getGlobalVariables());
 
-
+			Set<Variable> hs2 = new HashSet<>();
+			hs2.addAll(globalvariables);
+			globalvariables.clear();
+			globalvariables.addAll(hs2);
 			//////////////////////////////////////////////////////////
 			///                                                    ///
 			///             Recuperation des equations             ///
@@ -226,7 +236,16 @@ public class ModelRun extends Thread {
 			}
 			globalvariables.addAll(ModelSpecification.getGlobalVariables());
 
+			Set<SimpleVariable> hs = new HashSet<>();
+			hs.addAll(variables);
+			variables.clear();
+			variables.addAll(hs);
+			
 
+			Set<Variable> hs2 = new HashSet<>();
+			hs2.addAll(globalvariables);
+			globalvariables.clear();
+			globalvariables.addAll(hs2);
 
 			//////////////////////////////////////////////////////////
 			///                                                    ///
@@ -245,7 +264,7 @@ public class ModelRun extends Thread {
 				}
 				for(String bloceq : equations){
 
-					System.out.print(bloceq+"\n");
+					//System.out.print(bloceq+"\n");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

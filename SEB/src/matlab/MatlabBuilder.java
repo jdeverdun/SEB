@@ -267,9 +267,13 @@ public class MatlabBuilder {
 				if(var instanceof SimpleVariable){
 					String nname = var.getName().substring(0, var.getName().length() - Tube.LAST_ROUND_SUFFIX.length());
 					int ind = variables.indexOf(new SimpleVariable(nname));
-					if(ind == -1)
-						System.err.println("Unable to find variable "+nname+" in variables list");
-					content += var.getName() + " = " + unknownLabel + "(" + (ind+1) + ");"+NEWLINE_CHAR+"";
+					if(ind == -1){
+						//System.err.println("Unable to find variable "+nname+" in variables list");
+						
+					}else{
+						content += var.getName() + " = " + unknownLabel + "(" + (ind+1) + ");"+NEWLINE_CHAR+"";
+					}
+					
 				}
 			}
 		}
