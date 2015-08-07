@@ -16,7 +16,7 @@ public class SystemParams {
 	public static final String PROGRAM_NAME = "SEB";
 	public static final String VERSION = "0.1.2";
 	public static Logger modelLogger = null;
-	public static String MATLAB_MODEL_DIR = "C:\\Users\\Analyse\\Documents\\MATLAB\\Jeremy_these\\Modelisation\\linninger\\auto_generation_SEB";
+	public static String MATLAB_MODEL_DIR = "E:\\Programmes\\Matlab\\App\\Modelisation\\modele_java\\modele_flux";//"C:\\Users\\Analyse\\Documents\\MATLAB\\Jeremy_these\\Modelisation\\linninger\\auto_generation_SEB";
 	public static final int SOCKET_FLOAT_PORT = 12457;
 	public static final int SOCKET_OBJECT_PORT = 12458;
 	
