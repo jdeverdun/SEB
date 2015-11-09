@@ -74,7 +74,7 @@ public class VenousSinus extends ElasticTube {
 		// Continuity
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
-		SimpleVariable fo = null;
+		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
 		if(getChildren().size()>0)
 			fo = findVariableWithName(getFlowout().getName(),variables);
 		
@@ -126,7 +126,7 @@ public class VenousSinus extends ElasticTube {
 		// Continuity
 		SimpleVariable ar = findVariableWithName(getArea().getName(),variables);
 		SimpleVariable fi = findVariableWithName(getFlowin().getName(),variables);
-		SimpleVariable fo = null;
+		SimpleVariable fo = findVariableWithName(getFlowout().getName(),variables);
 		if(getChildren().size()>0)
 			fo = findVariableWithName(getFlowout().getName(),variables);
 		ArrayList<SimpleVariable> psas = findVariableWithStruct(Hemisphere.BOTH, SAS.TUBE_NUM, PRESSURE_LABEL, variables);
@@ -176,9 +176,9 @@ public class VenousSinus extends ElasticTube {
 		if(getChildren().size()>0){
 			return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" + "+ fo.getName()+")/"+getLength().getName();
 		}else{
-			pressureName = getP_OUT().getName();
+			//pressureName = getP_OUT().getName();
 			alfaName = ModelSpecification.TPout_alfa.getName();
-			return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ ModelSpecification.F_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")"+")/"+getLength().getName();
+			return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ getFlowout().getName()+")/"+getLength().getName();
 		}
 
 		//return "" + "("+ar.getName()+" - "+getArea().getName()+LAST_ROUND_SUFFIX+")/"+ModelSpecification.dt.getName()+""+" + (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")/"+nsinous+" * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+alfaName+"+"+pressureName+"*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+alfaName+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) + "+ fo.getName()+")/"+getLength().getName();
@@ -208,7 +208,7 @@ public class VenousSinus extends ElasticTube {
 
 	private String getSymbolicAddMomentumEquation(SimpleVariable pr, SimpleVariable fo){
 		// equ(72)
-		return "("+pr.getName()+" - "+P_OUT.getName()+") - "+ModelSpecification.TPout_alfa.getName()+" * "+ModelSpecification.F_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")";//fo.getName();
+		return "("+pr.getName()+" - "+ModelSpecification.P_OUT.getName()+"("+ModelSpecification.currentIter.getName()+")"+") - "+ModelSpecification.TPout_alfa.getName()+" * "+fo.getName();//fo.getName();
 	}
 
 	
@@ -224,9 +224,9 @@ public class VenousSinus extends ElasticTube {
 		if(getChildren().size()>0){
 			return ""+"  (- "+fi.getName()+" + "+ fo.getName()+")/"+getLength().getName();
 		}else{
-			pressureName = P_OUT.getName();
+			//pressureName = P_OUT.getName();
 			alfaName = ModelSpecification.TPout_alfa.getName();
-			return "  (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ ModelSpecification.F_OUT_INITIAL.getName()+")";
+			return "  (- "+fi.getName()+" - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+pr.getName()+") + "+ fo.getName()+")";
 		}
 		
 		//return fi.getName()+" + ("+ModelSpecification.k1.getName()+"/"+nsinous+") * ("+sasPressure.getName()+" - (("+pr.getName()+"*"+alfaName+"+"+pressureName+"*"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+")/("+alfaName+"+"+((VenousSinus)pr.getSourceObj()).getAlpha().getName()+"))) - "+fo.getName();
@@ -255,6 +255,6 @@ public class VenousSinus extends ElasticTube {
 */
 	private String getSymbolicInitialAddMomentumEquation(SimpleVariable pr, SimpleVariable fo){
 		// equ(72)
-		return "("+pr.getName()+" - "+P_OUT.getName()+") - "+ModelSpecification.TPout_alfa.getName()+" * "+ModelSpecification.F_OUT_INITIAL.getName();
+		return "("+pr.getName()+" - "+ModelSpecification.P_OUT_INITIAL.getName()+") - "+ModelSpecification.TPout_alfa.getName()+" * "+fo.getName();
 	}
 }

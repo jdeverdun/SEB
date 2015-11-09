@@ -24,7 +24,6 @@ public abstract class ElasticTube extends Tube {
 	protected SimpleVariable elastance;
 	protected SimpleVariable initialArea;
 	protected SimpleVariable P_INIT;
-	protected SimpleVariable P_OUT;
 	protected Hemisphere hemisphere;
 	protected ArrayList<ElasticTube> parents;
 	protected ArrayList<ElasticTube> children;
@@ -43,7 +42,7 @@ public abstract class ElasticTube extends Tube {
 		setArea(-1.0f);
 		setP_INIT(-1.0f);
 		setInitialArea(-1.0f);
-		setP_OUT(2.0f);
+		//setP_OUT(2.0f);
 		setP_INIT(50.0f);
 		parents = new ArrayList<ElasticTube>();
 		children = new ArrayList<ElasticTube>();
@@ -62,7 +61,7 @@ public abstract class ElasticTube extends Tube {
 		setHemisphere(hemi);
 		setInitialArea(a);
 		setArea(a);
-		setP_OUT(2.0f);
+		//setP_OUT(2.0f);
 		setP_INIT(-1.0f);
 		setElastance(elast);
 		setFlowin(flowin);
@@ -84,7 +83,7 @@ public abstract class ElasticTube extends Tube {
 		super(name,len);
 		setHemisphere(hemi);
 		setArea(a);
-		setP_OUT(2.0f);
+		//setP_OUT(2.0f);
 		setP_INIT(-1.0f);
 		setElastance(elast);
 		setFlowin(flowin);
@@ -251,11 +250,11 @@ public abstract class ElasticTube extends Tube {
 		this.P_INIT = v;
 	}
 
-	public SimpleVariable getP_OUT() {
+	/*public SimpleVariable getP_OUT() {
 		return P_OUT;
-	}
+	}*/
 
-	public void setP_OUT(float p_OUT) {
+	/*public void setP_OUT(float p_OUT) {
 		String prefix = "";
 		if(hemisphere == Hemisphere.LEFT)
 			prefix = "L_";
@@ -264,7 +263,7 @@ public abstract class ElasticTube extends Tube {
 				prefix = "R_";
 		SimpleVariable v = new SimpleVariable(prefix+TUBE_LABEL+getTubeNum()+"_"+PRESSURE_OUT_LABEL+"_"+getMyID(),p_OUT, (Tube)this);
 		this.P_OUT = v;
-	}
+	}*/
 
 	public SimpleVariable getPressure() {
 		return pressure;
@@ -327,9 +326,9 @@ public abstract class ElasticTube extends Tube {
 		}else{
 			variables.add(getFlowin());
 		}
-		if(this instanceof VenousSinus && this.getChildren().size()<=0)
+		/*if(this instanceof VenousSinus && this.getChildren().size()<=0)
 			variables.add(getP_OUT());
-		else
+		else*/
 			variables.add(getFlowout());
 		return variables;
 	}
@@ -356,13 +355,13 @@ public abstract class ElasticTube extends Tube {
 			temp = new SimpleVariable(getFlowin().getName()+LAST_ROUND_SUFFIX,getFlowin().getValue(),getFlowin().getSourceObj());
 			variables.add(temp);
 		}
-		if(this instanceof VenousSinus && this.getChildren().size()<=0){
+		/*if(this instanceof VenousSinus && this.getChildren().size()<=0){
 			temp = new SimpleVariable(getP_OUT().getName()+LAST_ROUND_SUFFIX,getP_OUT().getValue(),getP_OUT().getSourceObj());
 			variables.add(temp);
-		}else{
+		}else{*/
 			temp = new SimpleVariable(getFlowout().getName()+LAST_ROUND_SUFFIX,getFlowout().getValue(),getFlowout().getSourceObj());
 			variables.add(temp);
-		}
+		//}
 
 
 		return variables;

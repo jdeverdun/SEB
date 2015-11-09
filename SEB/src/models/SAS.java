@@ -185,7 +185,7 @@ public class SAS extends ElasticTube {
 			if(((VenousSinus)prs.getSourceObj()).getChildren().size()>0)
 				pressureName = ((VenousSinus)prs.getSourceObj()).getPressure().getName();
 			else{
-				pressureName = ((VenousSinus)prs.getSourceObj()).getP_OUT().getName();
+				//pressureName = ((VenousSinus)prs.getSourceObj()).getP_OUT().getName();
 				out += " - ("+ModelSpecification.k1.getName()+")"+" * ("+sasPressure.getName()+" - "+((VenousSinus)prs.getSourceObj()).getPressure().getName()+")";
 		
 			}
