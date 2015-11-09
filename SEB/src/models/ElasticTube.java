@@ -349,6 +349,8 @@ public abstract class ElasticTube extends Tube {
 				}
 				if(!left.equals("("))
 					prefix = " + ";
+				if(localpha.equals(""))
+					System.err.println("dafuck?");
 				left += prefix + "(" + localpha + "/2) * (" + pressure.getName() + " - " + el.getPressure().getName() + ")" ;
 			}
 			left += ")";

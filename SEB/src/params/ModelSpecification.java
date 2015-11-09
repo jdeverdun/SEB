@@ -26,7 +26,7 @@ public class ModelSpecification {
 	public enum SimulationMode{DEBUG,STANDARD};
 	
 	public static SimpleVariable Pstar = new SimpleVariable("Pstar",(0.0f + 0.0f),null);
-	public static SimpleVariable k1 = new SimpleVariable("k1",(float) 8.5325e-4,null);//recalcule à partir de la publi 0.0011 ??
+	public static SimpleVariable k1 = new SimpleVariable("k1",(float) 0.0025,null);//conductance ! ici correspond a resistance de 7 mmHg /(mL/min) 
 	public static SimpleVariable TPout_alfa = new SimpleVariable("TPout_alfa",0.0809088f,null);
 	public static SimpleVariable dt = new SimpleVariable("dt",0.025f,null);//defaut 0.025
 	public static SimpleVariable damp = new SimpleVariable("damp",1.0f,null);// valeur initiale 1.0f
