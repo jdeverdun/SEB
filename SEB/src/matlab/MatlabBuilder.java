@@ -90,14 +90,14 @@ public class MatlabBuilder {
 		String initialEqFileContent = "";
 		initialEqFileContent += createEquationInitialHeader(globalvariables);
 		//initialEqFileContent += globalVarsDefinition(globalvariables);
-		initialEqFileContent += createEquations(fixedvariables, variables, initEquations);
+		initialEqFileContent += createEquations(fixedvariables, variables, initEquations,true);
 		
 		
 		// ============== Time equations ==============
 		String timeEqFileContent = "";
 		timeEqFileContent += createEquationTimeHeader(globalvariables);
 		//timeEqFileContent += globalVarsDefinition(globalvariables);
-		timeEqFileContent += createEquations(fixedvariables, variables, equations);
+		timeEqFileContent += createEquations(fixedvariables, variables, equations,false);
 		
 		
 		
@@ -381,7 +381,7 @@ public class MatlabBuilder {
 	 * @return
 	 */
 	private static String createEquations(
-			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables, ArrayList<String> initEquations) {
+			ArrayList<SimpleVariable> fixedvariables, ArrayList<SimpleVariable> variables, ArrayList<String> initEquations, boolean isInit) {
 		String content = "%% Fixed variables "+NEWLINE_CHAR+"";
 		// on init les variables x()
 		content += ""+NEWLINE_CHAR+""+NEWLINE_CHAR+"%%Variables initialization"+NEWLINE_CHAR+"";
@@ -390,7 +390,7 @@ public class MatlabBuilder {
 			content += var.getName() + " = " + unknownLabel + "(" + (count++) + ");"+NEWLINE_CHAR+"";  
 		}
 		// on gere les variables fixes
-		content += createVariablesInitialization(fixedvariables);
+		content += createVariablesInitialization(fixedvariables,isInit);
 		
 		
 		// on init les variables x()
@@ -402,11 +402,18 @@ public class MatlabBuilder {
 		return content;
 	}
 
-	private static String createVariablesInitialization(ArrayList<SimpleVariable> variables){
+	private static String createVariablesInitialization(ArrayList<SimpleVariable> variables, boolean isInit){
 		// les variables
 		String content = "";
 		for(SimpleVariable var : variables){
-			content += var.getName() + " = " + var.getValue() + ";"+NEWLINE_CHAR+"";
+			if(isInit && var.getValue().contains("/10000)^2")){
+				String temp = var.getValue();
+				temp = temp.replace("_PREV/10000", "/10000");
+				temp = temp.replace("_A_", "_A0_");
+				content += var.getName() + " = " + temp + ";"+NEWLINE_CHAR+"";
+			}else{
+				content += var.getName() + " = " + var.getValue() + ";"+NEWLINE_CHAR+"";
+			}
 		}
 		return content;
 	}
